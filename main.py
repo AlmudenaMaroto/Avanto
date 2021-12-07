@@ -79,7 +79,7 @@ MDScreen:
                         padding: dp(24)
 
                         MDLabel:
-                            text: "Menú del día"
+                            text: "Menú"
                             font_style: "H5"
                             size_hint_y: None
                             height: self.texture_size[1]
