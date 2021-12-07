@@ -1,6 +1,8 @@
 import ast
 import sys
 from os import path
+import os
+os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 from kivy.config import Config
 Config.set("graphics", "width", "340")
 Config.set("graphics", "hight", "640")

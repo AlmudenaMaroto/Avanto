@@ -83,6 +83,12 @@
     	"screen_name": "badgelayout",
     	"icon": "eye-check"
     },
+	"Seleccionar Base de datos": {
+    	"import": "select_db",
+    	"factory": "Selectdb",
+    	"screen_name": "select_db",
+    	"icon": "plus-box-multiple"
+    },
     "AddWidget Behavior": {
     	"import": "addwidget",
     	"factory": "AddWidgetBehavior",
