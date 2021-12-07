@@ -2,6 +2,7 @@ import ast
 import sys
 from os import path
 import os
+import sqlite3
 os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 from kivy.config import Config
 Config.set("graphics", "width", "340")
@@ -18,6 +19,87 @@ from kivymd.uix.toolbar import MDToolbar  # noqa
 from kivymd_extensions.akivymd.uix.statusbarcolor import (  # noqa
     change_statusbar_color,
 )
+
+# Intento de crear Bases de datos:
+
+
+def create_table_movimientos(cursor):
+    cursor.execute(
+        '''
+        CREATE TABLE movimientos(
+        ID        INT   PRIMARY KEY NOT NULL,
+        [Fecha Operación]    TEXT               ,
+        Concepto     TEXT               NOT NULL,
+        Categoría   TEXT                NOT NULL,
+        Importe     FLOAT              NOT NULL,
+        Etapa   TEXT                NOT NULL,
+        Ubicación TEXT
+        )'''
+    )
+
+
+def create_table_deporte(cursor):
+    cursor.execute(
+        '''
+        CREATE TABLE deporte(
+        ID        INT   PRIMARY KEY NOT NULL,
+        [Fecha Operación]    TEXT               ,
+        Concepto     TEXT               NOT NULL,
+        Tiempo     FLOAT              NOT NULL
+        )'''
+    )
+
+
+def create_table_vbles_globales(cursor):
+    cursor.execute(
+        '''
+        CREATE TABLE globales(
+        ID        INT   PRIMARY KEY NOT NULL,
+        Obj_cuenta           FLOAT,
+        Obj_fecha           TEXT,
+        Obj_peso             FLOAT,
+        Domiciliaciones      TEXT,
+        Obj_tasa FLOAT
+        )''')
+
+    cursor.execute(
+        '''INSERT INTO globales (ID, Obj_cuenta, Obj_fecha, Obj_peso, Domiciliaciones, Obj_tasa) VALUES (1,25000,'01/09/2022',60,'ABONO',80)'''
+    )
+
+
+ruta_APP_PATH = os.getcwd()
+ruta_DB_PATH_movimientos = ruta_APP_PATH + '/movimientos.db'
+ruta_DB_PATH_deporte = ruta_APP_PATH + '/deporte.db'
+ruta_DB_PATH_vblesglobales = ruta_APP_PATH + '/globales.db'
+
+try:
+    con = sqlite3.connect(ruta_DB_PATH_movimientos)
+    cursor = con.cursor()
+    create_table_movimientos(cursor)
+    con.commit()
+    con.close()
+except Exception as e:
+    print(e)
+try:
+    con = sqlite3.connect(ruta_DB_PATH_deporte)
+    cursor = con.cursor()
+    create_table_deporte(cursor)
+    con.commit()
+    con.close()
+except Exception as e:
+    print(e)
+try:
+    con = sqlite3.connect(ruta_DB_PATH_vblesglobales)
+    cursor = con.cursor()
+    create_table_vbles_globales(cursor)
+    con.commit()
+    con.close()
+except Exception as e:
+    print(e)
+
+
+
+
 
 kv = """
 #: import StiffScrollEffect kivymd.effects.stiffscroll.StiffScrollEffect

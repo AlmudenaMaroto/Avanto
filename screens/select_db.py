@@ -35,11 +35,20 @@ class Selectdb(Screen):
 
     def update(self, *args):
         items = []
-        for x in range(20):
-            items.append(
-                OneLineListItem(text=f"Item {x}", on_release=self.update)
-            )
+        # Añadimos todas las Bases de Datos que vamos a emplear a la lista
+        items.append(OneLineListItem(text=f"movimientos", on_release=self.goto_movimientos))
+        items.append(OneLineListItem(text=f"deporte", on_release=self.goto_deporte))
+        items.append(OneLineListItem(text=f"variables globales", on_release=self.goto_vblesglobales))
         self.ids.list.items = items
 
     def on_leave(self):
         self.ids.list.clear_widgets()
+
+    def goto_movimientos(self, *args):
+        pass
+
+    def goto_deporte(self, *args):
+        pass
+
+    def goto_vblesglobales(self, *args):
+        pass
