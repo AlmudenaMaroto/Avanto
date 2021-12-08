@@ -1,0 +1,14 @@
+{
+    "Movimientos": {
+    	"import": "db_movimientos",
+    	"factory": "DataBaseWid_movimientos",
+    	"screen_name": "db_movimientos",
+    	"icon": "picture-in-picture-bottom-right"
+    },
+    "Bottom Navigation": {
+    	"import": "bottomnavigation",
+    	"factory": "BottomNavigation",
+    	"screen_name": "bottomnavigation",
+    	"icon": "picture-in-picture-bottom-right"
+    },
+}
