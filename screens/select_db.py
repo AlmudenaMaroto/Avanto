@@ -5,31 +5,32 @@ from kivymd.uix.list import MDList, OneLineListItem
 from kivymd_extensions.akivymd.uix.behaviors.addwidget import (
     AKAddWidgetAnimationBehavior,
 )
-
-Builder.load_string(
-    """
-<Selectdb>:
-
-    MDBoxLayout:
-        orientation: "vertical"
-
-        MyToolbar:
-            id: _toolbar
-
-        ScrollView:
-
-            AnimatedBox:
-                id: list
-                transition: "fade_size"
-"""
-)
+from main import DemoApp
+from kivymd.uix.screen import MDScreen
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
 
 
-class Selectdb(Screen):
+class DataBaseWid_movimientos(MDScreen):
+    pass
+
+
+class WindowManager_select(ScreenManager):
+
+    def load_screen(self, screen_name):
+        self.clear_widgets()
+        self.current = screen_name
+        self.add_widget(DataBaseWid_movimientos())
+
+
+class Selectdb(MDScreen):
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.WindowManager_select = WindowManager_select
+
     def on_enter(self):
         self.update()
 
@@ -45,10 +46,38 @@ class Selectdb(Screen):
         self.ids.list.clear_widgets()
 
     def goto_movimientos(self, *args):
-        pass
+        WindowManager_select.load_screen(self, 'db_movimientos')
 
     def goto_deporte(self, *args):
         pass
 
     def goto_vblesglobales(self, *args):
         pass
+
+
+Builder.load_string(
+    """
+WindowManager_select:
+    db_movimientos:
+    selectdb:
+
+<Selectdb>:
+    name:"selectdb"
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MyToolbar:
+            id: _toolbar
+
+        ScrollView:
+
+            AnimatedBox:
+                id: list
+                transition: "fade_size"
+
+<DataBaseWid_movimientos>:
+    name:"db_movimientos"
+    MDLabel:
+        text:"movimientos!!!"
+"""
+)

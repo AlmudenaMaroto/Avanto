@@ -3,8 +3,10 @@ import sys
 from os import path
 import os
 import sqlite3
+#
 os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 from kivy.config import Config
+
 Config.set("graphics", "width", "340")
 Config.set("graphics", "hight", "640")
 
@@ -15,6 +17,7 @@ from kivy.properties import StringProperty  # noqa
 from kivymd.app import MDApp  # noqa
 from kivymd.uix.list import OneLineAvatarListItem  # noqa
 from kivymd.uix.toolbar import MDToolbar  # noqa
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 from kivymd_extensions.akivymd.uix.statusbarcolor import (  # noqa
     change_statusbar_color,
@@ -97,10 +100,6 @@ try:
 except Exception as e:
     print(e)
 
-
-
-
-
 kv = """
 #: import StiffScrollEffect kivymd.effects.stiffscroll.StiffScrollEffect
 
@@ -179,7 +178,6 @@ class IconListItem(OneLineAvatarListItem):
 
 
 class DemoApp(MDApp):
-
     intro = """¡Bienvenid@ a Avanto!"""
 
     def __init__(self, **kwargs):
@@ -193,7 +191,7 @@ class DemoApp(MDApp):
 
     def on_start(self):
         with open(
-            path.join(path.dirname(__file__), "screens.json")
+                path.join(path.dirname(__file__), "screens.json")
         ) as read_file:
             self.data_screens = ast.literal_eval(read_file.read())
             data_screens = list(self.data_screens.keys())
@@ -207,6 +205,14 @@ class DemoApp(MDApp):
                     on_release=lambda x=list_item: self.load_screen(x),
                 )
             )
+        # Añadimos screens secundarias:
+        with open(
+                path.join(path.dirname(__file__), "hidescreens.json")
+        ) as read_file:
+            self.data_screens.update(ast.literal_eval(read_file.read()))
+            data_screens = list(self.data_screens.keys())
+            data_screens.sort()
+
 
     def load_screen(self, screen_name):
         manager = self.root.ids.screen_manager
@@ -232,5 +238,5 @@ class DemoApp(MDApp):
         self.root.ids.screen_manager.current = name
         return True
 
-
-DemoApp().run()
+if __name__ == '__main__':
+    DemoApp().run()
