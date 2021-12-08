@@ -14,6 +14,14 @@ class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
 
 
+class WindowManager_select(ScreenManager):
+
+    def load_movimientos(self, screen_name):
+        self.clear_widgets()
+        self.current = screen_name
+        self.add_widget(DataBaseWid_movimientos())
+
+
 class DataBaseWid_movimientos(MDScreen):
 
     def check_memory(self):
@@ -64,14 +72,6 @@ class DataBaseWid_movimientos(MDScreen):
     def add_10_more(self):
         self.mainwid.num_rows = self.mainwid.num_rows + 10
         self.mainwid.goto_database()
-
-
-class WindowManager_select(ScreenManager):
-
-    def load_movimientos(self, screen_name):
-        self.clear_widgets()
-        self.current = screen_name
-        self.add_widget(DataBaseWid_movimientos())
 
 
 class Selectdb(MDScreen):
