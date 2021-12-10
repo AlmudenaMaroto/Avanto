@@ -3,8 +3,14 @@ import sys
 from os import path
 import os
 import sqlite3
-#
-os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
+from kivy.utils import platform
+if platform == 'android':
+    from android.permissions import request_permissions, Permission
+    request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
+
+if platform != 'android':
+    os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
+
 from kivy.config import Config
 
 Config.set("graphics", "width", "340")
@@ -23,7 +29,6 @@ from kivymd_extensions.akivymd.uix.statusbarcolor import (  # noqa
     change_statusbar_color,
 )
 
-# Intento de crear Bases de datos:
 
 
 def create_table_movimientos(cursor):

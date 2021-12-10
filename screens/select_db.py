@@ -10,6 +10,7 @@ from kivymd.uix.screen import MDScreen
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.popup import Popup
 import sqlite3
 import os
 from datetime import date
@@ -20,7 +21,16 @@ class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
 
 
+class MessagePopup(Popup):
+    pass
+
+
 class WindowManager_select(ScreenManager):
+    def __init__(self, **kwargs):
+        super(WindowManager_select, self).__init__()
+        self.UpdateDataWid = BoxLayout()
+        self.Popup = MessagePopup()
+        # self.current = 'selectdb'
 
     def load_movimientos(self, screen_name):
         self.clear_widgets()
@@ -37,10 +47,21 @@ class WindowManager_select(ScreenManager):
         self.current = screen_name
         self.add_widget(Selectdb())
 
-    def load_updatedata_movimientos(self):
+    def load_updatedata_movimientos(self, data_id):
         self.clear_widgets()
         self.current = 'update_movimientos'
-        self.add_widget(Selectdb())
+        self.add_widget(UpdateDataWid(data_id))
+
+    def load_showdatawid_movimientos(self):
+        self.clear_widgets()
+        self.check_memory()
+        self.current = 'update_movimientos'
+        self.add_widget(DataWid())
+
+    def load_deporte(self, screen_name):
+        self.clear_widgets()
+        self.current = screen_name
+        self.add_widget(DataBaseWid_deporte())
 
 
 class Selectdb(MDScreen):
@@ -63,7 +84,7 @@ class Selectdb(MDScreen):
         WindowManager_select.load_movimientos(self, 'db_movimientos')
 
     def goto_deporte(self, *args):
-        pass
+        WindowManager_select.load_deporte(self, 'db_deporte')
 
     def goto_vblesglobales(self, *args):
         pass
@@ -127,13 +148,57 @@ class DataBaseWid_movimientos(MDScreen):
         self.goto_movimientos()
 
 
+class DataBaseWid_deporte(MDScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.num_rows = 10
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_movimientos = self.ruta_APP_PATH + '/movimientos.db'
+        self.ruta_DB_PATH_deporte = self.ruta_APP_PATH + '/deporte.db'
+        self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
+        self.check_memory()
+
+    def goto_movimientos(self, *args):
+        WindowManager_select.load_deporte(self, 'db_deporte')
+
+    def goto_insertdata(self, *args):
+        WindowManager_select.load_insertdeporte(self, 'insert_deporte')
+
+    def check_memory(self):
+        self.ids.container.clear_widgets()
+        con = sqlite3.connect(self.ruta_DB_PATH_deporte)
+        cursor = con.cursor()
+        orden_execute = 'select * from deporte ORDER BY ID DESC LIMIT ' + str(
+            self.num_rows)
+        cursor.execute(orden_execute)
+        for i in cursor:
+            wid = DataWid()
+            r0 = 'ID: ' + str(i[0]) + ' '
+            r1 = i[1] + ' \n'
+            r2 = i[2] + '\n'
+            r3 = str(i[3]) + ' '
+            wid.data_id = str(i[0])
+            wid.data = r0 + r1 + r2 + r3
+            self.ids.container.add_widget(wid)
+        con.close()
+
+    def create_new_product(self):
+        self.num_rows = 10
+        self.goto_insertdata()
+
+    def add_10_more(self):
+        self.num_rows = self.num_rows + 10
+        self.check_memory()
+        self.goto_movimientos()
+
+
 class DataWid(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
     def __init__(self, **kwargs):
         super(DataWid, self).__init__()
+        self.Selectdb = Selectdb
 
     def update_data(self, data_id):
-        # self.mainwid.goto_updatedata(data_id)
-        pass
+        WindowManager_select.load_updatedata_movimientos(self, data_id)
 
 
 class InsertDataWid(BoxLayout):
@@ -213,7 +278,7 @@ class UpdateDataWid(BoxLayout):
         con.close()
 
     def update_data(self):
-        con = sqlite3.connect(self.mainwid.DB_PATH)
+        con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
         cursor = con.cursor()
         d2 = self.ids.ti_fechao.text
         d3 = self.ids.ti_Concepto.text
@@ -229,7 +294,7 @@ class UpdateDataWid(BoxLayout):
             cursor.execute(s1 + ' ' + s2 + ' ' + s3)
             con.commit()
             con.close()
-            self.mainwid.goto_database()
+
         except Exception as e:
             message = self.mainwid.Popup.ids.message
             self.mainwid.Popup.open()
@@ -239,18 +304,19 @@ class UpdateDataWid(BoxLayout):
             else:
                 message.text = str(e)
             con.close()
+        self.back_to_dbw()
 
     def delete_data(self):
-        con = sqlite3.connect(self.mainwid.DB_PATH)
+        con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
         cursor = con.cursor()
         s = 'delete from movimientos where ID=' + self.data_id
         cursor.execute(s)
         con.commit()
         con.close()
-        self.mainwid.goto_database()
+        self.back_to_dbw()
 
     def back_to_dbw(self):
-        self.mainwid.goto_database()
+        WindowManager_select.load_showdatawid_movimientos(self)
 
 
 Builder.load_string(
@@ -260,6 +326,7 @@ WindowManager_select:
     selectdb:
     insert_movimientos:
     datawid:
+    update_movimientos:
 
 <Selectdb>:
     name:"selectdb"
@@ -375,5 +442,58 @@ WindowManager_select:
         size_hint_x: 0.1
         text: 'Edit'
         on_press: root.update_data(root.data_id)
+        
+<UpdateDataWid>:
+    name: "update_movimientos"
+    orientation: 'vertical'
+    data_id: ''
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        TextInput:
+            id: ti_fechao
+            multiline: False
+            hint_text: 'Fecha Operación'
+        TextInput:
+            id: ti_Concepto
+            multiline: False
+            hint_text: 'Concepto:'
+        TextInput:
+            id: ti_Categoria
+            multiline: False
+            hint_text: 'Categoría'
+    BoxLayout:
+        TextInput:
+            id: ti_Importe
+            multiline: False
+            hint_text: 'Importe'
+        TextInput:
+            id: ti_Etapa
+            multiline: False
+        TextInput:
+            id: ti_Ubi
+            multiline: False
+    BoxLayout:
+        Button:
+            text: 'Actualizar'
+            on_press: root.update_data()
+        Button:
+            text: 'Eliminar'
+            on_press: root.delete_data()
+<MessagePopup>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            id: message
+            size_hint: 1,0.8
+            text: ''
+        Button:
+            size_hint: 1,0.2
+            text: 'Regresar'
+            on_press: root.dismiss()
 """
 )
