@@ -5,6 +5,12 @@
     	"screen_name": "select_db",
     	"icon": "plus-box-multiple"
     },
+	"2Rehacer": {
+    	"import": "maindb",
+    	"factory": "Maindb",
+    	"screen_name": "maindb",
+    	"icon": "plus-box-multiple"
+    },
     "Bottom Navigation": {
     	"import": "bottomnavigation",
     	"factory": "BottomNavigation",
