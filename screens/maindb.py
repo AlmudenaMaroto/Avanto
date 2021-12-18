@@ -30,14 +30,23 @@ class WindowManager_select(ScreenManager):
         super(WindowManager_select, self).__init__()
 
     def load_movimientos(self):
+        # Al clickar en movimientos: self = Maindb screenname=maindb
         self.clear_widgets()
         self.current = 'db_movimientos'
-        self.add_widget(DataBaseWid_movimientos())
+        self.add_widget(DataBaseWid_movimientos(self))
+
+    def load_main(self):
+        # Al clickar en movimientos: self = Maindb screenname=maindb
+        self.clear_widgets()
+        self.current = 'maindb'
+        self.add_widget(Maindb())
+        Maindb.on_enter(self)
 
 
 class Maindb(MDScreen):
 
     def on_enter(self):
+        # self = Maindb screenname maindb
         self.update()
 
     def update(self, *args):
@@ -60,9 +69,14 @@ class Maindb(MDScreen):
     def goto_vblesglobales(self, *args):
         pass
 
+    def goto_main(self):
+        # Al ir "Atrás"
+        WindowManager_select.load_main(self)
+
+
 
 class DataBaseWid_movimientos(MDScreen):
-    def __init__(self, **kwargs):
+    def __init__(self, Maindb, **kwargs):
         super().__init__(**kwargs)
         self.num_rows = 10
         self.ruta_APP_PATH = os.getcwd()
@@ -70,6 +84,8 @@ class DataBaseWid_movimientos(MDScreen):
         self.ruta_DB_PATH_deporte = self.ruta_APP_PATH + '/deporte.db'
         self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
         self.check_memory()
+        # self.WindowManager_select = WindowManager_select
+        self.Maindb = Maindb
 
     def goto_movimientos(self, *args):
         WindowManager_select.load_movimientos(self)
@@ -107,6 +123,11 @@ class DataBaseWid_movimientos(MDScreen):
         self.num_rows = self.num_rows + 10
         self.check_memory()
         self.goto_movimientos()
+
+    def return_button(self):
+        self.num_rows = 10
+        self.Maindb.goto_main()
+
 
 
 class DataWid(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
@@ -150,6 +171,10 @@ WindowManager_select:
             id: _toolbar
         MDBoxLayout:
             size_hint_y: 0.1
+            Button: # -----------Go back
+                font_size: self.height*0.25
+                text: 'Atrás'
+                on_press: root.return_button()
             Button: # -----------Add 10 rows
                 font_size: self.height*0.35
                 text: 'Añadir 10 filas'
