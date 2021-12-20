@@ -9,7 +9,8 @@ if platform == 'android':
     request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
 
 if platform != 'android':
-    os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
+    pass
+    # os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 
 from kivy.config import Config
 

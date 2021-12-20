@@ -28,19 +28,19 @@ class MessagePopup(Popup):
 class WindowManager_select(ScreenManager):
     def __init__(self, **kwargs):
         super(WindowManager_select, self).__init__()
+        self.Maindb = Maindb()
 
     def load_movimientos(self):
         # Al clickar en movimientos: self = Maindb screenname=maindb
         self.clear_widgets()
-        self.current = 'db_movimientos'
-        self.add_widget(DataBaseWid_movimientos(self))
+        self.current = 'startwid'
+        self.add_widget(StartWid(self))
 
     def load_main(self):
         # Al clickar en movimientos: self = Maindb screenname=maindb
         self.clear_widgets()
         self.current = 'maindb'
         self.add_widget(Maindb())
-        Maindb.on_enter(self)
 
 
 class Maindb(MDScreen):
@@ -56,6 +56,7 @@ class Maindb(MDScreen):
         items.append(OneLineListItem(text=f"deporte", on_release=self.goto_deporte))
         items.append(OneLineListItem(text=f"variables globales", on_release=self.goto_vblesglobales))
         self.ids.list.items = items
+        a = 'stop'
 
     def on_leave(self):
         self.ids.list.clear_widgets()
@@ -74,6 +75,43 @@ class Maindb(MDScreen):
         WindowManager_select.load_main(self)
 
 
+class StartWid(BoxLayout):
+    def __init__(self, mainwid, **kwargs):
+        super(StartWid, self).__init__()
+        self.mainwid = mainwid
+
+    def create_database(self):  # Esta funcion no está siendo usada
+        name = self.ids.click_label.text
+        if self.mainwid.name_db == 'moviemientos':
+            self.mainwid.DB_PATH_movimientos = connect_to_database(self.mainwid.DB_PATH_movimientos, name)
+        elif self.mainwid.name_db == 'deporte':
+            self.mainwid.DB_PATH_deporte = connect_to_database(self.mainwid.DB_PATH_deporte, name)
+        self.mainwid.goto_database()
+
+    def open_browser(self):
+        self.mainwid.goto_selectdb_fb()
+
+    def mod_data(self):
+        self.mainwid.goto_selectdb_md()
+
+    def data_analysis(self):
+        self.mainwid.goto_data_analysis()
+
+    def select_database(self):
+        self.mainwid.goto_selectdb()
+
+    def global_vbles(self):
+        self.mainwid.goto_vbles_globales()
+
+    def nevera(self):
+        pass
+
+    def calorias(self):
+        pass
+
+    def deporte(self):
+        pass
+
 
 class DataBaseWid_movimientos(MDScreen):
     def __init__(self, Maindb, **kwargs):
@@ -84,7 +122,6 @@ class DataBaseWid_movimientos(MDScreen):
         self.ruta_DB_PATH_deporte = self.ruta_APP_PATH + '/deporte.db'
         self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
         self.check_memory()
-        # self.WindowManager_select = WindowManager_select
         self.Maindb = Maindb
 
     def goto_movimientos(self, *args):
@@ -129,7 +166,6 @@ class DataBaseWid_movimientos(MDScreen):
         self.Maindb.goto_main()
 
 
-
 class DataWid(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
     def __init__(self, **kwargs):
         super(DataWid, self).__init__()
@@ -143,6 +179,7 @@ Builder.load_string(
     """
 WindowManager_select:
     maindb:
+    startwid:
     db_movimientos:
     insert_movimientos:
     datawid:
@@ -152,16 +189,63 @@ WindowManager_select:
     name:"maindb"
     MDBoxLayout:
         orientation: "vertical"
-
         MyToolbar:
             id: _toolbar
-
         ScrollView:
-
             AnimatedBox:
                 id: list
                 transition: "fade_size"
+<StartWid>:
+    
+    orientation: 'vertical'
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        id: texto_inicial
+        size_hint_y: .1
+        rgb: 0.2, 0.2, 0.2
+        text: '¡Bienvenid@ a Avanto!'
+    Label:
+        id: texto_inicial
+        size_hint_y: .2
+        rgb: 0.2, 0.2, 0.2
+        text: 'Inicie los ficheros en "Seleccionar base de datos"'
 
+    Button:
+        size_hint_y: .1
+        text: 'Seleccionar base de datos'
+        on_press: root.select_database()
+    Button:
+        size_hint_y: .1
+        text: 'Modificar variables globales'
+        on_press: root.global_vbles()
+
+    BoxLayout:
+        size_hint_y: .1
+        Label:
+            text:'Para realizar cambios de forma masiva:'
+
+    Button:
+        size_hint_y: .1
+        text: 'Modificación masiva de datos'
+        on_press: root.mod_data()
+    Button:
+        size_hint_y: .1
+        text: 'Importación masiva de datos'
+        on_press: root.open_browser()
+
+    BoxLayout:
+        size_hint_y: .1
+        Label:
+            text:'Visualizaciones: '
+
+
+
+            
 <DataBaseWid_movimientos>:
     name:"db_movimientos"
     MDBoxLayout:
