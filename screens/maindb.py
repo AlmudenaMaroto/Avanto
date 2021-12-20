@@ -196,52 +196,58 @@ WindowManager_select:
                 id: list
                 transition: "fade_size"
 <StartWid>:
-    
-    orientation: 'vertical'
-    canvas:
-        Color:
-            rgb: .254,.556,.627
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    Label:
-        id: texto_inicial
-        size_hint_y: .1
-        rgb: 0.2, 0.2, 0.2
-        text: '¡Bienvenid@ a Avanto!'
-    Label:
-        id: texto_inicial
-        size_hint_y: .2
-        rgb: 0.2, 0.2, 0.2
-        text: 'Inicie los ficheros en "Seleccionar base de datos"'
+    name:"startwid"
+    MDBoxLayout:
+        orientation: "vertical"
 
-    Button:
-        size_hint_y: .1
-        text: 'Seleccionar base de datos'
-        on_press: root.select_database()
-    Button:
-        size_hint_y: .1
-        text: 'Modificar variables globales'
-        on_press: root.global_vbles()
-
-    BoxLayout:
-        size_hint_y: .1
-        Label:
-            text:'Para realizar cambios de forma masiva:'
-
-    Button:
-        size_hint_y: .1
-        text: 'Modificación masiva de datos'
-        on_press: root.mod_data()
-    Button:
-        size_hint_y: .1
-        text: 'Importación masiva de datos'
-        on_press: root.open_browser()
-
-    BoxLayout:
-        size_hint_y: .1
-        Label:
-            text:'Visualizaciones: '
+        MyToolbar:
+            id: _toolbar
+        MDBoxLayout:
+            orientation: 'vertical'
+            canvas:
+                Color:
+                    rgb: .254,.556,.627
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                id: texto_inicial
+                size_hint_y: .1
+                rgb: 0.2, 0.2, 0.2
+                text: '¡Bienvenid@ a Avanto!'
+            Label:
+                id: texto_inicial
+                size_hint_y: .2
+                rgb: 0.2, 0.2, 0.2
+                text: 'Inicie los ficheros en "Seleccionar base de datos"'
+        
+            Button:
+                size_hint_y: .1
+                text: 'Seleccionar base de datos'
+                on_press: root.select_database()
+            Button:
+                size_hint_y: .1
+                text: 'Modificar variables globales'
+                on_press: root.global_vbles()
+        
+            BoxLayout:
+                size_hint_y: .1
+                Label:
+                    text:'Para realizar cambios de forma masiva:'
+        
+            Button:
+                size_hint_y: .1
+                text: 'Modificación masiva de datos'
+                on_press: root.mod_data()
+            Button:
+                size_hint_y: .1
+                text: 'Importación masiva de datos'
+                on_press: root.open_browser()
+        
+            BoxLayout:
+                size_hint_y: .1
+                Label:
+                    text:'Visualizaciones: '
 
 
 
