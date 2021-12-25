@@ -126,16 +126,6 @@ class DataBaseWid_movimientos(MDScreen):
             wid.data_id = str(i[0])
             wid.data = r0 + r1 + r2 + r3 + r4 + r5 + r6
             self.ids.container.add_widget(wid)
-        # elif self.mainwid.name_db == 'deporte':
-        #     for i in cursor:
-        #         wid = DataWid(self.mainwid)
-        #         r0 = 'ID: ' + str(i[0]) + ' '
-        #         r1 = i[1] + ' \n'
-        #         r2 = i[2] + '\n'
-        #         r3 = str(i[3]) + ' '
-        #         wid.data_id = str(i[0])
-        #         wid.data = r0 + r1 + r2 + r3
-        #         self.ids.container.add_widget(wid)
         con.close()
 
     def create_new_product(self):

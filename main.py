@@ -4,8 +4,10 @@ from os import path
 import os
 import sqlite3
 from kivy.utils import platform
+
 if platform == 'android':
     from android.permissions import request_permissions, Permission
+
     request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
 
 if platform != 'android':
@@ -29,7 +31,6 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd_extensions.akivymd.uix.statusbarcolor import (  # noqa
     change_statusbar_color,
 )
-
 
 
 def create_table_movimientos(cursor):
@@ -106,6 +107,66 @@ try:
 except Exception as e:
     print(e)
 
+
+class IconListItem(OneLineAvatarListItem):
+    icon = StringProperty()
+
+
+class DemoApp(MDApp):
+    intro = """¡Bienvenid@ a Avanto!"""
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.theme_cls.primary_palette = "Cyan"
+        self.title = "              Avanto"
+        change_statusbar_color(self.theme_cls.primary_color)
+
+    def build(self):
+        self.root = Builder.load_string(kv)
+
+    def on_start(self):
+        with open(
+                path.join(path.dirname(__file__), "screens.json")
+        ) as read_file:
+            self.data_screens = ast.literal_eval(read_file.read())
+            data_screens = list(self.data_screens.keys())
+            data_screens.sort()
+
+        for list_item in data_screens:
+            if self.data_screens[list_item]["menu"] == "si":
+                self.root.ids.menu_list.add_widget(
+                    IconListItem(
+                        text=list_item,
+                        icon=self.data_screens[list_item]["icon"],
+                        on_release=lambda x=list_item: self.load_screen(x),
+                    )
+                )
+
+    def load_screen(self, screen_name):
+        manager = self.root.ids.screen_manager
+        screen_details = self.data_screens[screen_name.text]
+
+        if not manager.has_screen(screen_details["screen_name"]):
+            exec("from screens import %s" % screen_details["import"])
+            screen_object = eval("Factory.%s()" % screen_details["factory"])
+            screen_object.name = screen_details["screen_name"]
+            manager.add_widget(screen_object)
+
+            if "_toolbar" in screen_object.ids:
+                screen_object.ids._toolbar.title = screen_name.text
+
+        self.root.ids.navdrawer.set_state("close")
+        self.show_screen(screen_details["screen_name"])
+
+    def show_screen(self, name, mode=""):
+        if mode == "back":
+            self.root.ids.screen_manager.transition.direction = "right"
+        else:
+            self.root.ids.screen_manager.transition.direction = "left"
+        self.root.ids.screen_manager.current = name
+        return True
+
+
 kv = """
 #: import StiffScrollEffect kivymd.effects.stiffscroll.StiffScrollEffect
 
@@ -133,7 +194,7 @@ MDScreen:
 
             MDBoxLayout:
                 orientation: "vertical"
-                
+
                 MyToolbar:
                     title: app.title
                     left_action_items:[["menu" , lambda x: navdrawer.set_state("open")]]
@@ -177,66 +238,6 @@ MDScreen:
                 MDList:
                     id: menu_list
 """
-
-
-class IconListItem(OneLineAvatarListItem):
-    icon = StringProperty()
-
-
-class DemoApp(MDApp):
-    intro = """¡Bienvenid@ a Avanto!"""
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.theme_cls.primary_palette = "Cyan"
-        self.title = "              Avanto"
-        change_statusbar_color(self.theme_cls.primary_color)
-
-    def build(self):
-        self.root = Builder.load_string(kv)
-
-    def on_start(self):
-        with open(
-                path.join(path.dirname(__file__), "screens.json")
-        ) as read_file:
-            self.data_screens = ast.literal_eval(read_file.read())
-            data_screens = list(self.data_screens.keys())
-            data_screens.sort()
-
-        for list_item in data_screens:
-            if self.data_screens[list_item]["menu"] == "si":
-                self.root.ids.menu_list.add_widget(
-                    IconListItem(
-                        text=list_item,
-                        icon=self.data_screens[list_item]["icon"],
-                        on_release=lambda x=list_item: self.load_screen(x),
-                    )
-                )
-
-
-    def load_screen(self, screen_name):
-        manager = self.root.ids.screen_manager
-        screen_details = self.data_screens[screen_name.text]
-
-        if not manager.has_screen(screen_details["screen_name"]):
-            exec("from screens import %s" % screen_details["import"])
-            screen_object = eval("Factory.%s()" % screen_details["factory"])
-            screen_object.name = screen_details["screen_name"]
-            manager.add_widget(screen_object)
-
-            if "_toolbar" in screen_object.ids:
-                screen_object.ids._toolbar.title = screen_name.text
-
-        self.root.ids.navdrawer.set_state("close")
-        self.show_screen(screen_details["screen_name"])
-
-    def show_screen(self, name, mode=""):
-        if mode == "back":
-            self.root.ids.screen_manager.transition.direction = "right"
-        else:
-            self.root.ids.screen_manager.transition.direction = "left"
-        self.root.ids.screen_manager.current = name
-        return True
 
 if __name__ == '__main__':
     DemoApp().run()
