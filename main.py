@@ -204,20 +204,14 @@ class DemoApp(MDApp):
             data_screens.sort()
 
         for list_item in data_screens:
-            self.root.ids.menu_list.add_widget(
-                IconListItem(
-                    text=list_item,
-                    icon=self.data_screens[list_item]["icon"],
-                    on_release=lambda x=list_item: self.load_screen(x),
+            if self.data_screens[list_item]["menu"] == "si":
+                self.root.ids.menu_list.add_widget(
+                    IconListItem(
+                        text=list_item,
+                        icon=self.data_screens[list_item]["icon"],
+                        on_release=lambda x=list_item: self.load_screen(x),
+                    )
                 )
-            )
-        # Añadimos screens secundarias:
-        with open(
-                path.join(path.dirname(__file__), "hidescreens.json")
-        ) as read_file:
-            self.data_screens.update(ast.literal_eval(read_file.read()))
-            data_screens = list(self.data_screens.keys())
-            data_screens.sort()
 
 
     def load_screen(self, screen_name):
