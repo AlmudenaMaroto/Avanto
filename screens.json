@@ -6,13 +6,6 @@
     	"icon": "plus-box-multiple",
 		"menu": "si"
     },
-	"Movimientos": {
-    	"import": "select_db",
-    	"factory": "Selectdb",
-    	"screen_name": "select_db",
-    	"icon": "plus-box-multiple",
-		"menu": "interno1"
-    },
     "Bottom Navigation": {
     	"import": "bottomnavigation",
     	"factory": "BottomNavigation",
