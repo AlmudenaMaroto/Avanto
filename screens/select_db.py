@@ -153,7 +153,9 @@ class InsertDataWid_movimientos(BoxLayout):
             con.close()
 
     def back_to_dbw(self):
-        WindowManager_select.load_movimientos(self, 'selectdb')
+        self.clear_widgets()
+        self.current = 'db_movimientos'
+        self.add_widget(DataBaseWid_movimientos())
 
 
 Builder.load_string(
