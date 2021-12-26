@@ -129,8 +129,8 @@ class Export_data(BoxLayout):
 
     def return_button(self):
         self.clear_widgets()
-        self.current = 'selectDBWid_md'
-        self.add_widget(SelectDBWid_md())
+        self.current = 'import_main'
+        self.add_widget(Import_main())
 
     def delete_all(self):
         if self.bbdd == 'movimientos':
@@ -338,7 +338,7 @@ WindowManager_select:
     export_data:
 
 <Import_main>:
-    name:"selectdb"
+    name:"import_main"
     MDBoxLayout:
         orientation: "vertical"
 
