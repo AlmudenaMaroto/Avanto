@@ -26,8 +26,16 @@ class MessagePopup(Popup):
     pass
 
 
-class WindowManager_select(ScreenManager):
+class Eliminado(MDScreen):
     pass
+
+
+class WindowManager_select(ScreenManager):
+    def __init__(self, **kwargs):
+        super(WindowManager_select, self).__init__()
+
+    def refresh(self):
+        pass
 
 
 class Selectdb(MDScreen):
@@ -102,8 +110,9 @@ class DataWid(BoxLayout):  # Usado en el check_memory para visualizar los regist
         self.Selectdb = Selectdb
 
     def update_data(self, data_id):
-        # WindowManager_select.load_updatedata_movimientos(self, data_id)
-        pass
+        self.clear_widgets()
+        self.current = 'update_movimientos'
+        self.add_widget(UpdateDataWid_movimientos(data_id))
 
 
 class InsertDataWid_movimientos(BoxLayout):
@@ -160,6 +169,74 @@ class InsertDataWid_movimientos(BoxLayout):
         self.add_widget(DataBaseWid_movimientos())
 
 
+class UpdateDataWid_movimientos(BoxLayout):
+    def __init__(self, data_id, **kwargs):
+        super(UpdateDataWid_movimientos, self).__init__()
+        self.data_id = data_id
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_movimientos = self.ruta_APP_PATH + '/movimientos.db'
+        self.ruta_DB_PATH_deporte = self.ruta_APP_PATH + '/deporte.db'
+        self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
+        self.check_memory()
+        self.WindowManager_select = WindowManager_select
+
+    def check_memory(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
+        cursor = con.cursor()
+        s = 'select ID,	[Fecha Operación],	Concepto,	Categoría,	Importe,	Etapa,	Ubicación from movimientos where ID='
+        cursor.execute(s + self.data_id)
+        for i in cursor:
+            # self.ids.ti_id.text = i[0]
+            self.ids.ti_fechao.text = i[1]
+            self.ids.ti_Concepto.text = i[2]
+            self.ids.ti_Categoria.text = i[3]
+            self.ids.ti_Importe.text = str(i[4])
+            self.ids.ti_Etapa.text = i[5]
+            self.ids.ti_Ubi.text = i[6]
+        con.close()
+
+    def update_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
+        cursor = con.cursor()
+        d2 = self.ids.ti_fechao.text
+        d3 = self.ids.ti_Concepto.text
+        d4 = self.ids.ti_Categoria.text
+        d5 = self.ids.ti_Importe.text
+        d6 = self.ids.ti_Etapa.text
+        d7 = self.ids.ti_Ubi.text
+        a1 = (d2, d3, d4, d5, d6, d7)
+        s1 = 'UPDATE movimientos SET'
+        s2 = '[Fecha Operación]="%s",Concepto="%s",Categoría="%s",Importe=%s,Etapa="%s",Ubicación="%s"' % a1
+        s3 = 'WHERE ID=%s' % self.data_id
+        try:
+            cursor.execute(s1 + ' ' + s2 + ' ' + s3)
+            con.commit()
+            con.close()
+
+        except Exception as e:
+            message = self.mainwid.Popup.ids.message
+            self.mainwid.Popup.open()
+            self.mainwid.Popup.title = "Data base error"
+            if '' in a1:
+                message.text = 'Uno o más campos están vacíos'
+            else:
+                message.text = str(e)
+            con.close()
+        self.back_to_dbw()
+
+    def delete_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
+        cursor = con.cursor()
+        s = 'delete from movimientos where ID=' + self.data_id
+        cursor.execute(s)
+        con.commit()
+        con.close()
+        self.back_to_dbw()
+
+    def back_to_dbw(self):
+        self.clear_widgets()
+        self.add_widget(Eliminado())
+
 
 Builder.load_string(
     """
@@ -169,6 +246,7 @@ WindowManager_select:
     insert_movimientos:
     datawid:
     update_movimientos:
+    eliminado:
 
 <Selectdb>:
     name:"selectdb"
@@ -306,5 +384,54 @@ WindowManager_select:
             size_hint: 1,0.2
             text: 'Regresar'
             on_press: root.dismiss()
+            
+<UpdateDataWid_movimientos>:
+    name: "update_movimientos"
+    orientation: 'vertical'
+    data_id: ''
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        TextInput:
+            id: ti_fechao
+            multiline: False
+            hint_text: 'Fecha Operación'
+        TextInput:
+            id: ti_Concepto
+            multiline: False
+            hint_text: 'Concepto:'
+        TextInput:
+            id: ti_Categoria
+            multiline: False
+            hint_text: 'Categoría'
+    BoxLayout:
+        TextInput:
+            id: ti_Importe
+            multiline: False
+            hint_text: 'Importe'
+        TextInput:
+            id: ti_Etapa
+            multiline: False
+        TextInput:
+            id: ti_Ubi
+            multiline: False
+    BoxLayout:
+        Button:
+            text: 'Actualizar'
+            on_press: root.update_data()
+        Button:
+            text: 'Eliminar'
+            on_press: root.delete_data()
+            
+<Eliminado>:
+    name: "eliminado"
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Registro eliminado'
 """
 )
