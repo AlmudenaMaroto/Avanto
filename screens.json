@@ -13,6 +13,13 @@
     	"icon": "window-maximize",
 		"menu": "si"
     },
+	"3. Economia": {
+    	"import": "economia",
+    	"factory": "Economia",
+    	"screen_name": "economia",
+    	"icon": "chart-bell-curve-cumulative",
+		"menu": "si"
+    },
     "Bottom Navigation": {
     	"import": "bottomnavigation",
     	"factory": "BottomNavigation",

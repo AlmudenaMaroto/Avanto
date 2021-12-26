@@ -23,7 +23,7 @@ class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
 
 
-class MessagePopup(Popup):
+class MessagePopup_import(Popup):
     pass
 
 
@@ -89,7 +89,7 @@ class Export_data(BoxLayout):
         self.num_rows = 10
         self.full_path = full_path
         self.bbdd = bbdd
-        self.Popup = MessagePopup()
+        self.Popup = MessagePopup_import()
         self.check_memory(full_path, bbdd)
 
     def check_memory(self, full_path, bbdd):
@@ -176,7 +176,7 @@ class Import_data(BoxLayout):
     def __init__(self, full_path, bbdd,**kwargs):
         super(Import_data, self).__init__()
         self.file_name = ''
-        self.Popup = MessagePopup()
+        self.Popup = MessagePopup_import()
         self.full_path = full_path
         self.bbdd = bbdd
 
@@ -238,7 +238,7 @@ class UpdateDataWid_movimientos(BoxLayout):
         self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
         self.check_memory()
         self.WindowManager_select = WindowManager_select
-        self.Popup = MessagePopup()
+        self.Popup = MessagePopup_import()
 
     def check_memory(self):
         con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
@@ -309,7 +309,7 @@ class UpdateDataWid_deporte(BoxLayout):
         self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
         self.check_memory()
         self.WindowManager_select = WindowManager_select
-        self.Popup = MessagePopup()
+        self.Popup = MessagePopup_import()
 
     def check_memory(self):
         con = sqlite3.connect(self.ruta_DB_PATH_deporte)
@@ -550,7 +550,7 @@ WindowManager_select:
         text: 'Edit'
         on_press: root.update_data(root.data_id)
         
-<MessagePopup>:
+<MessagePopup_import>:
     BoxLayout:
         orientation: 'vertical'
         Label:
