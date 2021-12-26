@@ -43,32 +43,13 @@ class WindowManager_select(ScreenManager):
         pass
 
 
+
 class Import_main(MDScreen):
-
-    def on_enter(self):
-        pass
-
-    def on_leave(self):
-        try:
-            self.ids.list.clear_widgets()
-        except:
-            pass
-
-    def goto_import(self, *args):
-        pass
-
-    def goto_export(self, *args):
-        self.clear_widgets()
-        self.current = 'selectDBWid_md'
-        self.add_widget(SelectDBWid_md())
-
-
-class SelectDBWid_md(BoxLayout):
     def __init__(self, **kwargs):
-        super(SelectDBWid_md, self).__init__()
+        super(Import_main, self).__init__()
         self.name_db = ''
 
-    def select_db(self):
+    def export_db(self):
         bbdd = self.ids.click_label.text
         self.name_db = bbdd  # Variable usable a nivel general
         if bbdd == 'movimientos':
@@ -339,29 +320,6 @@ WindowManager_select:
 
 <Import_main>:
     name:"import_main"
-    MDBoxLayout:
-        orientation: "vertical"
-
-        MyToolbar:
-            id: _toolbar
-
-        ScrollView:
-            BoxLayout:
-                orientation: "vertical"
-                Label:
-                    size_hint_y: 0.1
-                    text:'Prueba'
-                Button:
-                    size_hint_y: 0.1
-                    text:'Importación'
-                    on_release:root.goto_import()
-                Button:
-                    size_hint_y: 0.1
-                    text:'Exportación'
-                    on_release:root.goto_export()
-
-<SelectDBWid_md>:
-    name:"selectDBWid_md"
     orientation: 'vertical'
     canvas:
         Color:
@@ -374,10 +332,15 @@ WindowManager_select:
 
         MyToolbar:
             id: _toolbar
-        Button:
+        MDBoxLayout:
+            orientation: "horizontal"
             size_hint_y: .1
-            text: 'Modificación masiva de datos'
-            on_press: root.select_db()
+            Button:
+                text: 'Exportar'
+                on_press: root.export_db()
+            Button:
+                text: 'Importar'
+                on_press: root.import_db()
     
         Label:
             id: click_label
