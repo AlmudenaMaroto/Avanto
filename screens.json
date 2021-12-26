@@ -6,6 +6,13 @@
     	"icon": "plus-box-multiple",
 		"menu": "si"
     },
+	"2. Import/Export": {
+    	"import": "import_main",
+    	"factory": "Import_main",
+    	"screen_name": "import_main",
+    	"icon": "window-maximize",
+		"menu": "si"
+    },
     "Bottom Navigation": {
     	"import": "bottomnavigation",
     	"factory": "BottomNavigation",
