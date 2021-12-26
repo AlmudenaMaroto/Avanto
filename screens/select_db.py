@@ -63,6 +63,11 @@ class Selectdb(MDScreen):
         self.current = 'db_deporte'
         self.add_widget(DataBaseWid_deporte())
 
+    def goto_vblesglobales(self, *args):
+        self.clear_widgets()
+        self.current = 'db_vblesglob'
+        self.add_widget(Vbles_globalesWid())
+
 
 class DataBaseWid_movimientos(MDScreen):
     def __init__(self, **kwargs):
@@ -157,6 +162,62 @@ class DataBaseWid_deporte(MDScreen):
         self.clear_widgets()
         self.current = 'insert_deporte'
         self.add_widget(InsertDataWid_deporte())
+
+
+class Vbles_globalesWid(BoxLayout):
+    def __init__(self, **kwargs):
+        super(Vbles_globalesWid, self).__init__()
+        self.check_memory()
+        self.Popup = MessagePopup()
+
+    def check_memory(self):
+        path_principal = os.getcwd()
+        path_globales = path_principal + '/globales.db'
+        con = sqlite3.connect(path_globales)
+        cursor = con.cursor()
+        s = 'select * from globales where ID=1'
+        cursor.execute(s)
+        for i in cursor:
+            self.ids.Obj_cuenta.text = str(i[1])
+            self.ids.Obj_fecha.text = i[2]
+            self.ids.Obj_peso.text = str(i[3])
+            self.ids.Domiciliaciones.text = i[4]
+            self.ids.Obj_tasa.text = str(i[5])
+        con.close()
+
+    def update_data(self):
+        path_principal = os.getcwd()
+        full_path = path_principal + '/globales.db'
+        con = sqlite3.connect(full_path)
+        cursor = con.cursor()
+        d2 = self.ids.Obj_cuenta.text
+        d3 = self.ids.Obj_fecha.text
+        d4 = self.ids.Obj_peso.text
+        d5 = self.ids.Domiciliaciones.text
+        d6 = self.ids.Obj_tasa.text
+        a1 = (d2, d3, d4, d5, d6)
+        s1 = 'UPDATE globales SET'
+        s2 = 'Obj_cuenta=%s,Obj_fecha="%s",Obj_peso=%s,Domiciliaciones="%s",Obj_tasa=%s' % a1
+        s3 = 'WHERE ID=1'
+        try:
+            cursor.execute(s1 + ' ' + s2 + ' ' + s3)
+            con.commit()
+            con.close()
+            self.back_to_dbw()
+        except Exception as e:
+            message = self.mainwid.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Data base error"
+            if '' in a1:
+                message.text = 'Uno o más campos están vacíos'
+            else:
+                message.text = str(e)
+            con.close()
+
+    def back_to_dbw(self):
+        self.clear_widgets()
+        self.current = 'selectdb'
+        self.add_widget(Selectdb())
 
 
 class DataWid(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
@@ -456,6 +517,11 @@ WindowManager_select:
                     size_hint_y: 0.1
                     text:'Deporte'
                     on_release:root.goto_deporte()
+                Button:
+                    size_hint_y: 0.1
+                    text:'Variables Globales'
+                    on_release:root.goto_vblesglobales()
+            
 
 <DataBaseWid_movimientos>:
     name:"db_movimientos"
@@ -467,11 +533,11 @@ WindowManager_select:
         MDBoxLayout:
             size_hint_y: 0.1
             Button: # -----------Back
-                font_size: self.height*0.35
+                font_size: self.height*0.25
                 text: 'Atrás'
                 on_press: root.goto_main()
             Button: # -----------Add 10 rows
-                font_size: self.height*0.35
+                font_size: self.height*0.25
                 text: 'Añadir 10 filas'
                 on_press: root.add_10_more()
             Button: # ---------Add
@@ -499,11 +565,11 @@ WindowManager_select:
         MDBoxLayout:
             size_hint_y: 0.1
             Button: # -----------Back
-                font_size: self.height*0.35
+                font_size: self.height*0.25
                 text: 'Atrás'
                 on_press: root.goto_main()
             Button: # -----------Add 10 rows
-                font_size: self.height*0.35
+                font_size: self.height*0.25
                 text: 'Añadir 10 filas'
                 on_press: root.add_10_more()
             Button: # ---------Add
@@ -753,5 +819,57 @@ WindowManager_select:
         orientation: 'vertical'
         Label:
             text: 'Registro actualizado'
+            
+            
+<Vbles_globalesWid>:
+    name:"db_vblesglob"
+    orientation: 'vertical'
+    data_id: ''
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Label:
+        text: ' Objetivo cuenta (€):'
+    TextInput:
+        id: Obj_cuenta
+        multiline: False
+        hint_text: '€'
+    Label:
+        text: ' Fecha límite para conseguirlo:'
+    TextInput:
+        id: Obj_fecha
+        multiline: False
+        hint_text: '01/01/2022'
+    Label: # ---------- Concepto
+        text: ' Objetivo peso (Kg):'
+    TextInput:
+        id: Obj_peso
+        multiline: False
+        hint_text: ' Kg'
+    Label: # ---------- Categoría
+        text: ' Domiciliaciones (separados por coma):'
+    TextInput:
+        id: Domiciliaciones
+        multiline: False
+        hint_text: 'ABONO, SPOTIFY,...'
+    Label: # ---------- Importe
+        text: ' Objetivo tasa de ahorro (%):'
+    TextInput:
+        id: Obj_tasa
+        multiline: False
+        hint_text: '%'
+    BoxLayout:
+        size_hint_y: 4
+    BoxLayout:
+        Button:
+            text: 'Salir'
+            on_press: root.back_to_dbw()
+        Button:
+            text: 'Actualizar'
+            on_press: root.update_data()
+
 """
 )
