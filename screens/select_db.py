@@ -29,6 +29,7 @@ class MessagePopup(Popup):
 class Eliminado(MDScreen):
     pass
 
+
 class Actualizado(MDScreen):
     pass
 
@@ -137,16 +138,13 @@ class DataBaseWid_deporte(MDScreen):
             self.num_rows)
         cursor.execute(orden_execute)
         for i in cursor:
-            wid = DataWid()
+            wid = DataWid_deporte()
             r0 = 'ID: ' + str(i[0]) + ' '
             r1 = i[1] + ' \n'
             r2 = i[2] + '\n'
             r3 = str(i[3]) + ' '
-            r4 = i[5] + '\n'
-            r5 = str(i[4]) + ' €\n'
-            r6 = i[6][0:20] + '...\n'
             wid.data_id = str(i[0])
-            wid.data = r0 + r1 + r2 + r3 + r4 + r5 + r6
+            wid.data = r0 + r1 + r2 + r3
             self.ids.container.add_widget(wid)
         con.close()
 
@@ -157,8 +155,8 @@ class DataBaseWid_deporte(MDScreen):
     def create_new_product(self):
         self.num_rows = 10
         self.clear_widgets()
-        self.current = 'insert_movimientos'
-        self.add_widget(InsertDataWid_movimientos())
+        self.current = 'insert_deporte'
+        self.add_widget(InsertDataWid_deporte())
 
 
 class DataWid(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
@@ -170,6 +168,17 @@ class DataWid(BoxLayout):  # Usado en el check_memory para visualizar los regist
         self.clear_widgets()
         self.current = 'update_movimientos'
         self.add_widget(UpdateDataWid_movimientos(data_id))
+
+
+class DataWid_deporte(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
+    def __init__(self, **kwargs):
+        super(DataWid_deporte, self).__init__()
+        self.Selectdb = Selectdb
+
+    def update_data(self, data_id):
+        self.clear_widgets()
+        self.current = 'update_deporte'
+        self.add_widget(UpdateDataWid_deporte(data_id))
 
 
 class InsertDataWid_movimientos(BoxLayout):
@@ -226,6 +235,57 @@ class InsertDataWid_movimientos(BoxLayout):
         self.add_widget(DataBaseWid_movimientos())
 
 
+class InsertDataWid_deporte(BoxLayout):
+    def __init__(self, **kwargs):
+        super(InsertDataWid_deporte, self).__init__()
+        today = date.today()
+        d1 = today.strftime("%d/%m/%Y")
+        self.ids.ti_fechao.text = d1
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_movimientos = self.ruta_APP_PATH + '/movimientos.db'
+        self.ruta_DB_PATH_deporte = self.ruta_APP_PATH + '/deporte.db'
+        self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
+        self.Popup = MessagePopup()
+
+    def insert_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_deporte)
+        cursor = con.cursor()
+        cursor.execute('select ID from deporte ORDER BY ID DESC LIMIT 1')
+        con.commit()
+        #
+        d1 = 1
+        for i in cursor:
+            d1 = i[0] + 1
+        con.close()
+        con = sqlite3.connect(self.ruta_DB_PATH_deporte)
+        cursor = con.cursor()
+        d2 = self.ids.ti_fechao.text
+        d3 = self.ids.ti_Concepto.text
+        d5 = self.ids.ti_Tiempo.text
+        a1 = (d1, d2, d3, d5)
+        s1 = 'INSERT INTO deporte (ID,	[Fecha Operación],	Concepto, Tiempo)'
+        s2 = 'VALUES(%s,"%s","%s",%s)' % a1
+        try:
+            cursor.execute(s1 + ' ' + s2)
+            con.commit()
+            con.close()
+            self.back_to_dbw()
+        except Exception as e:
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Data base error"
+            if '' in a1:
+                message.text = 'Uno o más campos están vacíos'
+            else:
+                message.text = str(e)
+            con.close()
+
+    def back_to_dbw(self):
+        self.clear_widgets()
+        self.current = 'db_deporte'
+        self.add_widget(DataBaseWid_deporte())
+
+
 class UpdateDataWid_movimientos(BoxLayout):
     def __init__(self, data_id, **kwargs):
         super(UpdateDataWid_movimientos, self).__init__()
@@ -236,6 +296,7 @@ class UpdateDataWid_movimientos(BoxLayout):
         self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
         self.check_memory()
         self.WindowManager_select = WindowManager_select
+        self.Popup = MessagePopup()
 
     def check_memory(self):
         con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
@@ -271,9 +332,9 @@ class UpdateDataWid_movimientos(BoxLayout):
             con.close()
 
         except Exception as e:
-            message = self.mainwid.Popup.ids.message
-            self.mainwid.Popup.open()
-            self.mainwid.Popup.title = "Data base error"
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Data base error"
             if '' in a1:
                 message.text = 'Uno o más campos están vacíos'
             else:
@@ -286,6 +347,71 @@ class UpdateDataWid_movimientos(BoxLayout):
         con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
         cursor = con.cursor()
         s = 'delete from movimientos where ID=' + self.data_id
+        cursor.execute(s)
+        con.commit()
+        con.close()
+        self.back_to_dbw()
+
+    def back_to_dbw(self):
+        self.clear_widgets()
+        self.add_widget(Eliminado())
+
+
+class UpdateDataWid_deporte(BoxLayout):
+    def __init__(self, data_id, **kwargs):
+        super(UpdateDataWid_deporte, self).__init__()
+        self.data_id = data_id
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_movimientos = self.ruta_APP_PATH + '/movimientos.db'
+        self.ruta_DB_PATH_deporte = self.ruta_APP_PATH + '/deporte.db'
+        self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
+        self.check_memory()
+        self.WindowManager_select = WindowManager_select
+        self.Popup = MessagePopup()
+
+    def check_memory(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_deporte)
+        cursor = con.cursor()
+        s = 'select ID,	[Fecha Operación], Concepto, Tiempo from deporte where ID='
+        cursor.execute(s + self.data_id)
+        for i in cursor:
+            # self.ids.ti_id.text = i[0]
+            self.ids.ti_fechao.text = i[1]
+            self.ids.ti_Concepto.text = i[2]
+            self.ids.ti_Tiempo.text = str(i[3])
+        con.close()
+
+    def update_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_deporte)
+        cursor = con.cursor()
+        d2 = self.ids.ti_fechao.text
+        d3 = self.ids.ti_Concepto.text
+        d5 = self.ids.ti_Tiempo.text
+        a1 = (d2, d3, d5)
+        s1 = 'UPDATE deporte SET'
+        s2 = '[Fecha Operación]="%s",Concepto="%s",Tiempo=%s' % a1
+        s3 = 'WHERE ID=%s' % self.data_id
+        try:
+            cursor.execute(s1 + ' ' + s2 + ' ' + s3)
+            con.commit()
+            con.close()
+
+        except Exception as e:
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Data base error"
+            if '' in a1:
+                message.text = 'Uno o más campos están vacíos'
+            else:
+                message.text = str(e)
+            con.close()
+        self.clear_widgets()
+        self.add_widget(Actualizado())
+
+    def delete_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_deporte)
+        cursor = con.cursor()
+        s = 'delete from deporte where ID=' + self.data_id
         cursor.execute(s)
         con.commit()
         con.close()
@@ -364,7 +490,7 @@ WindowManager_select:
                 height: self.minimum_height
                 
 <DataBaseWid_deporte>:
-    name:"db_movimientos"
+    name:"db_deporte"
     MDBoxLayout:
         orientation: "vertical"
 
@@ -413,6 +539,26 @@ WindowManager_select:
         size_hint_x: 0.1
         text: 'Edit'
         on_press: root.update_data(root.data_id)
+        
+<DataWid_deporte>:
+    name:"datawid"
+    data: ''
+    data_id: ''
+    canvas:
+        Color:
+            rgb: 0.2,0.2,0.2
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    Label:
+        size_hint_x: 0.9
+        size_font: self.width*0.4
+        text: root.data
+    Button:
+        size_hint_x: 0.1
+        text: 'Edit'
+        on_press: root.update_data(root.data_id)
+
                        
 <InsertDataWid_movimientos>:
     name:"insert_movimientos"
@@ -459,6 +605,44 @@ WindowManager_select:
     TextInput:
         id: ti_Ubi
         multiline: False
+    BoxLayout:
+        size_hint_y: 5
+    BoxLayout: # ---------- Crear Salir
+        Button:
+            text: 'Crear'
+            on_press: root.insert_data()
+        Button:
+            text: 'Salir'
+            on_press: root.back_to_dbw()
+
+<InsertDataWid_deporte>:
+    name:"insert_movimientos"
+    orientation: 'vertical'
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Label: # ---------- Fecha
+        text: ' Fecha Operación:'
+    TextInput:
+        id: ti_fechao
+        multiline: False
+#        hint_text: 'Fecha Operación:'
+    Label: # ---------- Concepto
+        text: ' Concepto:'
+    TextInput:
+        id: ti_Concepto
+        multiline: False
+        hint_text: 'Concepto:'
+    Label: # ---------- Importe
+        text: ' Tiempo:'
+    TextInput:
+        id: ti_Tiempo
+        multiline: False
+        hint_text: 'Tiempo'
     BoxLayout:
         size_hint_y: 5
     BoxLayout: # ---------- Crear Salir
@@ -515,6 +699,39 @@ WindowManager_select:
         TextInput:
             id: ti_Ubi
             multiline: False
+    BoxLayout:
+        Button:
+            text: 'Actualizar'
+            on_press: root.update_data()
+        Button:
+            text: 'Eliminar'
+            on_press: root.delete_data()
+            
+            
+<UpdateDataWid_deporte>:
+    name: "update_deporte"
+    orientation: 'vertical'
+    data_id: ''
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        TextInput:
+            id: ti_fechao
+            multiline: False
+            hint_text: 'Fecha Operación'
+        TextInput:
+            id: ti_Concepto
+            multiline: False
+            hint_text: 'Concepto:'
+    BoxLayout:
+        TextInput:
+            id: ti_Tiempo
+            multiline: False
+            hint_text: 'Tiempo'
     BoxLayout:
         Button:
             text: 'Actualizar'
