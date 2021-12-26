@@ -15,6 +15,7 @@ import sqlite3
 import os
 from datetime import date
 from datetime import datetime
+from kivy.uix.popup import Popup
 
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
@@ -115,6 +116,7 @@ class InsertDataWid_movimientos(BoxLayout):
         self.ruta_DB_PATH_movimientos = self.ruta_APP_PATH + '/movimientos.db'
         self.ruta_DB_PATH_deporte = self.ruta_APP_PATH + '/deporte.db'
         self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
+        self.Popup = MessagePopup()
 
     def insert_data(self):
         con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
@@ -143,9 +145,9 @@ class InsertDataWid_movimientos(BoxLayout):
             con.close()
             self.back_to_dbw()
         except Exception as e:
-            message = self.mainwid.Popup.ids.message
-            self.mainwid.Popup.open()
-            self.mainwid.Popup.title = "Data base error"
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Data base error"
             if '' in a1:
                 message.text = 'Uno o más campos están vacíos'
             else:
@@ -156,6 +158,7 @@ class InsertDataWid_movimientos(BoxLayout):
         self.clear_widgets()
         self.current = 'db_movimientos'
         self.add_widget(DataBaseWid_movimientos())
+
 
 
 Builder.load_string(
@@ -291,5 +294,17 @@ WindowManager_select:
         Button:
             text: 'Salir'
             on_press: root.back_to_dbw()
+            
+<MessagePopup>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            id: message
+            size_hint: 1,0.8
+            text: ''
+        Button:
+            size_hint: 1,0.2
+            text: 'Regresar'
+            on_press: root.dismiss()
 """
 )
