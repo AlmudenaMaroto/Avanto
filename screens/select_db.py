@@ -57,6 +57,11 @@ class Selectdb(MDScreen):
         self.current = 'db_movimientos'
         self.add_widget(DataBaseWid_movimientos())
 
+    def goto_deporte(self, *args):
+        self.clear_widgets()
+        self.current = 'db_deporte'
+        self.add_widget(DataBaseWid_deporte())
+
 
 class DataBaseWid_movimientos(MDScreen):
     def __init__(self, **kwargs):
@@ -80,6 +85,55 @@ class DataBaseWid_movimientos(MDScreen):
         con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
         cursor = con.cursor()
         orden_execute = 'select * from movimientos ORDER BY ID DESC LIMIT ' + str(
+            self.num_rows)
+        cursor.execute(orden_execute)
+        for i in cursor:
+            wid = DataWid()
+            r0 = 'ID: ' + str(i[0]) + ' '
+            r1 = i[1] + ' \n'
+            r2 = i[2] + '\n'
+            r3 = str(i[3]) + ' '
+            r4 = i[5] + '\n'
+            r5 = str(i[4]) + ' €\n'
+            r6 = i[6][0:20] + '...\n'
+            wid.data_id = str(i[0])
+            wid.data = r0 + r1 + r2 + r3 + r4 + r5 + r6
+            self.ids.container.add_widget(wid)
+        con.close()
+
+    def add_10_more(self):
+        self.num_rows = self.num_rows + 10
+        self.check_memory()
+
+    def create_new_product(self):
+        self.num_rows = 10
+        self.clear_widgets()
+        self.current = 'insert_movimientos'
+        self.add_widget(InsertDataWid_movimientos())
+
+
+class DataBaseWid_deporte(MDScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.Selectdb = Selectdb
+        self.num_rows = 10
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_movimientos = self.ruta_APP_PATH + '/movimientos.db'
+        self.ruta_DB_PATH_deporte = self.ruta_APP_PATH + '/deporte.db'
+        self.ruta_DB_PATH_vblesglobales = self.ruta_APP_PATH + '/globales.db'
+        self.check_memory()
+
+    def goto_main(self):
+        self.clear_widgets()
+        self.current = 'selectdb'
+        self.add_widget(Selectdb())
+
+    def check_memory(self):
+        self.ids.container.clear_widgets()
+
+        con = sqlite3.connect(self.ruta_DB_PATH_deporte)
+        cursor = con.cursor()
+        orden_execute = 'select * from deporte ORDER BY ID DESC LIMIT ' + str(
             self.num_rows)
         cursor.execute(orden_execute)
         for i in cursor:
@@ -246,6 +300,7 @@ Builder.load_string(
     """
 WindowManager_select:
     db_movimientos:
+    db_deporte:
     selectdb:
     insert_movimientos:
     datawid:
@@ -271,8 +326,44 @@ WindowManager_select:
                     size_hint_y: 0.1
                     text:'Movimientos'
                     on_release:root.goto_movimientos()
+                Button:
+                    size_hint_y: 0.1
+                    text:'Deporte'
+                    on_release:root.goto_deporte()
 
 <DataBaseWid_movimientos>:
+    name:"db_movimientos"
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MyToolbar:
+            id: _toolbar
+        MDBoxLayout:
+            size_hint_y: 0.1
+            Button: # -----------Back
+                font_size: self.height*0.35
+                text: 'Atrás'
+                on_press: root.goto_main()
+            Button: # -----------Add 10 rows
+                font_size: self.height*0.35
+                text: 'Añadir 10 filas'
+                on_press: root.add_10_more()
+            Button: # ---------Add
+                font_size: self.height*0.35
+                text: '+'
+                on_press: root.create_new_product()
+        ScrollView:
+            size: self.size
+            GridLayout:
+                id: container
+                padding: [10,10,10,10]
+                spacing: 5
+                size_hint_y: None
+                cols: 1
+                row_default_height: root.height*0.2
+                height: self.minimum_height
+                
+<DataBaseWid_deporte>:
     name:"db_movimientos"
     MDBoxLayout:
         orientation: "vertical"
