@@ -54,13 +54,30 @@ class Import_main(MDScreen):
         self.name_db = bbdd  # Variable usable a nivel general
         if bbdd == 'movimientos':
             full_path = os.getcwd() + '/movimientos.db'
+            self.clear_widgets()
+            self.current = 'export_data'
+            self.add_widget(Export_data(full_path, bbdd))
         elif bbdd == 'deporte':
             full_path = os.getcwd() + '/deporte.db'
-        self.name_db = full_path
+            self.clear_widgets()
+            self.current = 'export_data'
+            self.add_widget(Export_data(full_path, bbdd))
 
-        self.clear_widgets()
-        self.current = 'export_data'
-        self.add_widget(Export_data(full_path, bbdd))
+    def import_db(self):
+        bbdd = self.ids.click_label.text
+        self.name_db = bbdd  # Variable usable a nivel general
+        if bbdd == 'movimientos':
+            full_path = os.getcwd() + '/movimientos.db'
+            self.clear_widgets()
+            self.current = 'import_data'
+            self.add_widget(Import_data(full_path, bbdd))
+        elif bbdd == 'deporte':
+            full_path = os.getcwd() + '/deporte.db'
+            self.clear_widgets()
+            self.current = 'import_data'
+            self.add_widget(Import_data(full_path, bbdd))
+
+
 
     def spinner_clicked(self, value):
         self.ids.click_label.text = value
@@ -154,6 +171,62 @@ class Export_data(BoxLayout):
         self.Popup.title = "Csv guardado"
         message.text = "Se ha guardado el csv en \n" + str(os.getcwd())
 
+
+class Import_data(BoxLayout):
+    def __init__(self, full_path, bbdd,**kwargs):
+        super(Import_data, self).__init__()
+        self.file_name = ''
+        self.Popup = MessagePopup()
+        self.full_path = full_path
+        self.bbdd = bbdd
+
+    def open_file(self, path, filename):
+        if ".csv" in filename[0]:
+            with open(os.path.join(path, filename[0])) as f:
+                row = f.read()
+                row2 = row.split('\n')
+                i = 0
+                incorrectas = 0
+                for each_row in row2:
+                    try:
+                        string_list = each_row.split(";")
+                        string_list[4] = string_list[4].replace(",", ".")
+                        string_list = tuple(string_list)
+                        if self.bbdd == 'movimientos':
+                            con = sqlite3.connect(self.full_path)
+                            cursor = con.cursor()
+                            s1 = 'INSERT INTO movimientos(ID, [Fecha Operación], Concepto, Categoría, Importe, Etapa, Ubicación)'
+                            s2 = 'VALUES(%s,"%s","%s","%s",%s,"%s","%s")' % string_list
+                            cursor.execute(s1 + ' ' + s2)
+                        elif self.bbdd == 'deporte':
+                            con = sqlite3.connect(self.full_path)
+                            cursor = con.cursor()
+                            s1 = 'INSERT INTO deporte(ID,	[Fecha Operación],	Concepto, Tiempo)'
+                            s2 = 'VALUES(%s,"%s","%s",%s)' % string_list
+                            cursor.execute(s1 + ' ' + s2)
+                        con.commit()
+                        con.close()
+                    except:
+                        incorrectas = incorrectas + 1
+                    i = i + 1
+                # print("Hay", incorrectas, "líneas incorrectas")
+                message = self.Popup.ids.message
+                self.Popup.open()
+                self.Popup.title = "Líneas generadas"
+                message.text = "Hay " + str(incorrectas) + " con formato incorrecto o ID repetido"
+        else:
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Error de formato"
+            message.text = 'El fichero no es un csv'
+
+    def selectfile(self, filename):
+        self.file_name = filename
+
+    def return_button(self):
+        self.clear_widgets()
+        self.current = 'import_main'
+        self.add_widget(Import_main())
 
 class UpdateDataWid_movimientos(BoxLayout):
     def __init__(self, data_id, **kwargs):
@@ -313,10 +386,12 @@ class DataWid_deporte(BoxLayout):  # Usado en el check_memory para visualizar lo
 
 Builder.load_string(
     """
+#:import platform kivy.utils.platform
 WindowManager_select:
     import_main:
     selectDBWid_md:
     export_data:
+    import_data:
 
 <Import_main>:
     name:"import_main"
@@ -399,6 +474,43 @@ WindowManager_select:
                 cols: 1
                 row_default_height: root.height*0.2
                 height: self.minimum_height
+
+<Import_data>:
+    name:"import_data"
+    id:my_widget
+    cols:2
+    orientation: 'vertical'
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size_hint_y: 0.1
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint_y: 0.1
+            orientation: 'horizontal'
+            Button: # ---------Return
+                font_size: self.height*0.25
+                text:"Salir"
+                pos: 1, 1
+                size: 1, 5
+                #size_hint_y: 0.1
+                on_press: root.return_button()
+            Button: # ---------Add
+                font_size: self.height*0.25
+                text:"Abrir"
+                pos: 1, 1
+                size: 1, 5
+                #size_hint_y: 0.1
+                on_press: root.open_file(filechooser.path, filechooser.selection)
+        FileChooserListView:
+            rootpath: '/storage/emulated/0/' if platform == 'android' else '/'
+            id:filechooser
+            on_selection: my_widget.selectfile(filechooser.selection)
+
 
 <DataWid>:
     name:"datawid"
