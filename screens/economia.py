@@ -1,8 +1,55 @@
 from kivy.lang.builder import Builder
 from kivymd.uix.screen import MDScreen
+import sqlite3
+import os
+from datetime import datetime
+import time
+from calendar import timegm
 
 
 class Economia(MDScreen):
+    def __init__(self, **kwargs):
+        super(Economia, self).__init__()
+        self.path_app = os.getcwd()
+
+        # Linea temporal:
+        con = sqlite3.connect(self.path_app + '/movimientos.db')
+        cursor = con.cursor()
+        orden_execute = 'select * from movimientos'
+        cursor.execute(orden_execute)
+        longitud = len(cursor.fetchall())
+        con.close()
+        fechas = []
+        epochs = []
+        importes = []
+        saldos = []
+        saldo = 0
+
+        con = sqlite3.connect(self.path_app + '/movimientos.db')
+        cursor = con.cursor()
+        orden_execute = 'select * from movimientos ORDER BY ID ASC'
+        cursor.execute(orden_execute)
+        for i in cursor:
+            saldo = saldo + i[4]
+            if i[0] % 5 == 0:
+                try:
+                    utc_time = time.strptime(i[1], "%d/%m/%Y")
+                    epoch_time = timegm(utc_time)
+                    fechas.append(i[1])
+                    epochs.append(epoch_time)
+                    importes.append(i[4])
+                    saldos.append(saldo)
+                except ValueError:
+                    pass
+        con.close()
+        # Para no petar el grafico, cogemos solo 30 valores.
+
+        self.ids.chart1.x_values = epochs
+        self.ids.chart1.x_labels = fechas
+        self.ids.chart1.y_values = saldos
+        # self.ids.chart1.y_labels = saldos
+
+
     def set_text(self, args):
         self.ids._label.text = f"{args[1]} [{args[2]},{args[3]}]"
 
@@ -39,12 +86,20 @@ class Economia(MDScreen):
 
 Builder.load_string(
     """
+<Evolucion_temporal@AKLineChart>
+    size_hint_y: None
+    height: dp(180)
+    x_values: []
+    y_values: []
+    label_size: dp(12)
+    
 <MyAKLineChart@AKLineChart>
     size_hint_y: None
     height: dp(180)
     x_values: [0, 5, 8, 15]
     y_values: [0, 10, 6, 8]
     label_size: dp(12)
+
 
 
 <Economia>
@@ -64,14 +119,16 @@ Builder.load_string(
                 padding: dp(25)
                 adaptive_height: True
 
-                MyAKLineChart:
+                Evolucion_temporal:
                     id: chart1
                     labels: False
                     anim: True
-                    bg_color: 0.6, 0, 0, 1
-                    circles_color: [0.4, 0.4, 1, 1]
-                    labels: True
+                    #bg_color: 0.6, 0, 0, 1
+                    #circles_color: [0.4, 0.4, 1, 1]
+                    circles: False
+                    labels: False
                     on_select: root.set_text(args)
+                    line_width:dp(1)
 
                 MyAKLineChart:
                     id: chart2
