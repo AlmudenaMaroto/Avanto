@@ -1,5 +1,5 @@
 {
-	"1Seleccionar Base de datos": {
+	"1. Seleccionar Tabla": {
     	"import": "select_db",
     	"factory": "Selectdb",
     	"screen_name": "select_db",
