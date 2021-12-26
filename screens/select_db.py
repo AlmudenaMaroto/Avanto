@@ -29,6 +29,9 @@ class MessagePopup(Popup):
 class Eliminado(MDScreen):
     pass
 
+class Actualizado(MDScreen):
+    pass
+
 
 class WindowManager_select(ScreenManager):
     def __init__(self, **kwargs):
@@ -222,7 +225,8 @@ class UpdateDataWid_movimientos(BoxLayout):
             else:
                 message.text = str(e)
             con.close()
-        self.back_to_dbw()
+        self.clear_widgets()
+        self.add_widget(Actualizado())
 
     def delete_data(self):
         con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
@@ -247,6 +251,7 @@ WindowManager_select:
     datawid:
     update_movimientos:
     eliminado:
+    actualizado:
 
 <Selectdb>:
     name:"selectdb"
@@ -433,5 +438,12 @@ WindowManager_select:
         orientation: 'vertical'
         Label:
             text: 'Registro eliminado'
+            
+<Actualizado>:
+    name: "actualizado"
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Registro actualizado'
 """
 )
