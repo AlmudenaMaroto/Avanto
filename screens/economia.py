@@ -2,7 +2,7 @@ from kivy.lang.builder import Builder
 from kivymd.uix.screen import MDScreen
 
 
-class Linechart(MDScreen):
+class Economia(MDScreen):
     def set_text(self, args):
         self.ids._label.text = f"{args[1]} [{args[2]},{args[3]}]"
 
@@ -27,6 +27,15 @@ class Linechart(MDScreen):
         chart4.y_labels = ["XYZ", "Second", "Third", "Last"]
         chart4.update()
 
+    def choose_etapa(self):
+        pass
+
+    def choose_categoria(self):
+        pass
+
+    def choose_fecha(self):
+        pass
+
 
 Builder.load_string(
     """
@@ -38,7 +47,7 @@ Builder.load_string(
     label_size: dp(12)
 
 
-<Linechart>
+<Economia>
     on_leave: pass
 
     MDBoxLayout:
@@ -48,7 +57,7 @@ Builder.load_string(
             id: _toolbar
 
         ScrollView:
-
+            size_hint_y: 0.95
             MDBoxLayout:
                 orientation: "vertical"
                 spacing: dp(25)
@@ -86,12 +95,25 @@ Builder.load_string(
                     y_labels: ["XYZ", "Second", "Third", "Last"]
                     on_select: root.set_text(args)
 
-        MDBoxLayout:
-            adaptive_height: True
-
+        MDFloatLayout:
+            size_hint_y: 0.05
             MDRaisedButton:
-                text: "update"
-                on_release: root.update()
+                
+                md_bg_color: 143/255, 219/255, 236/255, 1
+                text: "Etapa"
+                on_release: root.choose_etapa()
+                
+            MDRaisedButton:
+                pos_hint: {"center_x": .5}
+                md_bg_color: 143/255, 219/255, 236/255, 1
+                text: "Categoría"
+                on_release: root.choose_categoria()
+                
+            MDRaisedButton:
+                pos_hint: {"center_x": .87}
+                md_bg_color: 143/255, 219/255, 236/255, 1
+                text: "Fecha"
+                on_release: root.choose_fecha()
 
             MDLabel:
                 id: _label
