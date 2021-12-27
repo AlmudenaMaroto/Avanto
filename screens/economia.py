@@ -8,6 +8,7 @@ from calendar import timegm
 import charts_almu
 import datetime
 
+
 class Economia(MDScreen):
     def __init__(self, **kwargs):
         super(Economia, self).__init__()
@@ -58,7 +59,6 @@ class Economia(MDScreen):
         min_epoch = min(epochs)
         for i in range(5):
             pass
-
 
         self.ids.chart1.x_values = epochs
         self.ids.chart1.x_labels = fechas
