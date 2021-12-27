@@ -39,8 +39,8 @@ class Economia(MDScreen):
                     epoch_time = timegm(utc_time)
                     if i[0] % 50 == 0:
                         # Ponemos solo la fecha de año/mes
-                        año_mes = datetime.datetime.strptime(str(i[1]), '%d/%m/%Y').strftime('%m/%y')
-                        fechas.append(año_mes)
+                        ano_mes = datetime.datetime.strptime(str(i[1]), '%d/%m/%Y').strftime('%m/%y')
+                        fechas.append(ano_mes)
                         saldos_str.append(str(saldo))
                     else:
                         fechas.append('')
@@ -56,6 +56,8 @@ class Economia(MDScreen):
         minimo_saldo = min(saldos)
         max_epoch = max(epochs)
         min_epoch = min(epochs)
+        for i in range(5):
+
 
 
         self.ids.chart1.x_values = epochs
