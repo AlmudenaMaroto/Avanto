@@ -57,7 +57,7 @@ class Economia(MDScreen):
         max_epoch = max(epochs)
         min_epoch = min(epochs)
         for i in range(5):
-
+            pass
 
 
         self.ids.chart1.x_values = epochs
