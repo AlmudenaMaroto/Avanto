@@ -18,6 +18,10 @@ class Economia(MDScreen):
     def __init__(self, **kwargs):
         super(Economia, self).__init__()
         self.path_app = os.getcwd()
+        self.dict_eco_sorted = {}
+        self.calculos()
+
+    def calculos(self):
         ########################
         # Linea temporal:      #
         ########################
@@ -49,19 +53,23 @@ class Economia(MDScreen):
                 row_i['epoch'] = epoch_time
                 row_i['importe'] = i[4]
                 row_i['saldo'] = saldo
+                row_i['concepto'] = i[2]
+                row_i['categoria'] = i[3]
+                row_i['etapa'] = i[5]
+                row_i['ubicacion'] = i[6]
                 dict_eco.append(row_i)
                 row_i = {}
 
             except ValueError:
                 pass
         con.close()
-        dict_eco_sorted = sorted(dict_eco, key=lambda d: d['epoch'], reverse=False)
+        self.dict_eco_sorted = sorted(dict_eco, key=lambda d: d['epoch'], reverse=False)
 
         # Para no petar el grafico, cogemos menos valores
-        maximo_saldo = max(dict_eco_sorted, key=lambda x: x['saldo']).get('saldo')
-        minimo_saldo = min(dict_eco_sorted, key=lambda x: x['saldo']).get('saldo')
-        max_epoch = max(dict_eco_sorted, key=lambda x: x['epoch']).get('epoch')
-        min_epoch = min(dict_eco_sorted, key=lambda x: x['epoch']).get('epoch')
+        maximo_saldo = max(self.dict_eco_sorted, key=lambda x: x['saldo']).get('saldo')
+        minimo_saldo = min(self.dict_eco_sorted, key=lambda x: x['saldo']).get('saldo')
+        max_epoch = max(self.dict_eco_sorted, key=lambda x: x['epoch']).get('epoch')
+        min_epoch = min(self.dict_eco_sorted, key=lambda x: x['epoch']).get('epoch')
 
         eje_y_max = round(maximo_saldo, -3) + 1000
         eje_y_min = round(minimo_saldo, -3)
@@ -76,14 +84,17 @@ class Economia(MDScreen):
             label_y_paso.append(eje_y_min + i * paso_y)
         label_x_paso = [epoch2human(t) for t in label_x_paso]
 
-        self.ids.chart1.x_values = [d['epoch'] for d in dict_eco_sorted if 'epoch' in d]
+        self.ids.chart1.x_values = [d['epoch'] for d in self.dict_eco_sorted if 'epoch' in d]
         self.ids.chart1.x_labels = label_x_paso
-        self.ids.chart1.y_values = [d['saldo'] for d in dict_eco_sorted if 'saldo' in d]
+        self.ids.chart1.y_values = [d['saldo'] for d in self.dict_eco_sorted if 'saldo' in d]
         self.ids.chart1.y_labels = label_y_paso
 
         # Cuenta actual
-        self.ids.saldo_total.text = str(dict_eco_sorted[-1].get('saldo')) + ' €'
-        a ='end'
+        self.ids.saldo_total.text = str(self.dict_eco_sorted[-1].get('saldo')) + ' €'
+        a = 'end'
+
+    def barchart_datos(self):
+        pass
 
     def set_text(self, args):
         self.ids._label.text = f"{args[1]} [{args[2]},{args[3]}]"
@@ -147,19 +158,7 @@ Builder.load_string(
                     bg_color: 106/255, 188/255, 206/255, 1
                     on_select: root.set_text(args)
                     line_width:dp(1)
-                    
-                MyAKLineChart_Almu:
-                    id: chart2
-                    labels: False
-                    anim: True
-                    on_select: root.set_text(args)
-
-                MyAKLineChart_Almu:
-                    id: chart3
-                    labels: True
-                    anim: True
-                    lines: False
-                    on_select: root.set_text(args)
+                
 
         MDFloatLayout:
             size_hint_y: 0.05

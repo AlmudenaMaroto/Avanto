@@ -113,7 +113,14 @@ class IconListItem(OneLineAvatarListItem):
 
 
 class DemoApp(MDApp):
-    intro = """¡Bienvenid@ a Avanto!"""
+    intro = """¡Bienvenid@ a Avanto! \n\n\n\n
+        Para empezar a añadir registros, haz click en "Seleccionar Tabla".
+        Hay varias tablas en las que registrar diferente información.
+        Para hacer una importación masiva haz click en "Import/Export" 
+        El formato debe ser el adecuado.
+        También puedes exportar los datos guardados en un csv para no perderlos. 
+        Para todo lo demás, las pestañas de análisis.
+    """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -205,7 +212,7 @@ MDScreen:
                     MDLabel:
                         text: app.intro
                         theme_text_color: "Primary"
-                        halign: "center"
+                        halign: "left"
 
     MDNavigationDrawer:
         id: navdrawer
