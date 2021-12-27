@@ -411,16 +411,16 @@ class AKLineChart_Almu(AKChartBase):
 
             if self.labels:
                 y_pos = [
-                    new_x,
+                    50,
                     new_y + self.circles_radius / 2,
                 ]
                 x_pos = [new_x, 0]
                 self.draw_label(
-                    text_x=x_label if x_label else str(x),
-                    text_y=y_label if y_label else str(y),
+                    text_x=x_label if type(x_label) == str else '',
+                    text_y=y_label if type(y_label) == str else '',
                     center_pos_x=x_pos,
                     center_pos_y=y_pos,
-                    idx=len(x_values) - i - 1,
+                    idx=len(self.x_labels) - i - 1,
                 )
         self._myinit = False
 

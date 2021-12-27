@@ -6,6 +6,7 @@ from datetime import datetime
 import time
 from calendar import timegm
 import charts_almu
+import datetime
 
 class Economia(MDScreen):
     def __init__(self, **kwargs):
@@ -32,12 +33,14 @@ class Economia(MDScreen):
         cursor.execute(orden_execute)
         for i in cursor:
             saldo = round(saldo + i[4], 2)
-            if True:
+            if i[0] % 20 == 0:
                 try:
                     utc_time = time.strptime(i[1], "%d/%m/%Y")
                     epoch_time = timegm(utc_time)
-                    if i[0] % 500 == 0:
-                        fechas.append(i[1])
+                    if i[0] % 50 == 0:
+                        # Ponemos solo la fecha de año/mes
+                        año_mes = datetime.datetime.strptime(str(i[1]), '%d/%m/%Y').strftime('%m/%y')
+                        fechas.append(año_mes)
                         saldos_str.append(str(saldo))
                     else:
                         fechas.append('')
@@ -53,6 +56,7 @@ class Economia(MDScreen):
         minimo_saldo = min(saldos)
         max_epoch = max(epochs)
         min_epoch = min(epochs)
+
 
         self.ids.chart1.x_values = epochs
         self.ids.chart1.x_labels = fechas
@@ -110,11 +114,10 @@ Builder.load_string(
 
                 Evolucion_temporal:
                     id: chart1
-                    labels: False
+                    labels: True
                     anim: True
                     circles: False
                     bg_color: 106/255, 188/255, 206/255, 1
-                    labels: False
                     on_select: root.set_text(args)
                     line_width:dp(1)
 
