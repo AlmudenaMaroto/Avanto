@@ -282,6 +282,34 @@ class AKChartBase(DrawTools, ThemableBehavior, RelativeLayout):
         )
         return f_update * res + self._bottom_line_y()
 
+    def normalized_labels(self, val, mode, f_update=1):
+        x_values = [*range(0, len(self.x_labels), 1)]
+        y_values = self.y_labels
+        trim = self.trim
+        padding = self.padding
+        size = self.size
+        min_x = min(x_values) if trim else 0
+        max_x = max(x_values)
+        min_y = min(y_values) if trim else 0
+        max_y = max(y_values)
+        x_distance = (max_x - min_x) if trim else max_x
+        y_distance = (max_y - min_y) if trim else max_y
+
+        if mode == "x":
+            _min = min_x
+            _distance = x_distance
+            _size = size[0]
+            f_update = 1
+        else:
+            _min = min_y
+            _distance = y_distance
+            _size = size[1]
+
+        res = ((val - _min) / _distance) * (
+            _size - self._bottom_line_y() - padding
+        )
+        return f_update * res + self._bottom_line_y()
+
     def do_layout(self, *args, **kwargs):
         super().do_layout(*args, **kwargs)
         self._update()
@@ -327,14 +355,14 @@ class AKChartBase(DrawTools, ThemableBehavior, RelativeLayout):
         if len(x_values) != len(y_values):
             raise Exception("x_values and y_values must have equal length")
 
-        if (
-            ((len(x_labels) != len(y_values)) and len(x_labels) > 0)
-            or (len(y_labels) != len(y_values))
-            and len(y_labels) > 0
-        ):
-            raise Exception(
-                "x_values and y_values and x_labels must have equal length"
-            )
+        # if (
+        #     ((len(x_labels) != len(y_values)) and len(x_labels) > 0)
+        #     or (len(y_labels) != len(y_values))
+        #     and len(y_labels) > 0
+        # ):
+        #     raise Exception(
+        #         "x_values and y_values and x_labels must have equal length"
+        #     )
 
     def _bottom_line_y(self):
         return self.label_size * 2
@@ -384,8 +412,8 @@ class AKLineChart_Almu(AKChartBase):
 
         for i in range(0, len(x_values)):
             x = x_values[i]
-            x_label = self.x_labels[i] if self.x_labels else False
-            y_label = self.y_labels[i] if self.y_labels else False
+            # x_label = self.x_labels[i] if self.x_labels else False
+            # y_label = self.y_labels[i] if self.y_labels else False
             y = y_values[i]
             new_x = self._get_normalized_cor(x, "x", f_update)
             new_y = self._get_normalized_cor(y, "y", f_update)
@@ -408,16 +436,22 @@ class AKLineChart_Almu(AKChartBase):
                     color=self.lines_color,
                 )
             last_point = [new_x, new_y]
-
+        # Dividimos para que el calculo de labels vaya separado del de valores.
+        for i in range(0, len(self.x_labels)):
             if self.labels:
+                x_label = self.x_labels[i] if self.x_labels else False
+                x_label_num = [*range(0, len(self.x_labels), 1)][i] if self.x_labels else False
+                y_label = self.y_labels[i] if self.y_labels else False
+                new_x = self.normalized_labels(x_label_num, "x", f_update)
+                new_y = self.normalized_labels(y_label, "y", f_update)
                 y_pos = [
-                    50,
+                    25,
                     new_y + self.circles_radius / 2,
                 ]
                 x_pos = [new_x, 0]
                 self.draw_label(
                     text_x=x_label if type(x_label) == str else '',
-                    text_y=y_label if type(y_label) == str else '',
+                    text_y=str(int(y_label)) if type(str(y_label)) == str else '',
                     center_pos_x=x_pos,
                     center_pos_y=y_pos,
                     idx=len(self.x_labels) - i - 1,

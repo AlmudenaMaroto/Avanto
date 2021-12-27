@@ -9,6 +9,11 @@ import charts_almu
 import datetime
 
 
+def epoch2human(epoch):
+    return time.strftime('%m/%y',
+                         time.localtime(int(epoch)))
+
+
 class Economia(MDScreen):
     def __init__(self, **kwargs):
         super(Economia, self).__init__()
@@ -21,49 +26,57 @@ class Economia(MDScreen):
         cursor.execute(orden_execute)
         longitud = len(cursor.fetchall())
         con.close()
-        fechas = []
-        epochs = []
-        importes = []
-        saldos = []
-        saldos_str = []
+        row_i = {}
+        dict_eco = []
         saldo = 0
 
         con = sqlite3.connect(self.path_app + '/movimientos.db')
         cursor = con.cursor()
-        orden_execute = 'select * from movimientos ORDER BY ID ASC'
+        orden_execute = 'select * from movimientos'
         cursor.execute(orden_execute)
         for i in cursor:
             saldo = round(saldo + i[4], 2)
-            if i[0] % 20 == 0:
-                try:
-                    utc_time = time.strptime(i[1], "%d/%m/%Y")
-                    epoch_time = timegm(utc_time)
-                    if i[0] % 50 == 0:
-                        # Ponemos solo la fecha de año/mes
-                        ano_mes = datetime.datetime.strptime(str(i[1]), '%d/%m/%Y').strftime('%m/%y')
-                        fechas.append(ano_mes)
-                        saldos_str.append(str(saldo))
-                    else:
-                        fechas.append('')
-                        saldos_str.append('')
-                    epochs.append(epoch_time)
-                    importes.append(i[4])
-                    saldos.append(saldo)
-                except ValueError:
-                    pass
-        con.close()
-        # Para no petar el grafico, cogemos menos valores
-        maximo_saldo = max(saldos)
-        minimo_saldo = min(saldos)
-        max_epoch = max(epochs)
-        min_epoch = min(epochs)
-        for i in range(5):
-            pass
+            try:
+                utc_time = time.strptime(i[1], "%d/%m/%Y")
+                epoch_time = timegm(utc_time)
+                ano_mes = datetime.datetime.strptime(str(i[1]), '%d/%m/%Y').strftime('%m/%y')
+                # Agrupamos en un diccionario para cada linea, para poder ordenarlo
+                row_i['fecha'] = str(i[1])
+                row_i['anomes'] = ano_mes
+                row_i['epoch'] = epoch_time
+                row_i['importe'] = i[4]
+                row_i['saldo'] = saldo
+                dict_eco.append(row_i)
+                row_i = {}
 
-        self.ids.chart1.x_values = epochs
-        self.ids.chart1.x_labels = fechas
-        self.ids.chart1.y_values = saldos
-        self.ids.chart1.y_labels = saldos_str
+            except ValueError:
+                pass
+        con.close()
+        dict_eco_sorted = sorted(dict_eco, key=lambda d: d['epoch'], reverse=False)
+
+        # Para no petar el grafico, cogemos menos valores
+        maximo_saldo = max(dict_eco_sorted, key=lambda x: x['saldo']).get('saldo')
+        minimo_saldo = min(dict_eco_sorted, key=lambda x: x['saldo']).get('saldo')
+        max_epoch = max(dict_eco_sorted, key=lambda x: x['epoch']).get('epoch')
+        min_epoch = min(dict_eco_sorted, key=lambda x: x['epoch']).get('epoch')
+
+        eje_y_max = round(maximo_saldo, -3) + 1000
+        eje_y_min = round(minimo_saldo, -3)
+
+        num_saltos = 5
+        label_x_paso = []
+        label_y_paso = []
+        for i in range(num_saltos):
+            paso_y = (eje_y_max - eje_y_min) / num_saltos
+            paso_x = (max_epoch - min_epoch) / num_saltos
+            label_x_paso.append(min_epoch + i * paso_x)
+            label_y_paso.append(eje_y_min + i * paso_y)
+        label_x_paso = [epoch2human(t) for t in label_x_paso]
+
+        self.ids.chart1.x_values = [d['epoch'] for d in dict_eco_sorted if 'epoch' in d]
+        self.ids.chart1.x_labels = label_x_paso
+        self.ids.chart1.y_values = [d['saldo'] for d in dict_eco_sorted if 'saldo' in d]
+        self.ids.chart1.y_labels = label_y_paso
 
     def set_text(self, args):
         self.ids._label.text = f"{args[1]} [{args[2]},{args[3]}]"
@@ -134,15 +147,6 @@ Builder.load_string(
                     labels: True
                     anim: True
                     lines: False
-                    on_select: root.set_text(args)
-
-                MyAKLineChart_Almu:
-                    id: chart4
-                    labels: True
-                    anim: True
-                    lines: False
-                    x_labels: ["XYZ", "Second", "Third", "Last"]
-                    y_labels: ["XYZ", "Second", "Third", "Last"]
                     on_select: root.set_text(args)
 
         MDFloatLayout:
