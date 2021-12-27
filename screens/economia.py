@@ -18,18 +18,21 @@ class Economia(MDScreen):
     def __init__(self, **kwargs):
         super(Economia, self).__init__()
         self.path_app = os.getcwd()
-
-        # Linea temporal:
+        ########################
+        # Linea temporal:      #
+        ########################
+        # Conseguir longitud del fichero
         con = sqlite3.connect(self.path_app + '/movimientos.db')
         cursor = con.cursor()
         orden_execute = 'select * from movimientos'
         cursor.execute(orden_execute)
         longitud = len(cursor.fetchall())
         con.close()
+
+        # Linea temporal: creamos una list of dict
         row_i = {}
         dict_eco = []
         saldo = 0
-
         con = sqlite3.connect(self.path_app + '/movimientos.db')
         cursor = con.cursor()
         orden_execute = 'select * from movimientos'
@@ -77,6 +80,10 @@ class Economia(MDScreen):
         self.ids.chart1.x_labels = label_x_paso
         self.ids.chart1.y_values = [d['saldo'] for d in dict_eco_sorted if 'saldo' in d]
         self.ids.chart1.y_labels = label_y_paso
+
+        # Cuenta actual
+        self.ids.saldo_total.text = str(dict_eco_sorted[-1].get('saldo')) + ' €'
+        a ='end'
 
     def set_text(self, args):
         self.ids._label.text = f"{args[1]} [{args[2]},{args[3]}]"
@@ -126,7 +133,12 @@ Builder.load_string(
                 spacing: dp(25)
                 padding: dp(25)
                 adaptive_height: True
-
+                
+                MDLabel:
+                    id:saldo_total
+                    halign: "center"
+                    text_color: 0, 0, 1, 1
+                    
                 Evolucion_temporal:
                     id: chart1
                     labels: True
@@ -135,7 +147,7 @@ Builder.load_string(
                     bg_color: 106/255, 188/255, 206/255, 1
                     on_select: root.set_text(args)
                     line_width:dp(1)
-
+                    
                 MyAKLineChart_Almu:
                     id: chart2
                     labels: False

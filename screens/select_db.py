@@ -267,6 +267,18 @@ class InsertDataWid_movimientos(BoxLayout):
         con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
         cursor = con.cursor()
         d2 = self.ids.ti_fechao.text
+        if d2 == '':
+            pass
+        else:
+            format = "%d/%m/%Y"
+            try:
+                datetime.strptime(d2, format)
+            except:
+                message = self.Popup.ids.message
+                self.Popup.open()
+                self.Popup.title = "Error formato"
+                message.text = 'La fecha debe ser formato DD/MM/YYYY \n o estar en blanco'
+                return
         d3 = self.ids.ti_Concepto.text
         d4 = self.ids.ti_Categoria.text
         d5 = self.ids.ti_Importe.text
@@ -321,6 +333,19 @@ class InsertDataWid_deporte(BoxLayout):
         con = sqlite3.connect(self.ruta_DB_PATH_deporte)
         cursor = con.cursor()
         d2 = self.ids.ti_fechao.text
+        if d2 == '':
+            pass
+        else:
+            format = "%d/%m/%Y"
+            try:
+                datetime.strptime(d2, format)
+            except:
+                message = self.Popup.ids.message
+                self.Popup.open()
+                self.Popup.title = "Error formato"
+                message.text = 'La fecha debe ser formato DD/MM/YYYY \n o estar en blanco'
+                return
+
         d3 = self.ids.ti_Concepto.text
         d5 = self.ids.ti_Tiempo.text
         a1 = (d1, d2, d3, d5)
@@ -340,6 +365,7 @@ class InsertDataWid_deporte(BoxLayout):
             else:
                 message.text = str(e)
             con.close()
+
 
     def back_to_dbw(self):
         self.clear_widgets()
