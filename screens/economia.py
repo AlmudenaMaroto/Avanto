@@ -9,7 +9,8 @@ import charts_almu
 import chart_progress
 import datetime
 from itertools import groupby
-
+from datetime import date
+today = date.today()
 
 def epoch2human(epoch):
     return time.strftime('%m/%y',
@@ -203,8 +204,15 @@ class Economia(MDScreen):
             self.domiciliaciones = i[4]
             self.obj_tasa = i[5]
         con.close()
+        # Porcentaje de ahorro:
         porcentaje_ahorro = self.saldo_total * 100 / self.obj_cuenta
         self.ids.progress_percent.cambiar_porc(porcentaje_ahorro)
+        # Ahorro mensual a realizar:
+        fecha_obj = datetime.datetime.strptime(self.obj_fecha, '%d/%m/%Y')
+        diff_fechas = (fecha_obj - datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y')).days
+        self.ids.ahorro_mensual_obj.text = str(round((self.obj_cuenta - self.saldo_total)*30/(diff_fechas))) + ' €'
+
+
 
     def update(self):
         self.calculos()
@@ -311,6 +319,10 @@ Builder.load_string(
                     end_deg: 540
                 MDLabel:
                     text: 'Ahorro mensual a realizar:'
+                    halign: "center"
+                    valign: "center"
+                MDLabel:
+                    id:ahorro_mensual_obj
                     halign: "center"
                     valign: "center"
                 
