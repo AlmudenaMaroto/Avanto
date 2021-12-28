@@ -111,9 +111,26 @@ class Economia(MDScreen):
             epoch_time = timegm(utc_time)
             linea['epoch'] = epoch_time
             dict_anomes_red.append(linea)
+
         self.ids.id_barmes.x_values = [d['epoch'] for d in dict_anomes_red if 'epoch' in d]
         self.ids.id_barmes.y_values = [d['importe'] for d in dict_anomes_red if 'importe' in d]
-        self.ids.id_barmes.x_labels = [d['anomes'] for d in dict_anomes_red if 'anomes' in d]
+
+        max_epoch = max(self.ids.id_barmes.x_values)
+        min_epoch = min(self.ids.id_barmes.x_values)
+        eje_y_max = round(max(self.ids.id_barmes.y_values), -3) + 1000
+        eje_y_min = round(min(self.ids.id_barmes.y_values), -3)
+        num_saltos = 4
+        label_x_paso = []
+        label_y_paso = []
+        for i in range(num_saltos + 1):
+            paso_y = (eje_y_max - eje_y_min) / num_saltos
+            paso_x = (max_epoch - min_epoch) / num_saltos
+            label_x_paso.append(min_epoch + i * paso_x)
+            label_y_paso.append(eje_y_min + i * paso_y)
+        label_x_paso = [epoch2human(t) for t in label_x_paso]
+
+        self.ids.id_barmes.x_labels = label_x_paso
+        self.ids.id_barmes.y_labels = label_y_paso
 
         a = 'stop'
 
@@ -189,13 +206,13 @@ Builder.load_string(
                 
                 Barras_mes:
                     id: id_barmes
-                    labels: False
+                    labels: True
                     anim: True
                     bg_color: 106/255, 188/255, 206/255, 1
                     lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
                     bars_color: [40/255, 107/255, 122/255, 1]
-                    labels_color: 0.6, 0, 0, 1
+                    labels_color: 40/255, 107/255, 122/255, 1
                     trim: True
                     #on_select: root.set_text(args)
                 

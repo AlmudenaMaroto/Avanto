@@ -479,8 +479,8 @@ class AKBarChart_anomes(AKChartBase):
         f_update = self._loaded if anim else 1
         for i in range(0, count):
             x = x_values[i]
-            x_label = self.x_labels[i] if self.x_labels else False
-            y_label = self.y_labels[i] if self.y_labels else False
+            # x_label = self.x_labels[i] if self.x_labels else False
+            # y_label = self.y_labels[i] if self.y_labels else False
             y = y_values[i]
             new_x = bars_x_list[i]
             new_y = self._get_normalized_cor(y, "y", f_update)
@@ -494,16 +494,21 @@ class AKBarChart_anomes(AKChartBase):
                 size=[bar_width, new_y - bottom_line_y],
                 pos=[new_x, bottom_line_y],
             )
-
+        for i in range(0, len(self.x_labels)):
             if self.labels:
-                y_pos = [new_x + bar_width / 2, new_y]
+                x_label = self.x_labels[i] if self.x_labels else False
+                x_label_num = [*range(0, len(self.x_labels), 1)][i] if self.x_labels else False
+                y_label = self.y_labels[i] if self.y_labels else False
+                new_x = self.normalized_labels(x_label_num, "x", f_update)
+                new_y = self.normalized_labels(y_label, "y", f_update)
+                y_pos = [20, new_y]
                 x_pos = [new_x + bar_width / 2, 0]
                 self.draw_label(
                     text_x=x_label if x_label else str(x),
-                    text_y=y_label if y_label else str(y),
+                    text_y=str(int(y_label)) if type(str(y_label)) == str else '',
                     center_pos_x=x_pos,
                     center_pos_y=y_pos,
-                    idx=len(x_values) - i - 1,
+                    idx=len(self.x_labels) - i - 1,
                 )
         dis = bottom_line_y
         self.draw_shape(
