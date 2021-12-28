@@ -35,6 +35,17 @@ class Economia(MDScreen):
         self.min_epoch_evtemp = 0
         self.eje_y_max_evtemp = 0
         self.eje_y_min_evtemp = 0
+        con = sqlite3.connect(self.path_app + '/globales.db')
+        cursor = con.cursor()
+        orden_execute = 'select * from globales'
+        cursor.execute(orden_execute)
+        for i in cursor:
+            self.obj_cuenta = i[1]
+            self.obj_fecha = i[2]
+            self.obj_peso = i[3]
+            self.domiciliaciones = i[4]
+            self.obj_tasa = i[5]
+        con.close()
         self.calculos()
         self.barchart_datos()
         self.barchart_ano()
@@ -196,17 +207,7 @@ class Economia(MDScreen):
         pass
 
     def calc_ahorros(self):
-        con = sqlite3.connect(self.path_app + '/globales.db')
-        cursor = con.cursor()
-        orden_execute = 'select * from globales'
-        cursor.execute(orden_execute)
-        for i in cursor:
-            self.obj_cuenta = i[1]
-            self.obj_fecha = i[2]
-            self.obj_peso = i[3]
-            self.domiciliaciones = i[4]
-            self.obj_tasa = i[5]
-        con.close()
+
         # Porcentaje de ahorro:
         porcentaje_ahorro = self.saldo_total * 100 / self.obj_cuenta
         self.ids.progress_percent.cambiar_porc(porcentaje_ahorro)
