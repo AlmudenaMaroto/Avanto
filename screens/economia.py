@@ -24,6 +24,12 @@ def epoch2human_year(epoch):
 def filtrar_dict_fechas(dic, epoch_ini, epoch_fin):
     return (dic['epoch'] > epoch_ini and dic['epoch'] < epoch_fin)
 
+def filtrar_ingresos(dic):
+    return dic['importe'] > 0
+
+def filtrar_gastos(dic):
+    return dic['importe'] < 0
+
 
 class Economia(MDScreen):
     def __init__(self, **kwargs):
@@ -31,6 +37,7 @@ class Economia(MDScreen):
         self.path_app = os.getcwd()
         self.dict_eco_sorted = {}
         self.dict_barmes = []
+        self.dict_barano = []
         self.max_epoch_evtemp = 0
         self.min_epoch_evtemp = 0
         self.eje_y_max_evtemp = 0
@@ -161,14 +168,14 @@ class Economia(MDScreen):
         self.ids.id_barmes.y_labels = label_y_paso
 
     def barchart_ano(self):
-        self.dict_barmes = []
+
         for row_i in self.dict_eco_sorted:
             barmes_i = {}
             barmes_i['importe'] = row_i['importe']
             barmes_i['anomes'] = row_i['anomes'][-2:]
-            self.dict_barmes.append(barmes_i)
+            self.dict_barano.append(barmes_i)
         dict_anomes_red = []
-        for k, v in groupby(self.dict_barmes, key=lambda x: x['anomes']):
+        for k, v in groupby(self.dict_barano, key=lambda x: x['anomes']):
             linea = {'anomes': k, 'importe': sum(int(d['importe']) for d in v)}
             utc_time = time.strptime(k, "%y")
             epoch_time = timegm(utc_time)
@@ -217,13 +224,14 @@ class Economia(MDScreen):
         self.ids.ahorro_mensual_obj.text = str(round((self.obj_cuenta - self.saldo_total)*30/(diff_fechas))) + ' €'
         # Gasto en domiciliaciones al mes (ultimos 30 dias)
         domiciliaciones_list = self.domiciliaciones.replace(' ','').split(',')
-        # self.dict_eco_sorted
         epoch_fin = datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y').timestamp()
         epoch_ini = (datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y')- datetime.timedelta(days=30)).timestamp()
         dict_domic = list(filter(lambda d: d['categoria'] in domiciliaciones_list, self.dict_eco_sorted))
         dict_domic_fech = [d for d in dict_domic if filtrar_dict_fechas(d, epoch_ini, epoch_fin)]
         self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech),2)) + ' €'
 
+    def tasa_ahorro(self):
+        pass
 
     def update(self):
         self.calculos()

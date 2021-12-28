@@ -6,7 +6,7 @@
     	"icon": "plus-box-multiple",
 		"menu": "si"
     },
-	"2. Import/Export": {
+	"2. Importar/Exportar": {
     	"import": "import_main",
     	"factory": "Import_main",
     	"screen_name": "import_main",
@@ -25,188 +25,188 @@
     	"factory": "BottomNavigation",
     	"screen_name": "bottomnavigation",
     	"icon": "picture-in-picture-bottom-right",
-		"menu": "si"
+		"menu": "no"
     },
     "Spinners": {
     	"import": "spinners",
     	"factory": "Spinners",
     	"screen_name": "spinners",
     	"icon": "progress-check",
-		"menu": "si"
+		"menu": "no"
     },
     "Dataloader": {
     	"import": "dataloader",
     	"factory": "Dataloader",
     	"screen_name": "dataloader",
     	"icon": "reload",
-		"menu": "si"
+		"menu": "no"
     },
     "Selectionlist": {
     	"import": "selectionlist",
     	"factory": "Selectionlist",
     	"screen_name": "selectionlist",
     	"icon": "list-status",
-		"menu": "si"
+		"menu": "no"
     },
     "Piechart": {
     	"import": "piechart",
     	"factory": "Piechart",
     	"screen_name": "piechart",
     	"icon": "chart-pie",
-		"menu": "si"
+		"menu": "no"
     },
     "Linechart": {
     	"import": "linechart",
     	"factory": "Linechart",
     	"screen_name": "linechart",
     	"icon": "chart-bell-curve-cumulative",
-		"menu": "si"
+		"menu": "no"
     },
     "Barchart": {
     	"import": "barchart",
     	"factory": "Barchart",
     	"screen_name": "barchart",
     	"icon": "chart-bar",
-		"menu": "si"
+		"menu": "no"
     },
     "Image Viewer": {
     	"import": "imageviewer",
     	"factory": "ImageViewer",
     	"screen_name": "imageviewer",
     	"icon": "view-carousel-outline",
-		"menu": "si"
+		"menu": "no"
     },
     "Card Stack": {
         "import": "cardstack",
         "factory": "CardStack",
         "screen_name": "cardstack",
         "icon": "cards",
-		"menu": "si"
+		"menu": "no"
     },
     "Button Panel": {
         "import": "buttonpanel",
         "factory": "ButtonPanel",
         "screen_name": "buttonpanel",
         "icon": "gesture-tap-button",
-		"menu": "si"
+		"menu": "no"
     },
     "Onboarding": {
     	"import": "onboarding",
     	"factory": "Onboarding",
     	"screen_name": "onboarding",
     	"icon": "view-carousel",
-		"menu": "si"
+		"menu": "no"
     },
     "Progress Button": {
     	"import": "progressbutton",
     	"factory": "ProgressButton",
     	"screen_name": "progressbutton",
     	"icon": "refresh",
-		"menu": "si"
+		"menu": "no"
     },
     "Silver Appbar": {
     	"import": "silverappbar",
     	"factory": "SilverAppbar",
     	"screen_name": "sileverappbar",
     	"icon": "dock-bottom",
-		"menu": "si"
+		"menu": "no"
     },
     "Badge Layout": {
     	"import": "badgelayout",
     	"factory": "BadgeLayout",
     	"screen_name": "badgelayout",
     	"icon": "eye-check",
-		"menu": "si"
+		"menu": "no"
     },
     "AddWidget Behavior": {
     	"import": "addwidget",
     	"factory": "AddWidgetBehavior",
     	"screen_name": "addwidget",
     	"icon": "plus-box-multiple",
-		"menu": "si"
+		"menu": "no"
     },
     "Bottom Appbar": {
     	"import": "bottomappbar",
     	"factory": "BottomAppbar",
     	"screen_name": "bottomappbar",
     	"icon": "color-helper",
-		"menu": "si"
+		"menu": "no"
     },
     "Label Animation": {
     	"import": "labelanimation",
     	"factory": "LabelAnimation",
     	"screen_name": "labelanimation",
     	"icon": "animation-play",
-		"menu": "si"
+		"menu": "no"
     },
     "Statusbar Color": {
     	"import": "statusbarcolor",
     	"factory": "StatusbarColor",
     	"screen_name": "statusbarcolor",
     	"icon": "invert-colors",
-		"menu": "si"
+		"menu": "no"
     },
     "Date Picker": {
     	"import": "datepicker",
     	"factory": "DatePicker",
     	"screen_name": "datepicker",
     	"icon": "calendar",
-		"menu": "si"
+		"menu": "no"
     },
     "Progress Widget": {
     	"import": "progresswidget",
     	"factory": "ProgressWidget",
     	"screen_name": "progresswidget",
     	"icon": "widgets",
-		"menu": "si"
+		"menu": "no"
     },
     "Hint Widget": {
     	"import": "hintwidget",
     	"factory": "HintWidget",
     	"screen_name": "hintwidget",
     	"icon": "tooltip-text",
-		"menu": "si"
+		"menu": "no"
     },
     "Windows": {
     	"import": "windows",
     	"factory": "Windows",
     	"screen_name": "windows",
     	"icon": "window-maximize",
-		"menu": "si"
+		"menu": "no"
     },
     "Navigationrail": {
     	"import": "navigationrail",
     	"factory": "Navigationrail",
     	"screen_name": "navigationrail",
     	"icon": "microsoft-xbox-controller-menu",
-		"menu": "si"
+		"menu": "no"
     },
     "Dialogs": {
     	"import": "dialogs",
     	"factory": "Dialogs",
     	"screen_name": "dialogs",
     	"icon": "message",
-		"menu": "si"
+		"menu": "no"
     },
     "Rating": {
     	"import": "rating",
     	"factory": "Rating",
     	"screen_name": "rating",
     	"icon": "star-half-full",
-		"menu": "si"
+		"menu": "no"
     },
     "Swipe Menu": {
     	"import": "swipemenu",
     	"factory": "SwipeMenu",
     	"screen_name": "swipemenu",
     	"icon": "gesture-swipe-up",
-		"menu": "si"
+		"menu": "no"
     },
     "Toolbar": {
     	"import": "toolbar",
     	"factory": "Toolbar",
     	"screen_name": "toolbar",
     	"icon": "set-top-box",
-		"menu": "si"
+		"menu": "no"
     }
 }
