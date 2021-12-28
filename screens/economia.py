@@ -113,6 +113,10 @@ class Economia(MDScreen):
             dict_anomes_red.append(linea)
         self.ids.id_barmes.x_values = [d['epoch'] for d in dict_anomes_red if 'epoch' in d]
         self.ids.id_barmes.y_values = [d['importe'] for d in dict_anomes_red if 'importe' in d]
+        self.ids.id_barmes.x_labels = [d['anomes'] for d in dict_anomes_red if 'anomes' in d]
+
+        a = 'stop'
+
 
     def set_text(self, args):
         self.ids._label_evtemp.text = f"{args[1]} [{args[2]},{args[3]}]"
@@ -175,7 +179,7 @@ Builder.load_string(
                     anim: True
                     circles: False
                     bg_color: 106/255, 188/255, 206/255, 1
-                    on_select: root.set_text(args)
+                    #on_select: root.set_text(args)
                     line_width:dp(1)
                     
                 MDLabel:
@@ -191,6 +195,8 @@ Builder.load_string(
                     lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
                     bars_color: [40/255, 107/255, 122/255, 1]
+                    labels_color: 0.6, 0, 0, 1
+                    trim: True
                     #on_select: root.set_text(args)
                 
 

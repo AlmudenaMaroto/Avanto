@@ -336,19 +336,6 @@ class AKChartBase(DrawTools, ThemableBehavior, RelativeLayout):
             self._labels_y_box.clear_widgets()
             self._labels_x_box.clear_widgets()
 
-        dis = self._bottom_line_y()
-        self.draw_shape(
-            "line",
-            shape_name="line",
-            canvas=canvas,
-            points=[
-                [dis, dis],
-                [self.width - dis, dis],
-            ],
-            line_width=self.line_width,
-            color=self.lines_color,
-        )
-
         if not x_values or not y_values:
             raise Exception("x_values and y_values cannot be empty")
 
@@ -435,6 +422,18 @@ class AKLineChart_Almu(AKChartBase):
                     line_width=self.line_width,
                     color=self.lines_color,
                 )
+            dis = self._bottom_line_y()
+            self.draw_shape(
+                "line",
+                shape_name="line",
+                canvas=canvas,
+                points=[
+                    [dis, dis],
+                    [self.width - dis, dis],
+                ],
+                line_width=self.line_width,
+                color=self.lines_color,
+            )
             last_point = [new_x, new_y]
         # Dividimos para que el calculo de labels vaya separado del de valores.
         for i in range(0, len(self.x_labels)):
@@ -445,7 +444,7 @@ class AKLineChart_Almu(AKChartBase):
                 new_x = self.normalized_labels(x_label_num, "x", f_update)
                 new_y = self.normalized_labels(y_label, "y", f_update)
                 y_pos = [
-                    30,
+                    40,
                     new_y,
                 ]
                 x_pos = [new_x, 0]
@@ -485,6 +484,7 @@ class AKBarChart_anomes(AKChartBase):
             y = y_values[i]
             new_x = bars_x_list[i]
             new_y = self._get_normalized_cor(y, "y", f_update)
+            bottom_line_y = self._get_normalized_cor(0, "y", f_update)
             drawer(
                 "bars",
                 shape_name="roundedRectangle",
@@ -505,6 +505,18 @@ class AKBarChart_anomes(AKChartBase):
                     center_pos_y=y_pos,
                     idx=len(x_values) - i - 1,
                 )
+        dis = bottom_line_y
+        self.draw_shape(
+            "line",
+            shape_name="line",
+            canvas=canvas,
+            points=[
+                [self._bottom_line_y(), dis],
+                [self.width - self._bottom_line_y(), dis],
+            ],
+            line_width=self.line_width,
+            color=self.lines_color,
+        )
         self._myinit = False
 
     def get_bar_x(self, bar_count):
