@@ -7,7 +7,7 @@ import time
 from calendar import timegm
 import charts_almu
 import datetime
-
+from itertools import groupby
 
 def epoch2human(epoch):
     return time.strftime('%m/%y',
@@ -19,7 +19,9 @@ class Economia(MDScreen):
         super(Economia, self).__init__()
         self.path_app = os.getcwd()
         self.dict_eco_sorted = {}
+        self.dict_barmes = []
         self.calculos()
+        self.barchart_datos()
 
     def calculos(self):
         ########################
@@ -74,27 +76,39 @@ class Economia(MDScreen):
         eje_y_max = round(maximo_saldo, -3) + 1000
         eje_y_min = round(minimo_saldo, -3)
 
-        num_saltos = 5
+        num_saltos = 4
         label_x_paso = []
         label_y_paso = []
-        for i in range(num_saltos):
+        for i in range(num_saltos + 1):
             paso_y = (eje_y_max - eje_y_min) / num_saltos
             paso_x = (max_epoch - min_epoch) / num_saltos
             label_x_paso.append(min_epoch + i * paso_x)
             label_y_paso.append(eje_y_min + i * paso_y)
         label_x_paso = [epoch2human(t) for t in label_x_paso]
 
-        self.ids.chart1.x_values = [d['epoch'] for d in self.dict_eco_sorted if 'epoch' in d]
-        self.ids.chart1.x_labels = label_x_paso
-        self.ids.chart1.y_values = [d['saldo'] for d in self.dict_eco_sorted if 'saldo' in d]
-        self.ids.chart1.y_labels = label_y_paso
+        self.ids.id_evtemp.x_values = [d['epoch'] for d in self.dict_eco_sorted if 'epoch' in d]
+        self.ids.id_evtemp.x_labels = label_x_paso
+        self.ids.id_evtemp.y_values = [d['saldo'] for d in self.dict_eco_sorted if 'saldo' in d]
+        self.ids.id_evtemp.y_labels = label_y_paso
 
         # Cuenta actual
         self.ids.saldo_total.text = str(self.dict_eco_sorted[-1].get('saldo')) + ' €'
-        a = 'end'
 
     def barchart_datos(self):
-        pass
+        for row_i in self.dict_eco_sorted:
+            barmes_i = {}
+            barmes_i['importe'] = row_i['importe']
+            barmes_i['anomes'] = row_i['anomes']
+            self.dict_barmes.append(barmes_i)
+        dict_anomes_red = []
+        for k,v in  groupby(self.dict_barmes,key=lambda x:x['anomes']):
+            linea = {'anomes': k, 'importe': sum(int(d['importe']) for d in v)}
+            utc_time = time.strptime(k, "%m/%y")
+            epoch_time = timegm(utc_time)
+            linea['epoch'] = epoch_time
+            dict_anomes_red.append(linea)
+        self.ids.id_barmes.x_values = [d['epoch'] for d in dict_anomes_red if 'epoch' in d]
+        self.ids.id_barmes.y_values = [d['importe'] for d in dict_anomes_red if 'importe' in d]
 
     def set_text(self, args):
         self.ids._label.text = f"{args[1]} [{args[2]},{args[3]}]"
@@ -121,7 +135,7 @@ Builder.load_string(
     y_values: []
     label_size: dp(12)
     
-<MyAKLineChart_Almu@AKLineChart_Almu>
+<Barras_mes@AKBarChart_anomes>
     size_hint_y: None
     height: dp(180)
     x_values: [0, 5, 8, 15]
@@ -151,13 +165,23 @@ Builder.load_string(
                     text_color: 0, 0, 1, 1
                     
                 Evolucion_temporal:
-                    id: chart1
+                    id: id_evtemp
                     labels: True
                     anim: True
                     circles: False
                     bg_color: 106/255, 188/255, 206/255, 1
-                    on_select: root.set_text(args)
+                    #on_select: root.set_text(args)
                     line_width:dp(1)
+                
+                Barras_mes:
+                    id: id_barmes
+                    labels: False
+                    anim: True
+                    bg_color: 106/255, 188/255, 206/255, 1
+                    lines_color: [40/255, 107/255, 122/255, 1]
+                    line_width:dp(1)
+                    bars_color: [40/255, 107/255, 122/255, 1]
+                    #on_select: root.set_text(args)
                 
 
         MDFloatLayout:

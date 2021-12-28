@@ -445,8 +445,8 @@ class AKLineChart_Almu(AKChartBase):
                 new_x = self.normalized_labels(x_label_num, "x", f_update)
                 new_y = self.normalized_labels(y_label, "y", f_update)
                 y_pos = [
-                    25,
-                    new_y + self.circles_radius / 2,
+                    30,
+                    new_y,
                 ]
                 x_pos = [new_x, 0]
                 self.draw_label(
@@ -459,7 +459,7 @@ class AKLineChart_Almu(AKChartBase):
         self._myinit = False
 
 
-class AKBarChart(AKChartBase):
+class AKBarChart_anomes(AKChartBase):
     max_bar_width = NumericProperty("80dp")
     min_bar_width = NumericProperty("10dp")
     bars_spacing = NumericProperty("10dp")
