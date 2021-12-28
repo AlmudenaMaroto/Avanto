@@ -21,6 +21,9 @@ def epoch2human_year(epoch):
     return time.strftime('%Y',
                          time.localtime(int(epoch)))
 
+def filtrar_dict_fechas(dic, epoch_ini, epoch_fin):
+    return (dic['epoch'] > epoch_ini and dic['epoch'] < epoch_fin)
+
 
 class Economia(MDScreen):
     def __init__(self, **kwargs):
@@ -35,7 +38,7 @@ class Economia(MDScreen):
         self.calculos()
         self.barchart_datos()
         self.barchart_ano()
-        self.porc_ahorro()
+        self.calc_ahorros()
 
     def calculos(self):
         ########################
@@ -192,7 +195,7 @@ class Economia(MDScreen):
         # self.ids._label_evtemp.text = f"[{eje_x},{eje_y}]"
         pass
 
-    def porc_ahorro(self):
+    def calc_ahorros(self):
         con = sqlite3.connect(self.path_app + '/globales.db')
         cursor = con.cursor()
         orden_execute = 'select * from globales'
@@ -211,7 +214,14 @@ class Economia(MDScreen):
         fecha_obj = datetime.datetime.strptime(self.obj_fecha, '%d/%m/%Y')
         diff_fechas = (fecha_obj - datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y')).days
         self.ids.ahorro_mensual_obj.text = str(round((self.obj_cuenta - self.saldo_total)*30/(diff_fechas))) + ' €'
-
+        # Gasto en domiciliaciones al mes (ultimos 30 dias)
+        domiciliaciones_list = self.domiciliaciones.replace(' ','').split(',')
+        # self.dict_eco_sorted
+        epoch_fin = datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y').timestamp()
+        epoch_ini = (datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y')- datetime.timedelta(days=30)).timestamp()
+        dict_domic = list(filter(lambda d: d['categoria'] in domiciliaciones_list, self.dict_eco_sorted))
+        dict_domic_fech = [d for d in dict_domic if filtrar_dict_fechas(d, epoch_ini, epoch_fin)]
+        self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech),2)) + ' €'
 
 
     def update(self):
@@ -274,11 +284,6 @@ Builder.load_string(
                     bg_color: 106/255, 188/255, 206/255, 1
                     #on_select: root.set_text_evtemp(args)
                     line_width:dp(1)
-                    
-                MDLabel:
-                    id: _label_evtemp
-                    halign: "center"
-                    valign: "center"
                 
                 Barras_mes:
                     id: id_barmes
@@ -323,6 +328,14 @@ Builder.load_string(
                     valign: "center"
                 MDLabel:
                     id:ahorro_mensual_obj
+                    halign: "center"
+                    valign: "center"
+                MDLabel:
+                    text: 'Gasto fijo en domiciliaciones al mes:'
+                    halign: "center"
+                    valign: "center"
+                MDLabel:
+                    id:domiciliaciones_mes
                     halign: "center"
                     valign: "center"
                 
