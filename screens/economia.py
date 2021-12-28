@@ -31,6 +31,7 @@ class Economia(MDScreen):
         self.calculos()
         self.barchart_datos()
         self.barchart_ano()
+        self.porc_ahorro()
 
     def calculos(self):
         ########################
@@ -158,8 +159,8 @@ class Economia(MDScreen):
         self.ids.id_barano.x_values = [d['epoch'] for d in dict_anomes_red if 'epoch' in d]
         self.ids.id_barano.y_values = [d['importe'] for d in dict_anomes_red if 'importe' in d]
 
-        self.max_epoch_evtemp = max(self.ids.id_barano.x_values)
-        self.min_epoch_evtemp = min(self.ids.id_barano.x_values)
+        self.max_epoch_evtemp = max([int('20'+d['anomes']) for d in dict_anomes_red if 'anomes' in d]) + 1
+        self.min_epoch_evtemp = min([int('20'+d['anomes']) for d in dict_anomes_red if 'anomes' in d])
         self.eje_y_max_evtemp = round(max(self.ids.id_barano.y_values), -3) + 1000
         self.eje_y_min_evtemp = round(min(self.ids.id_barano.y_values), -3)
         num_saltos = 4
@@ -168,9 +169,9 @@ class Economia(MDScreen):
         for i in range(num_saltos):
             paso_y = (self.eje_y_max_evtemp - self.eje_y_min_evtemp) / num_saltos
             paso_x = (self.max_epoch_evtemp - self.min_epoch_evtemp) / num_saltos
-            label_x_paso.append(self.min_epoch_evtemp + i * paso_x)
+            label_x_paso.append(str(round(self.min_epoch_evtemp + i * paso_x)))
             label_y_paso.append(self.eje_y_min_evtemp + i * paso_y)
-        label_x_paso = [epoch2human_year(t) for t in label_x_paso]
+        # label_x_paso = [epoch2human_year(t) for t in label_x_paso]
 
         self.ids.id_barano.x_labels = label_x_paso
         self.ids.id_barano.y_labels = label_y_paso
@@ -184,6 +185,10 @@ class Economia(MDScreen):
         # eje_x = epoch2human((args[2] / size[0]) * dist_x + self.min_epoch_evtemp)
         # eje_y = int((args[3] / size[1]) * dist_y + self.eje_y_min_evtemp)
         # self.ids._label_evtemp.text = f"[{eje_x},{eje_y}]"
+        pass
+
+    def porc_ahorro(self):
+        # self.ids.progress_percent.current_percent = 50
         pass
 
     def update(self):
@@ -275,6 +280,20 @@ Builder.load_string(
                     labels_color: 40/255, 107/255, 122/255, 1
                     trim: True
                     #on_select: root.set_text(args)
+                    
+                MDLabel:
+                    text: '% del ahorro objetivo'
+                    halign: "center"
+                    valign: "center"
+                    
+                AKCircularProgress:
+                    id: progress_percent
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    size_hint: None, None
+                    size: dp(100), dp(100)
+                    percent_type: "percent"
+                    start_deg: 180
+                    end_deg: 540
                 
 
         MDFloatLayout:
