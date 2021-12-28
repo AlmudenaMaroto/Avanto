@@ -444,13 +444,13 @@ class AKLineChart_Almu(AKChartBase):
                 new_x = self.normalized_labels(x_label_num, "x", f_update)
                 new_y = self.normalized_labels(y_label, "y", f_update)
                 y_pos = [
-                    40,
+                    20,
                     new_y,
                 ]
                 x_pos = [new_x, 0]
                 self.draw_label(
                     text_x=x_label if type(x_label) == str else '',
-                    text_y=str(int(y_label)) if type(str(y_label)) == str else '',
+                    text_y=str(int(y_label/1000)) + 'k' if type(str(y_label)) == str else '',
                     center_pos_x=x_pos,
                     center_pos_y=y_pos,
                     idx=len(self.x_labels) - i - 1,
@@ -505,7 +505,7 @@ class AKBarChart_anomes(AKChartBase):
                 x_pos = [new_x + bar_width / 2, 0]
                 self.draw_label(
                     text_x=x_label if x_label else str(x),
-                    text_y=str(int(y_label)) if type(str(y_label)) == str else '',
+                    text_y=str(int(y_label/1000)) + 'k' if type(str(y_label)) == str else '',
                     center_pos_x=x_pos,
                     center_pos_y=y_pos,
                     idx=len(self.x_labels) - i - 1,

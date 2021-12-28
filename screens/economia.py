@@ -21,6 +21,10 @@ class Economia(MDScreen):
         self.path_app = os.getcwd()
         self.dict_eco_sorted = {}
         self.dict_barmes = []
+        self.max_epoch_evtemp = 0
+        self.min_epoch_evtemp = 0
+        self.eje_y_max_evtemp = 0
+        self.eje_y_min_evtemp = 0
         self.calculos()
         self.barchart_datos()
 
@@ -44,7 +48,7 @@ class Economia(MDScreen):
         cursor = con.cursor()
         orden_execute = 'select * from movimientos'
         cursor.execute(orden_execute)
-        ticks_sobrecarga = round(longitud/300)
+        ticks_sobrecarga = round(longitud / 300)
         for i in cursor:
             saldo = round(saldo + i[4], 2)
             try:
@@ -115,18 +119,18 @@ class Economia(MDScreen):
         self.ids.id_barmes.x_values = [d['epoch'] for d in dict_anomes_red if 'epoch' in d]
         self.ids.id_barmes.y_values = [d['importe'] for d in dict_anomes_red if 'importe' in d]
 
-        max_epoch = max(self.ids.id_barmes.x_values)
-        min_epoch = min(self.ids.id_barmes.x_values)
-        eje_y_max = round(max(self.ids.id_barmes.y_values), -3) + 1000
-        eje_y_min = round(min(self.ids.id_barmes.y_values), -3)
+        self.max_epoch_evtemp = max(self.ids.id_barmes.x_values)
+        self.min_epoch_evtemp = min(self.ids.id_barmes.x_values)
+        self.eje_y_max_evtemp = round(max(self.ids.id_barmes.y_values), -3) + 1000
+        self.eje_y_min_evtemp = round(min(self.ids.id_barmes.y_values), -3)
         num_saltos = 4
         label_x_paso = []
         label_y_paso = []
         for i in range(num_saltos + 1):
-            paso_y = (eje_y_max - eje_y_min) / num_saltos
-            paso_x = (max_epoch - min_epoch) / num_saltos
-            label_x_paso.append(min_epoch + i * paso_x)
-            label_y_paso.append(eje_y_min + i * paso_y)
+            paso_y = (self.eje_y_max_evtemp - self.eje_y_min_evtemp) / num_saltos
+            paso_x = (self.max_epoch_evtemp - self.min_epoch_evtemp) / num_saltos
+            label_x_paso.append(self.min_epoch_evtemp + i * paso_x)
+            label_y_paso.append(self.eje_y_min_evtemp + i * paso_y)
         label_x_paso = [epoch2human(t) for t in label_x_paso]
 
         self.ids.id_barmes.x_labels = label_x_paso
@@ -134,9 +138,16 @@ class Economia(MDScreen):
 
         a = 'stop'
 
-
-    def set_text(self, args):
-        self.ids._label_evtemp.text = f"{args[1]} [{args[2]},{args[3]}]"
+    def set_text_evtemp(self, args):
+        # Como hemos guardado los valores de los ejes max y min en self podemos usarlos para calcular
+        # la conversion y hacer print del valor.
+        # size = [50, 180]
+        # dist_x = self.max_epoch_evtemp - self.min_epoch_evtemp
+        # dist_y = self.eje_y_max_evtemp - self.eje_y_min_evtemp
+        # eje_x = epoch2human((args[2] / size[0]) * dist_x + self.min_epoch_evtemp)
+        # eje_y = int((args[3] / size[1]) * dist_y + self.eje_y_min_evtemp)
+        # self.ids._label_evtemp.text = f"[{eje_x},{eje_y}]"
+        pass
 
     def update(self):
         self.calculos()
@@ -196,7 +207,7 @@ Builder.load_string(
                     anim: True
                     circles: False
                     bg_color: 106/255, 188/255, 206/255, 1
-                    #on_select: root.set_text(args)
+                    #on_select: root.set_text_evtemp(args)
                     line_width:dp(1)
                     
                 MDLabel:
