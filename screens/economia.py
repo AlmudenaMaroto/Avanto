@@ -9,6 +9,7 @@ import charts_almu
 import datetime
 from itertools import groupby
 
+
 def epoch2human(epoch):
     return time.strftime('%m/%y',
                          time.localtime(int(epoch)))
@@ -43,6 +44,7 @@ class Economia(MDScreen):
         cursor = con.cursor()
         orden_execute = 'select * from movimientos'
         cursor.execute(orden_execute)
+        ticks_sobrecarga = round(longitud/300)
         for i in cursor:
             saldo = round(saldo + i[4], 2)
             try:
@@ -86,9 +88,11 @@ class Economia(MDScreen):
             label_y_paso.append(eje_y_min + i * paso_y)
         label_x_paso = [epoch2human(t) for t in label_x_paso]
 
-        self.ids.id_evtemp.x_values = [d['epoch'] for d in self.dict_eco_sorted if 'epoch' in d]
+        valores_x_reducidos = [d['epoch'] for d in self.dict_eco_sorted if 'epoch' in d][0::ticks_sobrecarga]
+        valores_y_reducidos = [d['saldo'] for d in self.dict_eco_sorted if 'saldo' in d][0::ticks_sobrecarga]
+        self.ids.id_evtemp.x_values = valores_x_reducidos
         self.ids.id_evtemp.x_labels = label_x_paso
-        self.ids.id_evtemp.y_values = [d['saldo'] for d in self.dict_eco_sorted if 'saldo' in d]
+        self.ids.id_evtemp.y_values = valores_y_reducidos
         self.ids.id_evtemp.y_labels = label_y_paso
 
         # Cuenta actual
@@ -101,7 +105,7 @@ class Economia(MDScreen):
             barmes_i['anomes'] = row_i['anomes']
             self.dict_barmes.append(barmes_i)
         dict_anomes_red = []
-        for k,v in  groupby(self.dict_barmes,key=lambda x:x['anomes']):
+        for k, v in groupby(self.dict_barmes, key=lambda x: x['anomes']):
             linea = {'anomes': k, 'importe': sum(int(d['importe']) for d in v)}
             utc_time = time.strptime(k, "%m/%y")
             epoch_time = timegm(utc_time)
@@ -111,10 +115,11 @@ class Economia(MDScreen):
         self.ids.id_barmes.y_values = [d['importe'] for d in dict_anomes_red if 'importe' in d]
 
     def set_text(self, args):
-        self.ids._label.text = f"{args[1]} [{args[2]},{args[3]}]"
+        self.ids._label_evtemp.text = f"{args[1]} [{args[2]},{args[3]}]"
 
     def update(self):
-        pass
+        self.calculos()
+        self.barchart_datos()
 
     def choose_etapa(self):
         pass
@@ -170,8 +175,13 @@ Builder.load_string(
                     anim: True
                     circles: False
                     bg_color: 106/255, 188/255, 206/255, 1
-                    #on_select: root.set_text(args)
+                    on_select: root.set_text(args)
                     line_width:dp(1)
+                    
+                MDLabel:
+                    id: _label_evtemp
+                    halign: "center"
+                    valign: "center"
                 
                 Barras_mes:
                     id: id_barmes

@@ -198,6 +198,8 @@ MDScreen:
             Image:
                 source: "assets/logo.png"
                 opacity: .3
+                size_hint_x: 1
+                allow_stretch: True
 
             MDBoxLayout:
                 orientation: "vertical"

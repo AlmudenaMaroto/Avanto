@@ -461,8 +461,8 @@ class AKLineChart_Almu(AKChartBase):
 
 class AKBarChart_anomes(AKChartBase):
     max_bar_width = NumericProperty("80dp")
-    min_bar_width = NumericProperty("10dp")
-    bars_spacing = NumericProperty("10dp")
+    min_bar_width = NumericProperty("3dp")
+    bars_spacing = NumericProperty("2dp")
     bars_radius = NumericProperty("5dp")
     bars_color = ColorProperty([1, 1, 1, 1])
 

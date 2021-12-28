@@ -155,13 +155,13 @@ class Export_data(BoxLayout):
             os.chdir('/storage/emulated/0/')
         if self.bbdd == 'movimientos':
             data = cur.execute("SELECT * FROM movimientos")
-            with open('movimientos.csv', 'w') as f:
+            with open('movimientos.csv', 'w', newline='') as f:
                 writer = csv.writer(f, delimiter=';')
                 writer.writerows(data)
 
         elif self.bbdd == 'deporte':
             data = cur.execute("SELECT * FROM deporte")
-            with open('deporte.csv', 'w') as f:
+            with open('deporte.csv', 'w', newline='') as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
         con.commit()
