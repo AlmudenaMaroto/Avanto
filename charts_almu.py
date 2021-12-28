@@ -28,7 +28,7 @@ color_mode
 __all__ = (
     "AKPieChart",
     "AKLineChart_Almu",
-    "AKBarChart",
+    "AKBarChart_anomes",
 )
 
 Builder.load_string(
@@ -80,8 +80,6 @@ Builder.load_string(
     RelativeLayout:
         id: _labels_x_box
 
-
-<AKPieChart>:
 """
 )
 
@@ -557,61 +555,3 @@ class AKBarChart_anomes(AKChartBase):
             return bar_width
 
 
-class AKCircularProgress_ahorro(ThemableBehavior, BoxLayout):
-    circle_color = ListProperty()
-    start_deg = NumericProperty(0)
-    end_deg = NumericProperty(360)
-    line_width = NumericProperty("3dp")
-    percent_color = ListProperty()
-    percent_size = NumericProperty("20dp")
-    current_percent = NumericProperty(-1)
-    anim_speed = NumericProperty(0.3)
-    anim_transition = StringProperty("out_quad")
-    max_percent = NumericProperty(100)
-    percent_type = OptionProperty("percent", options=["percent", "relative"])
-    background_circle_color = ListProperty()
-    background_line_width = NumericProperty("1dp")
-    cap_type = OptionProperty("round", options=["round", "none"])
-    _current_deg = NumericProperty(-1)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        Clock.schedule_once(lambda x: self._update())
-
-    def _update(self):
-        self.current_percent = 50
-
-    def on_current_percent(self, *args):
-        deg_distance = self.end_deg - self.start_deg
-        self._each_percent = deg_distance / self.max_percent
-
-        _current_deg = args[1] * self._each_percent
-        percent_anim = Animation(
-            _current_deg=self.start_deg + _current_deg,
-            duration=self.anim_speed,
-            t=self.anim_transition,
-        )
-        percent_anim.start(self)
-
-    def on__current_deg(self, *args):
-        if self.percent_type == "percent":
-            self.ids._percent_label.text = (
-                str(
-                    int(
-                        (self._current_deg - self.start_deg)
-                        / self._each_percent
-                    )
-                )
-                + " %"
-            )
-        elif self.percent_type == "relative":
-            self.ids._percent_label.text = (
-                str(
-                    int(
-                        (self._current_deg - self.start_deg)
-                        / self._each_percent
-                    )
-                )
-                + "\\"
-                + str(self.max_percent)
-            )

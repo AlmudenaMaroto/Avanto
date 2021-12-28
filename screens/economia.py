@@ -6,6 +6,7 @@ from datetime import datetime
 import time
 from calendar import timegm
 import charts_almu
+import chart_progress
 import datetime
 from itertools import groupby
 
@@ -13,6 +14,8 @@ from itertools import groupby
 def epoch2human(epoch):
     return time.strftime('%m/%y',
                          time.localtime(int(epoch)))
+
+
 def epoch2human_year(epoch):
     return time.strftime('%Y',
                          time.localtime(int(epoch)))
@@ -105,7 +108,8 @@ class Economia(MDScreen):
         self.ids.id_evtemp.y_labels = label_y_paso
 
         # Cuenta actual
-        self.ids.saldo_total.text = str(self.dict_eco_sorted[-1].get('saldo')) + ' €'
+        self.saldo_total = self.dict_eco_sorted[-1].get('saldo')
+        self.ids.saldo_total.text = str(self.saldo_total) + ' €'
 
     def barchart_datos(self):
         for row_i in self.dict_eco_sorted:
@@ -159,8 +163,8 @@ class Economia(MDScreen):
         self.ids.id_barano.x_values = [d['epoch'] for d in dict_anomes_red if 'epoch' in d]
         self.ids.id_barano.y_values = [d['importe'] for d in dict_anomes_red if 'importe' in d]
 
-        self.max_epoch_evtemp = max([int('20'+d['anomes']) for d in dict_anomes_red if 'anomes' in d]) + 1
-        self.min_epoch_evtemp = min([int('20'+d['anomes']) for d in dict_anomes_red if 'anomes' in d])
+        self.max_epoch_evtemp = max([int('20' + d['anomes']) for d in dict_anomes_red if 'anomes' in d]) + 1
+        self.min_epoch_evtemp = min([int('20' + d['anomes']) for d in dict_anomes_red if 'anomes' in d])
         self.eje_y_max_evtemp = round(max(self.ids.id_barano.y_values), -3) + 1000
         self.eje_y_min_evtemp = round(min(self.ids.id_barano.y_values), -3)
         num_saltos = 4
@@ -188,8 +192,19 @@ class Economia(MDScreen):
         pass
 
     def porc_ahorro(self):
-        # self.ids.progress_percent.current_percent = 50
-        pass
+        con = sqlite3.connect(self.path_app + '/globales.db')
+        cursor = con.cursor()
+        orden_execute = 'select * from globales'
+        cursor.execute(orden_execute)
+        for i in cursor:
+            self.obj_cuenta = i[1]
+            self.obj_fecha = i[2]
+            self.obj_peso = i[3]
+            self.domiciliaciones = i[4]
+            self.obj_tasa = i[5]
+        con.close()
+        porcentaje_ahorro = self.saldo_total * 100 / self.obj_cuenta
+        self.ids.progress_percent.cambiar_porc(porcentaje_ahorro)
 
     def update(self):
         self.calculos()
@@ -282,11 +297,11 @@ Builder.load_string(
                     #on_select: root.set_text(args)
                     
                 MDLabel:
-                    text: '% del ahorro objetivo'
+                    text: '% del ahorro objetivo:'
                     halign: "center"
                     valign: "center"
                     
-                AKCircularProgress:
+                AKCircularProgress_ahorro:
                     id: progress_percent
                     pos_hint: {"center_x": .5, "center_y": .5}
                     size_hint: None, None
@@ -294,6 +309,10 @@ Builder.load_string(
                     percent_type: "percent"
                     start_deg: 180
                     end_deg: 540
+                MDLabel:
+                    text: 'Ahorro mensual a realizar:'
+                    halign: "center"
+                    valign: "center"
                 
 
         MDFloatLayout:
