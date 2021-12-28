@@ -13,6 +13,9 @@ from itertools import groupby
 def epoch2human(epoch):
     return time.strftime('%m/%y',
                          time.localtime(int(epoch)))
+def epoch2human_year(epoch):
+    return time.strftime('%Y',
+                         time.localtime(int(epoch)))
 
 
 class Economia(MDScreen):
@@ -27,6 +30,7 @@ class Economia(MDScreen):
         self.eje_y_min_evtemp = 0
         self.calculos()
         self.barchart_datos()
+        self.barchart_ano()
 
     def calculos(self):
         ########################
@@ -136,7 +140,40 @@ class Economia(MDScreen):
         self.ids.id_barmes.x_labels = label_x_paso
         self.ids.id_barmes.y_labels = label_y_paso
 
-        a = 'stop'
+    def barchart_ano(self):
+        self.dict_barmes = []
+        for row_i in self.dict_eco_sorted:
+            barmes_i = {}
+            barmes_i['importe'] = row_i['importe']
+            barmes_i['anomes'] = row_i['anomes'][-2:]
+            self.dict_barmes.append(barmes_i)
+        dict_anomes_red = []
+        for k, v in groupby(self.dict_barmes, key=lambda x: x['anomes']):
+            linea = {'anomes': k, 'importe': sum(int(d['importe']) for d in v)}
+            utc_time = time.strptime(k, "%y")
+            epoch_time = timegm(utc_time)
+            linea['epoch'] = epoch_time
+            dict_anomes_red.append(linea)
+
+        self.ids.id_barano.x_values = [d['epoch'] for d in dict_anomes_red if 'epoch' in d]
+        self.ids.id_barano.y_values = [d['importe'] for d in dict_anomes_red if 'importe' in d]
+
+        self.max_epoch_evtemp = max(self.ids.id_barano.x_values)
+        self.min_epoch_evtemp = min(self.ids.id_barano.x_values)
+        self.eje_y_max_evtemp = round(max(self.ids.id_barano.y_values), -3) + 1000
+        self.eje_y_min_evtemp = round(min(self.ids.id_barano.y_values), -3)
+        num_saltos = 4
+        label_x_paso = []
+        label_y_paso = []
+        for i in range(num_saltos):
+            paso_y = (self.eje_y_max_evtemp - self.eje_y_min_evtemp) / num_saltos
+            paso_x = (self.max_epoch_evtemp - self.min_epoch_evtemp) / num_saltos
+            label_x_paso.append(self.min_epoch_evtemp + i * paso_x)
+            label_y_paso.append(self.eje_y_min_evtemp + i * paso_y)
+        label_x_paso = [epoch2human_year(t) for t in label_x_paso]
+
+        self.ids.id_barano.x_labels = label_x_paso
+        self.ids.id_barano.y_labels = label_y_paso
 
     def set_text_evtemp(self, args):
         # Como hemos guardado los valores de los ejes max y min en self podemos usarlos para calcular
@@ -217,6 +254,18 @@ Builder.load_string(
                 
                 Barras_mes:
                     id: id_barmes
+                    labels: True
+                    anim: True
+                    bg_color: 106/255, 188/255, 206/255, 1
+                    lines_color: [40/255, 107/255, 122/255, 1]
+                    line_width:dp(1)
+                    bars_color: [40/255, 107/255, 122/255, 1]
+                    labels_color: 40/255, 107/255, 122/255, 1
+                    trim: True
+                    #on_select: root.set_text(args)
+                    
+                Barras_mes:
+                    id: id_barano
                     labels: True
                     anim: True
                     bg_color: 106/255, 188/255, 206/255, 1

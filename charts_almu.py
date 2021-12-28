@@ -492,7 +492,7 @@ class AKBarChart_anomes(AKChartBase):
                 color=self.bars_color,
                 radius=[self.bars_radius, self.bars_radius, 0, 0],
                 size=[bar_width, new_y - bottom_line_y],
-                pos=[new_x, bottom_line_y],
+                pos=[new_x, bottom_line_y+10],
             )
         for i in range(0, len(self.x_labels)):
             if self.labels:
@@ -502,7 +502,7 @@ class AKBarChart_anomes(AKChartBase):
                 new_x = self.normalized_labels(x_label_num, "x", f_update)
                 new_y = self.normalized_labels(y_label, "y", f_update)
                 y_pos = [20, new_y]
-                x_pos = [new_x + bar_width / 2, 0]
+                x_pos = [new_x, 0]
                 self.draw_label(
                     text_x=x_label if x_label else str(x),
                     text_y=str(int(y_label/1000)) + 'k' if type(str(y_label)) == str else '',
@@ -516,8 +516,8 @@ class AKBarChart_anomes(AKChartBase):
             shape_name="line",
             canvas=canvas,
             points=[
-                [self._bottom_line_y(), dis],
-                [self.width - self._bottom_line_y(), dis],
+                [self._bottom_line_y(), dis+10],
+                [self.width - self._bottom_line_y(), dis+10],
             ],
             line_width=self.line_width,
             color=self.lines_color,
