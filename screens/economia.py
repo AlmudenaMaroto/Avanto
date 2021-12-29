@@ -13,6 +13,9 @@ from date_pick_esp import AKDatePicker_ini, AKDatePicker_fin
 import datetime
 from itertools import groupby
 from kivy.uix.popup import Popup
+from kivymd.uix.dialog import BaseDialog
+from kivymd.theming import ThemableBehavior
+from kivymd_extensions.akivymd.uix.selectionlist import AKSelectListAvatarItem
 from datetime import date
 
 today = date.today()
@@ -292,7 +295,9 @@ class Economia(MDScreen):
 
     def choose_etapa(self):
         etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted if 'etapa' in d]))
-        a = 0
+        a = Selectionlist_etapa()
+        a.on_enter()
+        a.open()
 
     def choose_categoria(self):
         pass
@@ -313,6 +318,35 @@ class Economia(MDScreen):
             return
         self.fecha_fin = "%d/%d/%d" % (date.day, date.month, date.year)
 
+
+class Selectionlist_etapa(BaseDialog, ThemableBehavior):
+
+    def on_enter(self):
+        self.ids.selectionlist.clear_widgets()
+        for x in range(20):
+            self.ids.selectionlist.add_widget(
+                AKSelectListAvatarItem(
+                    first_label="Item %d" % x,
+                    second_label="Description for item %d" % x
+                    # source="assets/logo.png",
+                )
+            )
+    #
+    # def on_leave(self):
+    #     return self.clear_selected()
+    #
+    # def get_selected(self):
+    #     items = self.ids.selectionlist.get_selection()
+    #     text = ""
+    #     for x in items:
+    #         text += ", %s" % x
+    #     return toast(text)
+    #
+    # def clear_selected(self):
+    #     return self.ids.selectionlist.clear_selection()
+    #
+    # def select_all(self):
+    #     return self.ids.selectionlist.select_all()
 
 Builder.load_string(
     """
@@ -385,10 +419,10 @@ Builder.load_string(
                     labels: True
                     anim: True
                     bg_color: 106/255, 188/255, 206/255, 1
-                    lines_color: [40/255, 107/255, 122/255, 1]
+                    #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
-                    bars_color: [40/255, 107/255, 122/255, 1]
-                    labels_color: 40/255, 107/255, 122/255, 1
+                    #bars_color: [40/255, 107/255, 122/255, 1]
+                    #labels_color: 40/255, 107/255, 122/255, 1
                     trim: True
                     #on_select: root.set_text(args)
                     
@@ -397,10 +431,10 @@ Builder.load_string(
                     labels: True
                     anim: True
                     bg_color: 106/255, 188/255, 206/255, 1
-                    lines_color: [40/255, 107/255, 122/255, 1]
+                    #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
-                    bars_color: [40/255, 107/255, 122/255, 1]
-                    labels_color: 40/255, 107/255, 122/255, 1
+                    #bars_color: [40/255, 107/255, 122/255, 1]
+                    #labels_color: 40/255, 107/255, 122/255, 1
                     trim: True
                     #on_select: root.set_text(args)
                     
@@ -464,6 +498,37 @@ Builder.load_string(
                 id: _label
                 halign: "center"
                 valign: "center"
+<Selectionlist_etapa>:
+    size_hint: None, None
+    size:
+        (dp(302), dp(450)) \
+        if root.theme_cls.device_orientation == "portrait" \
+        else (dp(450), dp(350))
+    BoxLayout:
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: root.theme_cls.bg_normal
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+        BoxLayout:
+            orientation:"vertical"
+            size_hint_y: None
+            height: dp(50)
+            canvas.before:
+                Color:
+                    rgba: root.theme_cls.primary_color
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
+            
+            ScrollView:
+                AKSelectList:
+                    id: selectionlist
+            MDLabeltitle2:
+                text:'Seleccionar Etapa'
 
 """
 )
