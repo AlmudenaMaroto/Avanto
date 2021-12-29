@@ -302,9 +302,8 @@ class AKChartBase(DrawTools, ThemableBehavior, RelativeLayout):
             _min = min_y
             _distance = y_distance
             _size = size[1]
-
         res = ((val - _min) / _distance) * (
-            _size - self._bottom_line_y() - padding*1.5
+            _size - self._bottom_line_y() - padding
         )
         return f_update * res + self._bottom_line_y()
 

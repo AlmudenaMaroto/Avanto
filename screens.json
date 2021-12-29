@@ -13,7 +13,7 @@
     	"icon": "window-maximize",
 		"menu": "si"
     },
-	"3. Economia": {
+	"3. Economía": {
     	"import": "economia",
     	"factory": "Economia",
     	"screen_name": "economia",

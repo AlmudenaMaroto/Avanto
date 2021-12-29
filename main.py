@@ -134,7 +134,7 @@ class DemoApp(MDApp):
 
     def on_start(self):
         with open(
-                path.join(path.dirname(__file__), "screens.json")
+                path.join(path.dirname(__file__), "screens.json"), encoding='utf-8'
         ) as read_file:
             self.data_screens = ast.literal_eval(read_file.read())
             data_screens = list(self.data_screens.keys())

@@ -1,5 +1,7 @@
 from kivy.lang.builder import Builder
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.datatables import MDDataTable
+from kivy.metrics import dp
 import sqlite3
 import os
 from datetime import datetime
@@ -72,21 +74,12 @@ class Economia(MDScreen):
         self.barchart_ano()
         self.calc_ahorros()
 
-        # saldo_total = self.ids.saldo_total
         id_evtemp = self.ids.id_evtemp
         id_barmes = self.ids.id_barmes
         id_barano = self.ids.id_barano
-        # progress_percent = self.ids.progress_percent
-        # ahorro_mensual_obj = self.ids.ahorro_mensual_obj
-        # domiciliaciones_mes = self.ids.domiciliaciones_mes
-        # saldo_total.update()
         id_evtemp.update()
         id_barmes.update()
         id_barano.update()
-        # progress_percent.update()
-        # ahorro_mensual_obj.update()
-        # domiciliaciones_mes.update()
-
 
     def calculos(self):
         # Reseteo de nuevo
@@ -271,8 +264,8 @@ class Economia(MDScreen):
         self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech), 2)) + ' €'
         A = 'STOP'
 
-    def tasa_ahorro(self):
-        pass
+    def tasa_ahorro_tabla(self):
+        tabla1 = MDDataTable(column_data = [("Col 1", dp(30)), ("Col 2", dp(30)), ("Col 3", dp(30))])
 
     def choose_etapa(self):
         pass
@@ -377,6 +370,9 @@ Builder.load_string(
                     pos_hint: {"center_x": .5, "center_y": .5}
                     size_hint: None, None
                     size: dp(100), dp(100)
+                    circle_color: 106/255, 188/255, 206/255, 1
+                    percent_color: 106/255, 188/255, 206/255, 1
+                    background_circle_color:106/255, 188/255, 206/255, 1
                     percent_type: "percent"
                     start_deg: 180
                     end_deg: 540
