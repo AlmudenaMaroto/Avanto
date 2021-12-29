@@ -591,7 +591,7 @@ class AKBarChart_ano(AKChartBase):
                 size=[bar_width, new_y - bottom_line_y],
                 pos=[new_x, bottom_line_y+25],
             )
-            posicion_barras_save.append([new_x, bottom_line_y+25])
+            posicion_barras_save.append([new_x+bar_width*0.5, bottom_line_y])
         for i in range(0, len(self.x_labels)):
             if self.labels:
                 x_label = self.x_labels[i] if self.x_labels else False
@@ -600,7 +600,7 @@ class AKBarChart_ano(AKChartBase):
                 new_x = self.normalized_labels(x_label_num, "x", f_update)
                 new_y = self.normalized_labels(y_label, "y", f_update)
                 y_pos = [20, new_y+10]
-                x_pos = [new_x, 0+10]
+                x_pos = posicion_barras_save[i]
                 self.draw_label(
                     text_x=x_label if x_label else str(x),
                     text_y=str(int(y_label/1000)) + 'k' if type(str(y_label)) == str else '',
