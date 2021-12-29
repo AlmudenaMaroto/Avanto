@@ -11,13 +11,11 @@ import charts_almu
 import chart_progress
 from date_pick_esp import AKDatePicker_ini, AKDatePicker_fin
 import datetime
-
 from itertools import groupby
-from datetime import date
-today = date.today()
 from kivy.uix.popup import Popup
+from datetime import date
 
-
+today = date.today()
 
 
 def epoch2human(epoch):
@@ -31,7 +29,7 @@ def epoch2human_year(epoch):
 
 
 def filtrar_dict_fechas(dic, epoch_ini, epoch_fin):
-    return (dic['epoch'] > epoch_ini and dic['epoch'] < epoch_fin)
+    return epoch_ini < dic['epoch'] < epoch_fin
 
 
 def filtrar_ingresos(dic):
@@ -41,13 +39,13 @@ def filtrar_ingresos(dic):
 def filtrar_gastos(dic):
     return dic['importe'] < 0
 
+
 def filtrar_fecha_ini(dic, fecha_ini):
     return datetime.datetime.strptime(dic['fecha'], '%d/%m/%Y') > datetime.datetime.strptime(fecha_ini, '%d/%m/%Y')
 
+
 def filtrar_fecha_fin(dic, fecha_fin):
     return datetime.datetime.strptime(dic['fecha'], '%d/%m/%Y') < datetime.datetime.strptime(fecha_fin, '%d/%m/%Y')
-
-
 
 
 class MessagePopup_eco(Popup):
@@ -66,8 +64,15 @@ class Economia(MDScreen):
         self.min_epoch_evtemp = 0
         self.eje_y_max_evtemp = 0
         self.eje_y_min_evtemp = 0
+        self.saldo_total = 0
         self.fecha_ini = ''
         self.fecha_fin = ''
+        self.obj_cuenta = 0
+        self.obj_fecha = 0
+        self.obj_peso = 0
+        self.domiciliaciones = ''
+        self.ingresos = ''
+        self.obj_tasa = 0
         self.update()
 
     def update(self):
@@ -80,7 +85,8 @@ class Economia(MDScreen):
             self.obj_fecha = i[2]
             self.obj_peso = i[3]
             self.domiciliaciones = i[4]
-            self.obj_tasa = i[5]
+            self.ingresos = i[5]
+            self.obj_tasa = i[6]
         con.close()
         self.calculos()
         self.barchart_datos()
@@ -152,7 +158,6 @@ class Economia(MDScreen):
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_ini(d, self.fecha_ini)]
         if self.fecha_fin != '':
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_fin(d, self.fecha_fin)]
-
 
         # Para no petar el grafico, cogemos menos valores
         maximo_saldo = max(self.dict_eco_sorted, key=lambda x: x['saldo']).get('saldo')
@@ -283,10 +288,11 @@ class Economia(MDScreen):
         self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech), 2)) + ' €'
 
     def tasa_ahorro_tabla(self):
-        tabla1 = MDDataTable(column_data = [("Col 1", dp(30)), ("Col 2", dp(30)), ("Col 3", dp(30))])
+        tabla1 = MDDataTable(column_data=[("Col 1", dp(30)), ("Col 2", dp(30)), ("Col 3", dp(30))])
 
     def choose_etapa(self):
-        pass
+        etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted if 'etapa' in d]))
+        a = 0
 
     def choose_categoria(self):
         pass
@@ -302,12 +308,10 @@ class Economia(MDScreen):
             return
         self.fecha_ini = "%d/%d/%d" % (date.day, date.month, date.year)
 
-
     def callback_fin(self, date):
         if not date:
             return
         self.fecha_fin = "%d/%d/%d" % (date.day, date.month, date.year)
-
 
 
 Builder.load_string(

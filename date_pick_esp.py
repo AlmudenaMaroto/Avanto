@@ -226,7 +226,7 @@ Builder.load_string(
 
 class AKDatePicker_ini(BaseDialog, ThemableBehavior):
     year_today = today.strftime("%Y")
-    year_range = ListProperty([1930, int(year_today)+1])
+    year_range = ListProperty([1990, int(year_today)+1])
     month_type = OptionProperty("string", options=["string", "int"])
     _day_title = StringProperty("-")
     _month_title = StringProperty("-")
@@ -311,7 +311,7 @@ class AKDatePicker_ini(BaseDialog, ThemableBehavior):
 
 class AKDatePicker_fin(BaseDialog, ThemableBehavior):
     year_today = today.strftime("%Y")
-    year_range = ListProperty([1930, int(year_today)+1])
+    year_range = ListProperty([1990, int(year_today)+1])
     month_type = OptionProperty("string", options=["string", "int"])
     _day_title = StringProperty("-")
     _month_title = StringProperty("-")
