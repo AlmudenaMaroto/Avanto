@@ -10,7 +10,10 @@ import chart_progress
 import datetime
 from itertools import groupby
 from datetime import date
+from kivy.uix.popup import Popup
+
 today = date.today()
+
 
 def epoch2human(epoch):
     return time.strftime('%m/%y',
@@ -21,19 +24,27 @@ def epoch2human_year(epoch):
     return time.strftime('%Y',
                          time.localtime(int(epoch)))
 
+
 def filtrar_dict_fechas(dic, epoch_ini, epoch_fin):
     return (dic['epoch'] > epoch_ini and dic['epoch'] < epoch_fin)
 
+
 def filtrar_ingresos(dic):
     return dic['importe'] > 0
+
 
 def filtrar_gastos(dic):
     return dic['importe'] < 0
 
 
+class MessagePopup_eco(Popup):
+    pass
+
+
 class Economia(MDScreen):
     def __init__(self, **kwargs):
         super(Economia, self).__init__()
+        self.Popup = MessagePopup_eco()
         self.path_app = os.getcwd()
         self.dict_eco_sorted = {}
         self.dict_barmes = []
@@ -42,6 +53,9 @@ class Economia(MDScreen):
         self.min_epoch_evtemp = 0
         self.eje_y_max_evtemp = 0
         self.eje_y_min_evtemp = 0
+        self.update()
+
+    def update(self):
         con = sqlite3.connect(self.path_app + '/globales.db')
         cursor = con.cursor()
         orden_execute = 'select * from globales'
@@ -58,7 +72,31 @@ class Economia(MDScreen):
         self.barchart_ano()
         self.calc_ahorros()
 
+        # saldo_total = self.ids.saldo_total
+        id_evtemp = self.ids.id_evtemp
+        id_barmes = self.ids.id_barmes
+        id_barano = self.ids.id_barano
+        # progress_percent = self.ids.progress_percent
+        # ahorro_mensual_obj = self.ids.ahorro_mensual_obj
+        # domiciliaciones_mes = self.ids.domiciliaciones_mes
+        # saldo_total.update()
+        id_evtemp.update()
+        id_barmes.update()
+        id_barano.update()
+        # progress_percent.update()
+        # ahorro_mensual_obj.update()
+        # domiciliaciones_mes.update()
+
+
     def calculos(self):
+        # Reseteo de nuevo
+        self.dict_eco_sorted = {}
+        self.dict_barmes = []
+        self.dict_barano = []
+        self.max_epoch_evtemp = 0
+        self.min_epoch_evtemp = 0
+        self.eje_y_max_evtemp = 0
+        self.eje_y_min_evtemp = 0
         ########################
         # Linea temporal:      #
         ########################
@@ -101,6 +139,7 @@ class Economia(MDScreen):
             except ValueError:
                 pass
         con.close()
+
         self.dict_eco_sorted = sorted(dict_eco, key=lambda d: d['epoch'], reverse=False)
 
         # Para no petar el grafico, cogemos menos valores
@@ -221,21 +260,19 @@ class Economia(MDScreen):
         # Ahorro mensual a realizar:
         fecha_obj = datetime.datetime.strptime(self.obj_fecha, '%d/%m/%Y')
         diff_fechas = (fecha_obj - datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y')).days
-        self.ids.ahorro_mensual_obj.text = str(round((self.obj_cuenta - self.saldo_total)*30/(diff_fechas))) + ' €'
+        self.ids.ahorro_mensual_obj.text = str(round((self.obj_cuenta - self.saldo_total) * 30 / (diff_fechas))) + ' €'
         # Gasto en domiciliaciones al mes (ultimos 30 dias)
-        domiciliaciones_list = self.domiciliaciones.replace(' ','').split(',')
+        domiciliaciones_list = self.domiciliaciones.replace(' ', '').split(',')
         epoch_fin = datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y').timestamp()
-        epoch_ini = (datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y')- datetime.timedelta(days=30)).timestamp()
+        epoch_ini = (datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y') - datetime.timedelta(
+            days=30)).timestamp()
         dict_domic = list(filter(lambda d: d['categoria'] in domiciliaciones_list, self.dict_eco_sorted))
         dict_domic_fech = [d for d in dict_domic if filtrar_dict_fechas(d, epoch_ini, epoch_fin)]
-        self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech),2)) + ' €'
+        self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech), 2)) + ' €'
+        A = 'STOP'
 
     def tasa_ahorro(self):
         pass
-
-    def update(self):
-        self.calculos()
-        self.barchart_datos()
 
     def choose_etapa(self):
         pass
@@ -262,6 +299,18 @@ Builder.load_string(
     x_values: [0, 5, 8, 15]
     y_values: [0, 10, 6, 8]
     label_size: dp(12)
+
+<MessagePopup_eco>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            id: message
+            size_hint: 1,0.8
+            text: ''
+        Button:
+            size_hint: 1,0.2
+            text: 'Regresar'
+            on_press: root.dismiss()
 
 <Economia>
     on_leave: pass
@@ -349,7 +398,7 @@ Builder.load_string(
                     valign: "center"
                 
 
-        MDFloatLayout:
+        MDBoxLayout:
             size_hint_y: 0.05
             MDRaisedButton:
                 
@@ -358,16 +407,18 @@ Builder.load_string(
                 on_release: root.choose_etapa()
                 
             MDRaisedButton:
-                pos_hint: {"center_x": .5}
                 md_bg_color: 143/255, 219/255, 236/255, 1
                 text: "Categoría"
                 on_release: root.choose_categoria()
                 
             MDRaisedButton:
-                pos_hint: {"center_x": .87}
                 md_bg_color: 143/255, 219/255, 236/255, 1
                 text: "Fecha"
                 on_release: root.choose_fecha()
+            MDRaisedButton:
+                md_bg_color: 143/255, 219/255, 236/255, 1
+                text: "Actualizar"
+                on_release: root.update()
 
             MDLabel:
                 id: _label

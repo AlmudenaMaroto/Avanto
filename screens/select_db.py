@@ -182,7 +182,8 @@ class Vbles_globalesWid(BoxLayout):
             self.ids.Obj_fecha.text = i[2]
             self.ids.Obj_peso.text = str(i[3])
             self.ids.Domiciliaciones.text = i[4]
-            self.ids.Obj_tasa.text = str(i[5])
+            self.ids.Ingresos.text = i[5]
+            self.ids.Obj_tasa.text = str(i[6])
         con.close()
 
     def update_data(self):
@@ -194,10 +195,11 @@ class Vbles_globalesWid(BoxLayout):
         d3 = self.ids.Obj_fecha.text
         d4 = self.ids.Obj_peso.text
         d5 = self.ids.Domiciliaciones.text
-        d6 = self.ids.Obj_tasa.text
-        a1 = (d2, d3, d4, d5, d6)
+        d6 = self.ids.Ingresos.text
+        d7 = self.ids.Obj_tasa.text
+        a1 = (d2, d3, d4, d5, d6, d7)
         s1 = 'UPDATE globales SET'
-        s2 = 'Obj_cuenta=%s,Obj_fecha="%s",Obj_peso=%s,Domiciliaciones="%s",Obj_tasa=%s' % a1
+        s2 = 'Obj_cuenta=%s,Obj_fecha="%s",Obj_peso=%s,Domiciliaciones="%s", Ingresos="%s",Obj_tasa=%s' % a1
         s3 = 'WHERE ID=1'
         try:
             cursor.execute(s1 + ' ' + s2 + ' ' + s3)
@@ -875,12 +877,18 @@ WindowManager_select:
         id: Obj_peso
         multiline: False
         hint_text: ' Kg'
-    Label: # ---------- Categoría
+    Label: # ---------- Domiciliaciones
         text: ' Domiciliaciones (separados por coma):'
     TextInput:
         id: Domiciliaciones
         multiline: False
         hint_text: 'ABONO, SPOTIFY,...'
+    Label: # ---------- Ingresos
+        text: ' Ingresos (separados por coma):'
+    TextInput:
+        id: Ingresos
+        multiline: False
+        hint_text: 'SALARIO, BECA,...'
     Label: # ---------- Importe
         text: ' Objetivo tasa de ahorro (%):'
     TextInput:

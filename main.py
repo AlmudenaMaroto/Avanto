@@ -69,11 +69,12 @@ def create_table_vbles_globales(cursor):
         Obj_fecha           TEXT,
         Obj_peso             FLOAT,
         Domiciliaciones      TEXT,
+        Ingresos TEXT,
         Obj_tasa FLOAT
         )''')
 
     cursor.execute(
-        '''INSERT INTO globales (ID, Obj_cuenta, Obj_fecha, Obj_peso, Domiciliaciones, Obj_tasa) VALUES (1,25000,'01/09/2022',60,'ABONO',80)'''
+        '''INSERT INTO globales (ID, Obj_cuenta, Obj_fecha, Obj_peso, Domiciliaciones, Ingresos, Obj_tasa) VALUES (1,25000,'01/09/2022',60,'ABONO', 'SALARIO',80)'''
     )
 
 
