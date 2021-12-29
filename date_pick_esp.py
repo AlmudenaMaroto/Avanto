@@ -119,11 +119,11 @@ Builder.load_string(
                     pos: self.pos
                     radius: [(0.0, 10.0), (0.0, 10.0), (10, 10), (10, 10)]
             MDFlatButton:
-                text: "Cancel"
+                text: "Cancelar"
                 pos_hint: {"center_x": .5, "center_y": .5}
                 on_release: root.cancel()
             MDFlatButton:
-                text: "Select"
+                text: "Seleccionar"
                 pos_hint: {"center_x": .5, "center_y": .5}
                 on_release: root._choose()
 <AKDatePicker_fin>:
@@ -213,11 +213,11 @@ Builder.load_string(
                     pos: self.pos
                     radius: [(0.0, 10.0), (0.0, 10.0), (10, 10), (10, 10)]
             MDFlatButton:
-                text: "Cancel"
+                text: "Cancelar"
                 pos_hint: {"center_x": .5, "center_y": .5}
                 on_release: root.cancel()
             MDFlatButton:
-                text: "Select"
+                text: "Seleccionar"
                 pos_hint: {"center_x": .5, "center_y": .5}
                 on_release: root._choose()
 """

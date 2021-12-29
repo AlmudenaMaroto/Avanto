@@ -151,7 +151,7 @@
     	"factory": "DatePicker",
     	"screen_name": "datepicker",
     	"icon": "calendar",
-		"menu": "si"
+		"menu": "no"
     },
     "Progress Widget": {
     	"import": "progresswidget",

@@ -41,6 +41,14 @@ def filtrar_ingresos(dic):
 def filtrar_gastos(dic):
     return dic['importe'] < 0
 
+def filtrar_fecha_ini(dic, fecha_ini):
+    return datetime.datetime.strptime(dic['fecha'], '%d/%m/%Y') > datetime.datetime.strptime(fecha_ini, '%d/%m/%Y')
+
+def filtrar_fecha_fin(dic, fecha_fin):
+    return datetime.datetime.strptime(dic['fecha'], '%d/%m/%Y') < datetime.datetime.strptime(fecha_fin, '%d/%m/%Y')
+
+
+
 
 class MessagePopup_eco(Popup):
     pass
@@ -140,6 +148,11 @@ class Economia(MDScreen):
         con.close()
 
         self.dict_eco_sorted = sorted(dict_eco, key=lambda d: d['epoch'], reverse=False)
+        if self.fecha_ini != '':
+            self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_ini(d, self.fecha_ini)]
+        if self.fecha_fin != '':
+            self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_fin(d, self.fecha_fin)]
+
 
         # Para no petar el grafico, cogemos menos valores
         maximo_saldo = max(self.dict_eco_sorted, key=lambda x: x['saldo']).get('saldo')
@@ -227,7 +240,7 @@ class Economia(MDScreen):
         self.min_epoch_evtemp = min([int('20' + d['anomes']) for d in dict_anomes_red if 'anomes' in d])
         self.eje_y_max_evtemp = round(max(self.ids.id_barano.y_values), -3) + 1000
         self.eje_y_min_evtemp = round(min(self.ids.id_barano.y_values), -3)
-        num_saltos = 4
+        num_saltos = len(dict_anomes_red)
         label_x_paso = []
         label_y_paso = []
         for i in range(num_saltos):
@@ -287,15 +300,13 @@ class Economia(MDScreen):
     def callback_ini(self, date):
         if not date:
             return
+        self.fecha_ini = "%d/%d/%d" % (date.day, date.month, date.year)
 
-        self.fecha_ini = "%d / %d / %d" % (date.day, date.month, date.year)
-        b='stop'
 
     def callback_fin(self, date):
         if not date:
             return
-        self.fecha_fin = "%d / %d / %d" % (date.day, date.month, date.year)
-        b='stp'
+        self.fecha_fin = "%d/%d/%d" % (date.day, date.month, date.year)
 
 
 
