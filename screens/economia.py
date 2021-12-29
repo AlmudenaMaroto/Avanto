@@ -9,12 +9,15 @@ import time
 from calendar import timegm
 import charts_almu
 import chart_progress
+from date_pick_esp import AKDatePicker_ini, AKDatePicker_fin
 import datetime
+
 from itertools import groupby
 from datetime import date
+today = date.today()
 from kivy.uix.popup import Popup
 
-today = date.today()
+
 
 
 def epoch2human(epoch):
@@ -55,6 +58,8 @@ class Economia(MDScreen):
         self.min_epoch_evtemp = 0
         self.eje_y_max_evtemp = 0
         self.eje_y_min_evtemp = 0
+        self.fecha_ini = ''
+        self.fecha_fin = ''
         self.update()
 
     def update(self):
@@ -73,6 +78,7 @@ class Economia(MDScreen):
         self.barchart_datos()
         self.barchart_ano()
         self.calc_ahorros()
+        self.tasa_ahorro_tabla()
 
         id_evtemp = self.ids.id_evtemp
         id_barmes = self.ids.id_barmes
@@ -262,7 +268,6 @@ class Economia(MDScreen):
         dict_domic = list(filter(lambda d: d['categoria'] in domiciliaciones_list, self.dict_eco_sorted))
         dict_domic_fech = [d for d in dict_domic if filtrar_dict_fechas(d, epoch_ini, epoch_fin)]
         self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech), 2)) + ' €'
-        A = 'STOP'
 
     def tasa_ahorro_tabla(self):
         tabla1 = MDDataTable(column_data = [("Col 1", dp(30)), ("Col 2", dp(30)), ("Col 3", dp(30))])
@@ -274,7 +279,24 @@ class Economia(MDScreen):
         pass
 
     def choose_fecha(self):
-        pass
+        self.date = AKDatePicker_ini(callback=self.callback_ini)
+        self.date.open()
+        self.date = AKDatePicker_fin(callback=self.callback_fin)
+        self.date.open()
+
+    def callback_ini(self, date):
+        if not date:
+            return
+
+        self.fecha_ini = "%d / %d / %d" % (date.day, date.month, date.year)
+        b='stop'
+
+    def callback_fin(self, date):
+        if not date:
+            return
+        self.fecha_fin = "%d / %d / %d" % (date.day, date.month, date.year)
+        b='stp'
+
 
 
 Builder.load_string(

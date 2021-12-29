@@ -39,7 +39,7 @@
     	"factory": "Dataloader",
     	"screen_name": "dataloader",
     	"icon": "reload",
-		"menu": "si"
+		"menu": "no"
     },
     "Selectionlist": {
     	"import": "selectionlist",
@@ -151,7 +151,7 @@
     	"factory": "DatePicker",
     	"screen_name": "datepicker",
     	"icon": "calendar",
-		"menu": "no"
+		"menu": "si"
     },
     "Progress Widget": {
     	"import": "progresswidget",
