@@ -489,7 +489,7 @@ class AKBarChart_anomes(AKChartBase):
                 color=self.bars_color,
                 radius=[self.bars_radius, self.bars_radius, 0, 0],
                 size=[bar_width, new_y - bottom_line_y],
-                pos=[new_x, bottom_line_y+10],
+                pos=[new_x, bottom_line_y+25],
             )
         for i in range(0, len(self.x_labels)):
             if self.labels:
@@ -498,8 +498,8 @@ class AKBarChart_anomes(AKChartBase):
                 y_label = self.y_labels[i] if self.y_labels else False
                 new_x = self.normalized_labels(x_label_num, "x", f_update)
                 new_y = self.normalized_labels(y_label, "y", f_update)
-                y_pos = [20, new_y]
-                x_pos = [new_x, 0]
+                y_pos = [20, new_y+10]
+                x_pos = [new_x, 0+10]
                 self.draw_label(
                     text_x=x_label if x_label else str(x),
                     text_y=str(int(y_label/1000)) + 'k' if type(str(y_label)) == str else '',
@@ -513,8 +513,109 @@ class AKBarChart_anomes(AKChartBase):
             shape_name="line",
             canvas=canvas,
             points=[
-                [self._bottom_line_y(), dis+10],
-                [self.width - self._bottom_line_y(), dis+10],
+                [self._bottom_line_y(), dis+25],
+                [self.width - self._bottom_line_y(), dis+25],
+            ],
+            line_width=self.line_width,
+            color=self.lines_color,
+        )
+        self._myinit = False
+
+    def get_bar_x(self, bar_count):
+        bar_width = self.get_bar_width()
+        total_width = (
+            bar_width * bar_count
+            + (bar_count - 1) * self.bars_spacing
+            + self.label_size * 4
+        )
+        start_pos = (self.width - total_width) / 2
+        x_list = []
+        for x in range(0, bar_count):
+            x_pos = (
+                start_pos
+                + (bar_width + self.bars_spacing) * x
+                + self.label_size * 2
+            )
+            x_list.append(x_pos)
+        return x_list
+
+    def get_bar_width(self):
+        bars_count = len(self.x_values)
+        spacing = self.bars_spacing
+        width = self.width
+        bar_width = (
+            width - (bars_count + 1) * spacing - self.label_size * 4
+        ) / bars_count
+        if bar_width > self.max_bar_width:
+            return self.max_bar_width
+        elif bar_width < self.min_bar_width:
+            return self.min_bar_width
+        else:
+            return bar_width
+
+
+class AKBarChart_ano(AKChartBase):
+    max_bar_width = NumericProperty("80dp")
+    min_bar_width = NumericProperty("3dp")
+    bars_spacing = NumericProperty("2dp")
+    bars_radius = NumericProperty("2dp")
+    bars_color = ColorProperty([1, 1, 1, 1])
+
+    def _update(self, anim=False, *args):
+        super()._update()
+        x_values = self.x_values
+        y_values = self.y_values
+        canvas = self._canvas.canvas
+        drawer = self.draw_shape
+        # bottom line
+        bottom_line_y = self._bottom_line_y()
+        count = len(self.y_values)
+        bars_x_list = self.get_bar_x(count)
+        bar_width = self.get_bar_width()
+        f_update = self._loaded if anim else 1
+        posicion_barras_save = []
+        for i in range(0, count):
+            x = x_values[i]
+            # x_label = self.x_labels[i] if self.x_labels else False
+            # y_label = self.y_labels[i] if self.y_labels else False
+            y = y_values[i]
+            new_x = bars_x_list[i]
+            new_y = self._get_normalized_cor(y, "y", f_update)
+            bottom_line_y = self._get_normalized_cor(0, "y", f_update)
+            drawer(
+                "bars",
+                shape_name="roundedRectangle",
+                canvas=canvas.after,
+                color=self.bars_color,
+                radius=[self.bars_radius, self.bars_radius, 0, 0],
+                size=[bar_width, new_y - bottom_line_y],
+                pos=[new_x, bottom_line_y+25],
+            )
+            posicion_barras_save.append([new_x, bottom_line_y+25])
+        for i in range(0, len(self.x_labels)):
+            if self.labels:
+                x_label = self.x_labels[i] if self.x_labels else False
+                x_label_num = [*range(0, len(self.x_labels), 1)][i] if self.x_labels else False
+                y_label = self.y_labels[i] if self.y_labels else False
+                new_x = self.normalized_labels(x_label_num, "x", f_update)
+                new_y = self.normalized_labels(y_label, "y", f_update)
+                y_pos = [20, new_y+10]
+                x_pos = [new_x, 0+10]
+                self.draw_label(
+                    text_x=x_label if x_label else str(x),
+                    text_y=str(int(y_label/1000)) + 'k' if type(str(y_label)) == str else '',
+                    center_pos_x=x_pos,
+                    center_pos_y=y_pos,
+                    idx=len(self.x_labels) - i - 1,
+                )
+        dis = bottom_line_y
+        self.draw_shape(
+            "line",
+            shape_name="line",
+            canvas=canvas,
+            points=[
+                [self._bottom_line_y(), dis+25],
+                [self.width - self._bottom_line_y(), dis+25],
             ],
             line_width=self.line_width,
             color=self.lines_color,

@@ -293,6 +293,13 @@ Builder.load_string(
     y_values: [0, 10, 6, 8]
     label_size: dp(12)
 
+<Barras_ano@AKBarChart_ano>
+    size_hint_y: None
+    height: dp(180)
+    x_values: [0, 5, 8, 15]
+    y_values: [0, 10, 6, 8]
+    label_size: dp(12)
+
 <MessagePopup_eco>:
     BoxLayout:
         orientation: 'vertical'
@@ -348,7 +355,7 @@ Builder.load_string(
                     trim: True
                     #on_select: root.set_text(args)
                     
-                Barras_mes:
+                Barras_ano:
                     id: id_barano
                     labels: True
                     anim: True
