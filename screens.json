@@ -39,7 +39,7 @@
     	"factory": "Dataloader",
     	"screen_name": "dataloader",
     	"icon": "reload",
-		"menu": "no"
+		"menu": "si"
     },
     "Selectionlist": {
     	"import": "selectionlist",

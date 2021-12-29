@@ -190,6 +190,7 @@ class Import_data(BoxLayout):
                 for each_row in row2:
                     try:
                         string_list = each_row.split(";")
+                        string_list[0] = string_list[0].replace("ï»¿","")
                         string_list[4] = string_list[4].replace(",", ".")
                         string_list = tuple(string_list)
                         if self.bbdd == 'movimientos':
@@ -213,7 +214,7 @@ class Import_data(BoxLayout):
                 message = self.Popup.ids.message
                 self.Popup.open()
                 self.Popup.title = "Líneas generadas"
-                message.text = "Hay " + str(incorrectas) + " con formato incorrecto o ID repetido"
+                message.text = "Hay " + str(incorrectas-1) + " con formato incorrecto o ID repetido"
         else:
             message = self.Popup.ids.message
             self.Popup.open()
