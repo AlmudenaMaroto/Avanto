@@ -46,7 +46,7 @@
     	"factory": "Selectionlist",
     	"screen_name": "selectionlist",
     	"icon": "list-status",
-		"menu": "no"
+		"menu": "si"
     },
     "Piechart": {
     	"import": "piechart",

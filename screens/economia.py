@@ -20,7 +20,8 @@ from listas_config import AKSelectListAvatarItem_etapa
 from datetime import date
 
 today = date.today()
-lista_seleccionada_etapa = ''
+lista_seleccionada_etapa = []
+
 
 def epoch2human(epoch):
     return time.strftime('%m/%y',
@@ -50,6 +51,7 @@ def filtrar_fecha_ini(dic, fecha_ini):
 
 def filtrar_fecha_fin(dic, fecha_fin):
     return datetime.datetime.strptime(dic['fecha'], '%d/%m/%Y') < datetime.datetime.strptime(fecha_fin, '%d/%m/%Y')
+
 
 def filtrar_etapa(dic, lista_etapas):
     for etapa_i in lista_etapas:
@@ -85,6 +87,7 @@ class Economia(MDScreen):
         self.lista_etapas = ''
         self.filtrado_etapa = 1
         self.etapas_posibles = ''
+        self.date = ''
         self.update()
 
     def update(self):
@@ -142,6 +145,8 @@ class Economia(MDScreen):
         orden_execute = 'select * from movimientos'
         cursor.execute(orden_execute)
         ticks_sobrecarga = round(longitud / 300)
+        if ticks_sobrecarga == 0:
+            ticks_sobrecarga = 1
         for i in cursor:
             saldo = round(saldo + i[4], 2)
             try:
@@ -171,7 +176,7 @@ class Economia(MDScreen):
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_ini(d, self.fecha_ini)]
         if self.fecha_fin != '':
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_fin(d, self.fecha_fin)]
-        if lista_seleccionada_etapa != '':
+        if lista_seleccionada_etapa != []:
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
 
         #############################################
@@ -202,8 +207,9 @@ class Economia(MDScreen):
         self.ids.id_evtemp.y_labels = label_y_paso
 
         # Cuenta actual
-        self.saldo_total = self.dict_eco_sorted[-1].get('saldo')
-        self.ids.saldo_total.text = str(self.saldo_total) + ' €'
+        self.saldo_total = 0
+        self.saldo_total = sum(item['importe'] for item in self.dict_eco_sorted)
+        self.ids.saldo_total.text = str(round(self.saldo_total, 2)) + ' €'
 
     def barchart_datos(self):
         for row_i in self.dict_eco_sorted:
@@ -293,7 +299,7 @@ class Economia(MDScreen):
         # Ahorro mensual a realizar:
         fecha_obj = datetime.datetime.strptime(self.obj_fecha, '%d/%m/%Y')
         diff_fechas = (fecha_obj - datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y')).days
-        self.ids.ahorro_mensual_obj.text = str(round((self.obj_cuenta - self.saldo_total) * 30 / (diff_fechas))) + ' €'
+        self.ids.ahorro_mensual_obj.text = str(round((self.obj_cuenta - self.saldo_total) * 30 / diff_fechas)) + ' €'
         # Gasto en domiciliaciones al mes (ultimos 30 dias)
         domiciliaciones_list = self.domiciliaciones.replace(' ', '').split(',')
         epoch_fin = datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y').timestamp()
@@ -304,7 +310,7 @@ class Economia(MDScreen):
         self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech), 2)) + ' €'
 
     def tasa_ahorro_tabla(self):
-        tabla1 = MDDataTable(column_data=[("Col 1", dp(30)), ("Col 2", dp(30)), ("Col 3", dp(30))])
+        pass
 
     def choose_etapa(self):
         if self.filtrado_etapa:
@@ -323,15 +329,15 @@ class Economia(MDScreen):
         self.date = AKDatePicker_fin(callback=self.callback_fin)
         self.date.open()
 
-    def callback_ini(self, date):
-        if not date:
+    def callback_ini(self, date_i):
+        if not date_i:
             return
-        self.fecha_ini = "%d/%d/%d" % (date.day, date.month, date.year)
+        self.fecha_ini = "%d/%d/%d" % (date_i.day, date_i.month, date_i.year)
 
-    def callback_fin(self, date):
-        if not date:
+    def callback_fin(self, date_i):
+        if not date_i:
             return
-        self.fecha_fin = "%d/%d/%d" % (date.day, date.month, date.year)
+        self.fecha_fin = "%d/%d/%d" % (date_i.day, date_i.month, date_i.year)
 
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
