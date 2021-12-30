@@ -17,7 +17,7 @@ from kivymd.uix.dialog import BaseDialog
 from kivymd.theming import ThemableBehavior
 # from kivymd_extensions.akivymd.uix.selectionlist import AKSelectListAvatarItem
 from listas_config import AKSelectListAvatarItem_etapa
-from kivymd_extensions.akivymd.uix.charts import AKPieChart
+from charts_almu import AKPieChart
 from datetime import date
 
 today = date.today()
@@ -100,6 +100,7 @@ class Economia(MDScreen):
         self.categorias_posibles = ''
         self.date = ''
         self.error = 0
+        self.piechart = ''
         self.update()
 
     def update(self):
@@ -395,12 +396,11 @@ class Economia(MDScreen):
             # dict_etapa_importe.append(linea)
         total_perc = sum(list_dict_etapa_importe.values())
         list_dict_etapa_importe.update((x, y * 100/total_perc) for x, y in list_dict_etapa_importe.items())
-        # items = [{"Python": 40, "Java": 30, "C++": 10, "PHP": 8, "Ruby": 12}]
         self.piechart = AKPieChart(
             items=[list_dict_etapa_importe],
             pos_hint={"center_x": 0.5, "center_y": 0.5},
             size_hint=[None, None],
-            size=(dp(300), dp(300)),
+            size=(dp(250), dp(250)),
         )
         self.ids.chart_box.add_widget(self.piechart)
 

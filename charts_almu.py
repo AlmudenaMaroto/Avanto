@@ -152,6 +152,8 @@ class AKPieChart(ThemableBehavior, BoxLayout):
                     alpha = 1
 
                 if self.color_mode == "colors":
+                    while color_item > len(palette):
+                        color_item = color_item - len(palette)
                     color = get_color_from_hex(
                         colors[palette[color_item]]["500"]
                     )
@@ -182,7 +184,7 @@ class AKPieChart(ThemableBehavior, BoxLayout):
                         angle_start=angle_start,
                         angle_end=angle_start + value,
                     )
-            color_item += 1
+            color_item += 2
             angle_start += value
 
         angle_start = 0
