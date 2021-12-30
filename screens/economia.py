@@ -20,7 +20,7 @@ from listas_config import AKSelectListAvatarItem_etapa
 from datetime import date
 
 today = date.today()
-
+lista_seleccionada_etapa = ''
 
 def epoch2human(epoch):
     return time.strftime('%m/%y',
@@ -51,6 +51,11 @@ def filtrar_fecha_ini(dic, fecha_ini):
 def filtrar_fecha_fin(dic, fecha_fin):
     return datetime.datetime.strptime(dic['fecha'], '%d/%m/%Y') < datetime.datetime.strptime(fecha_fin, '%d/%m/%Y')
 
+def filtrar_etapa(dic, lista_etapas):
+    for etapa_i in lista_etapas:
+        if dic['etapa'] == etapa_i:
+            return True
+
 
 class MessagePopup_eco(Popup):
     pass
@@ -78,6 +83,8 @@ class Economia(MDScreen):
         self.ingresos = ''
         self.obj_tasa = 0
         self.lista_etapas = ''
+        self.filtrado_etapa = 1
+        self.etapas_posibles = ''
         self.update()
 
     def update(self):
@@ -158,12 +165,16 @@ class Economia(MDScreen):
                 pass
         con.close()
 
+        ################ FILTROS ####################
         self.dict_eco_sorted = sorted(dict_eco, key=lambda d: d['epoch'], reverse=False)
         if self.fecha_ini != '':
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_ini(d, self.fecha_ini)]
         if self.fecha_fin != '':
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_fin(d, self.fecha_fin)]
+        if lista_seleccionada_etapa != '':
+            self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
 
+        #############################################
         # Para no petar el grafico, cogemos menos valores
         maximo_saldo = max(self.dict_eco_sorted, key=lambda x: x['saldo']).get('saldo')
         minimo_saldo = min(self.dict_eco_sorted, key=lambda x: x['saldo']).get('saldo')
@@ -296,9 +307,11 @@ class Economia(MDScreen):
         tabla1 = MDDataTable(column_data=[("Col 1", dp(30)), ("Col 2", dp(30)), ("Col 3", dp(30))])
 
     def choose_etapa(self):
-        etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted if 'etapa' in d]))
+        if self.filtrado_etapa:
+            self.etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted if 'etapa' in d]))
+        self.filtrado_etapa = 0
         a = Selectionlist_etapa()
-        a.on_enter(etapas_posibles)
+        a.on_enter(self.etapas_posibles)
         a.open()
 
     def choose_categoria(self):
@@ -337,7 +350,10 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
         self.dismiss()
 
     def _choose(self):
-        pass
+        global lista_seleccionada_etapa
+        lista_seleccionada_etapa = self.ids.selectionlist.get_selection()
+        self.on_leave()
+        self.dismiss()
 
     def on_leave(self):
         return self.clear_selected()
