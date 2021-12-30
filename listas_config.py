@@ -9,7 +9,7 @@ from kivymd.uix.behaviors import CircularRippleBehavior
 
 Builder.load_string(
     """
-<AKSelectList>
+<AKSelectList_etapa>
     orientation: "lr-tb"
     spacing: dp(5)
     padding: dp(10)
@@ -18,19 +18,15 @@ Builder.load_string(
 <AKSelectListAvatarItem_etapa>
     orientation: "vertical"
     size_hint: 1 / root.columns, None
-    height: self.width * 1.2
+    height: self.width * 0.5
     padding: dp(5)
     spacing: dp(5)
     on_release: root._choose_selection(_first_label.text)
     FloatLayout:
-        Image:
-            pos_hint: {"center_x": .5, "center_y": .5}
-            keep_ratio: True
-            source: root.source
         MDIcon:
             id: _box
             pos_hint: {"center_x": 0.9, "center_y": 0.9}
-            size_hint: None,None
+            size_hint: None,.2
             font_size: 0
             icon: "check-circle"
             color: root.theme_cls.primary_color
@@ -56,7 +52,7 @@ Builder.load_string(
 class AKSelectListAvatarItem_etapa(
     ThemableBehavior, ButtonBehavior, CircularRippleBehavior, BoxLayout
 ):
-    columns = NumericProperty(4)
+    columns = NumericProperty(2)
     source = StringProperty("")
     first_label = StringProperty("")
     second_label = StringProperty("")
@@ -96,7 +92,7 @@ class AKSelectListAvatarItem_etapa(
         anim.start(self.ids._box)
 
 
-class AKSelectList(StackLayout):
+class AKSelectList_etapa(StackLayout):
     _selected_list = []
 
     def get_selection(self):

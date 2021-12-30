@@ -77,6 +77,7 @@ class Economia(MDScreen):
         self.domiciliaciones = ''
         self.ingresos = ''
         self.obj_tasa = 0
+        self.lista_etapas = ''
         self.update()
 
     def update(self):
@@ -297,7 +298,7 @@ class Economia(MDScreen):
     def choose_etapa(self):
         etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted if 'etapa' in d]))
         a = Selectionlist_etapa()
-        a.on_enter()
+        a.on_enter(etapas_posibles)
         a.open()
 
     def choose_categoria(self):
@@ -322,32 +323,38 @@ class Economia(MDScreen):
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
 
-    def on_enter(self):
+    def on_enter(self, etapas_posibles):
         self.ids.selectionlist.clear_widgets()
-        for x in range(20):
+        for x in etapas_posibles:
             self.ids.selectionlist.add_widget(
                 AKSelectListAvatarItem_etapa(
-                    first_label="Item %d" % x
-                    # second_label="Description for item %d" % x
-                    # source="assets/logo.png",
+                    first_label=x
                 )
             )
-    #
-    # def on_leave(self):
-    #     return self.clear_selected()
-    #
-    # def get_selected(self):
-    #     items = self.ids.selectionlist.get_selection()
-    #     text = ""
-    #     for x in items:
-    #         text += ", %s" % x
-    #     return toast(text)
-    #
-    # def clear_selected(self):
-    #     return self.ids.selectionlist.clear_selection()
-    #
-    # def select_all(self):
-    #     return self.ids.selectionlist.select_all()
+
+    def cancel(self):
+        self.on_leave()
+        self.dismiss()
+
+    def _choose(self):
+        pass
+
+    def on_leave(self):
+        return self.clear_selected()
+
+    def get_selected(self):
+        items = self.ids.selectionlist.get_selection()
+        text = ""
+        for x in items:
+            text += ", %s" % x
+        return text
+
+    def clear_selected(self):
+        return self.ids.selectionlist.clear_selection()
+
+    def select_all(self):
+        return self.ids.selectionlist.select_all()
+
 
 Builder.load_string(
     """
@@ -542,6 +549,26 @@ Builder.load_string(
                 
                 AKSelectList:
                     id: selectionlist
+            BoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                padding: [dp(10), 0]
+                spacing: dp(10)
+                canvas.before:
+                    Color:
+                        rgba: root.theme_cls.bg_dark
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [(0.0, 10.0), (0.0, 10.0), (10, 10), (10, 10)]
+                MDFlatButton:
+                    text: "Cancelar"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root.cancel()
+                MDFlatButton:
+                    text: "Seleccionar"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root._choose()
             
 
 """
