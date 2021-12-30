@@ -15,7 +15,8 @@ from itertools import groupby
 from kivy.uix.popup import Popup
 from kivymd.uix.dialog import BaseDialog
 from kivymd.theming import ThemableBehavior
-from kivymd_extensions.akivymd.uix.selectionlist import AKSelectListAvatarItem
+# from kivymd_extensions.akivymd.uix.selectionlist import AKSelectListAvatarItem
+from listas_config import AKSelectListAvatarItem_etapa
 from datetime import date
 
 today = date.today()
@@ -325,9 +326,9 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
         self.ids.selectionlist.clear_widgets()
         for x in range(20):
             self.ids.selectionlist.add_widget(
-                AKSelectListAvatarItem(
-                    first_label="Item %d" % x,
-                    second_label="Description for item %d" % x
+                AKSelectListAvatarItem_etapa(
+                    first_label="Item %d" % x
+                    # second_label="Description for item %d" % x
                     # source="assets/logo.png",
                 )
             )
@@ -514,8 +515,8 @@ Builder.load_string(
                 pos: self.pos
         BoxLayout:
             orientation:"vertical"
-            size_hint_y: None
-            height: dp(50)
+            size_hint_y: .1
+            height: dp(500)
             canvas.before:
                 Color:
                     rgba: root.theme_cls.primary_color
@@ -523,12 +524,25 @@ Builder.load_string(
                     size: self.size
                     pos: self.pos
                     radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
-            
+            MDLabeltitle2:
+                
+                text:'Seleccionar Etapa'
+        BoxLayout:
+            orientation:"vertical"
+            size_hint_y: .9
+            height: dp(500)
+            canvas.before:
+                Color:
+                    #rgba: root.theme_cls.primary_color
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
             ScrollView:
+                
                 AKSelectList:
                     id: selectionlist
-            MDLabeltitle2:
-                text:'Seleccionar Etapa'
+            
 
 """
 )
