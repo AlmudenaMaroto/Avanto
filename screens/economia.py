@@ -21,6 +21,7 @@ from datetime import date
 
 today = date.today()
 lista_seleccionada_etapa = []
+lista_seleccionada_categoria = []
 
 
 def epoch2human(epoch):
@@ -58,6 +59,11 @@ def filtrar_etapa(dic, lista_etapas):
         if dic['etapa'] == etapa_i:
             return True
 
+def filtrar_categoria(dic, lista_categoria):
+    for categoria_i in lista_categoria:
+        if dic['categoria'] == categoria_i:
+            return True
+
 
 class MessagePopup_eco(Popup):
     pass
@@ -85,8 +91,11 @@ class Economia(MDScreen):
         self.ingresos = ''
         self.obj_tasa = 0
         self.lista_etapas = ''
+        self.lista_categorias = ''
         self.filtrado_etapa = 1
+        self.filtrado_categoria = 1
         self.etapas_posibles = ''
+        self.categorias_posibles = ''
         self.date = ''
         self.error = 0
         self.update()
@@ -106,6 +115,8 @@ class Economia(MDScreen):
         con.close()
         self.calculos()
         if self.error == 1:
+            return
+        if self.error == 2:
             return
         self.barchart_datos()
         self.barchart_ano()
@@ -137,6 +148,13 @@ class Economia(MDScreen):
         orden_execute = 'select * from movimientos'
         cursor.execute(orden_execute)
         longitud = len(cursor.fetchall())
+        if longitud == 0:
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Vacío"
+            message.text = 'Para poder analizar, deben existir registros.'
+            self.error = 2
+            return
         con.close()
 
         # Linea temporal: creamos una list of dict
@@ -181,6 +199,8 @@ class Economia(MDScreen):
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_fin(d, self.fecha_fin)]
         if lista_seleccionada_etapa != []:
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
+        if lista_seleccionada_categoria != []:
+            self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_categoria(d, lista_seleccionada_categoria)]
 
         # Si está vacío mensaje de error y reseteamos los filtros:
         if self.dict_eco_sorted == []:
@@ -333,7 +353,12 @@ class Economia(MDScreen):
         a.open()
 
     def choose_categoria(self):
-        pass
+        if self.filtrado_categoria:
+            self.categorias_posibles = list(dict.fromkeys([d['categoria'] for d in self.dict_eco_sorted if 'categoria' in d]))
+        self.filtrado_categoria = 0
+        a = Selectionlist_categoria()
+        a.on_enter(self.categorias_posibles)
+        a.open()
 
     def choose_fecha(self):
         self.date = AKDatePicker_ini(callback=self.callback_ini)
@@ -388,6 +413,45 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
 
     def select_all(self):
         return self.ids.selectionlist.select_all()
+
+
+
+class Selectionlist_categoria(BaseDialog, ThemableBehavior):
+
+    def on_enter(self, categorias_posibles):
+        self.ids.selectionlist_categoria.clear_widgets()
+        for x in categorias_posibles:
+            self.ids.selectionlist_categoria.add_widget(
+                AKSelectListAvatarItem_etapa(
+                    first_label=x
+                )
+            )
+
+    def cancel(self):
+        self.on_leave()
+        self.dismiss()
+
+    def _choose(self):
+        global lista_seleccionada_categoria
+        lista_seleccionada_categoria = self.ids.selectionlist_categoria.get_selection()
+        self.on_leave()
+        self.dismiss()
+
+    def on_leave(self):
+        return self.clear_selected()
+
+    def get_selected(self):
+        items = self.ids.selectionlist_categoria.get_selection()
+        text = ""
+        for x in items:
+            text += ", %s" % x
+        return text
+
+    def clear_selected(self):
+        return self.ids.selectionlist_categoria.clear_selection()
+
+    def select_all(self):
+        return self.ids.selectionlist_categoria.select_all()
 
 
 Builder.load_string(
@@ -604,6 +668,69 @@ Builder.load_string(
                     pos_hint: {"center_x": .5, "center_y": .5}
                     on_release: root._choose()
             
+<Selectionlist_categoria>:
+    size_hint: None, None
+    size:
+        (dp(302), dp(450)) \
+        if root.theme_cls.device_orientation == "portrait" \
+        else (dp(450), dp(350))
+    BoxLayout:
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: root.theme_cls.bg_normal
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+        BoxLayout:
+            orientation:"vertical"
+            size_hint_y: .1
+            height: dp(500)
+            canvas.before:
+                Color:
+                    rgba: root.theme_cls.primary_color
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
+            MDLabeltitle2:
+                
+                text:'Seleccionar Categoría'
+        BoxLayout:
+            orientation:"vertical"
+            size_hint_y: .9
+            height: dp(500)
+            canvas.before:
+                Color:
+                    #rgba: root.theme_cls.primary_color
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
+            ScrollView:
+                
+                AKSelectList:
+                    id: selectionlist_categoria
+            BoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                padding: [dp(10), 0]
+                spacing: dp(10)
+                canvas.before:
+                    Color:
+                        rgba: root.theme_cls.bg_dark
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [(0.0, 10.0), (0.0, 10.0), (10, 10), (10, 10)]
+                MDFlatButton:
+                    text: "Cancelar"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root.cancel()
+                MDFlatButton:
+                    text: "Seleccionar"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root._choose()
 
 """
 )
