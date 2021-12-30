@@ -88,6 +88,7 @@ class Economia(MDScreen):
         self.filtrado_etapa = 1
         self.etapas_posibles = ''
         self.date = ''
+        self.error = 0
         self.update()
 
     def update(self):
@@ -104,6 +105,8 @@ class Economia(MDScreen):
             self.obj_tasa = i[6]
         con.close()
         self.calculos()
+        if self.error == 1:
+            return
         self.barchart_datos()
         self.barchart_ano()
         self.calc_ahorros()
@@ -178,6 +181,15 @@ class Economia(MDScreen):
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_fin(d, self.fecha_fin)]
         if lista_seleccionada_etapa != []:
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
+
+        # Si está vacío mensaje de error y reseteamos los filtros:
+        if self.dict_eco_sorted == []:
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Vacío"
+            message.text = 'No hay datos que cumplan el criterio'
+            self.error = 1
+            return
 
         #############################################
         # Para no petar el grafico, cogemos menos valores
