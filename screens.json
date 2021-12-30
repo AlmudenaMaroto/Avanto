@@ -53,7 +53,7 @@
     	"factory": "Piechart",
     	"screen_name": "piechart",
     	"icon": "chart-pie",
-		"menu": "no"
+		"menu": "si"
     },
     "Linechart": {
     	"import": "linechart",

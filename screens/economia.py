@@ -17,6 +17,7 @@ from kivymd.uix.dialog import BaseDialog
 from kivymd.theming import ThemableBehavior
 # from kivymd_extensions.akivymd.uix.selectionlist import AKSelectListAvatarItem
 from listas_config import AKSelectListAvatarItem_etapa
+from kivymd_extensions.akivymd.uix.charts import AKPieChart
 from datetime import date
 
 today = date.today()
@@ -58,6 +59,7 @@ def filtrar_etapa(dic, lista_etapas):
     for etapa_i in lista_etapas:
         if dic['etapa'] == etapa_i:
             return True
+
 
 def filtrar_categoria(dic, lista_categoria):
     for categoria_i in lista_categoria:
@@ -122,6 +124,7 @@ class Economia(MDScreen):
         self.barchart_ano()
         self.calc_ahorros()
         self.tasa_ahorro_tabla()
+        self.pie_etapa_importe()
 
         id_evtemp = self.ids.id_evtemp
         id_barmes = self.ids.id_barmes
@@ -200,7 +203,8 @@ class Economia(MDScreen):
         if lista_seleccionada_etapa != []:
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
         if lista_seleccionada_categoria != []:
-            self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_categoria(d, lista_seleccionada_categoria)]
+            self.dict_eco_sorted = [d for d in self.dict_eco_sorted if
+                                    filtrar_categoria(d, lista_seleccionada_categoria)]
 
         # Si está vacío mensaje de error y reseteamos los filtros:
         if self.dict_eco_sorted == []:
@@ -345,6 +349,7 @@ class Economia(MDScreen):
         pass
 
     def choose_etapa(self):
+        # Si ya hemos calculado las etapas, no hay que calcularlas de nuevo, o perdemos elementos de la lista.
         if self.filtrado_etapa:
             self.etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted if 'etapa' in d]))
         self.filtrado_etapa = 0
@@ -354,7 +359,8 @@ class Economia(MDScreen):
 
     def choose_categoria(self):
         if self.filtrado_categoria:
-            self.categorias_posibles = list(dict.fromkeys([d['categoria'] for d in self.dict_eco_sorted if 'categoria' in d]))
+            self.categorias_posibles = list(
+                dict.fromkeys([d['categoria'] for d in self.dict_eco_sorted if 'categoria' in d]))
         self.filtrado_categoria = 0
         a = Selectionlist_categoria()
         a.on_enter(self.categorias_posibles)
@@ -375,6 +381,28 @@ class Economia(MDScreen):
         if not date_i:
             return
         self.fecha_fin = "%d/%d/%d" % (date_i.day, date_i.month, date_i.year)
+
+    def pie_etapa_importe(self):
+        # Para que no se duplique el grafico hay que borrarlo.
+        self.ids.chart_box.clear_widgets()
+        dict_etapa_importe = []
+        list_dict_etapa_importe = {}
+        for k, v in groupby(self.dict_eco_sorted, key=lambda x: x['etapa']):
+            linea = {k: sum(int(d['importe'])*100/self.saldo_total for d in v)}
+            if linea[k] < 0:
+                linea[k] = 0
+            list_dict_etapa_importe[k] = linea.get(k)
+            # dict_etapa_importe.append(linea)
+        total_perc = sum(list_dict_etapa_importe.values())
+        list_dict_etapa_importe.update((x, y * 100/total_perc) for x, y in list_dict_etapa_importe.items())
+        # items = [{"Python": 40, "Java": 30, "C++": 10, "PHP": 8, "Ruby": 12}]
+        self.piechart = AKPieChart(
+            items=[list_dict_etapa_importe],
+            pos_hint={"center_x": 0.5, "center_y": 0.5},
+            size_hint=[None, None],
+            size=(dp(300), dp(300)),
+        )
+        self.ids.chart_box.add_widget(self.piechart)
 
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
@@ -413,7 +441,6 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
 
     def select_all(self):
         return self.ids.selectionlist.select_all()
-
 
 
 class Selectionlist_categoria(BaseDialog, ThemableBehavior):
@@ -540,7 +567,7 @@ Builder.load_string(
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
                     #bars_color: [40/255, 107/255, 122/255, 1]
-                    #labels_color: 40/255, 107/255, 122/255, 1
+                    labels_color: 40/255, 107/255, 122/255, 1
                     trim: True
                     #on_select: root.set_text(args)
                     
@@ -576,7 +603,11 @@ Builder.load_string(
                     id:domiciliaciones_mes
                     halign: "center"
                     valign: "center"
-                
+                MDBoxLayout:
+                    id: chart_box
+                    adaptive_height: True
+                    padding:dp(24)
+                    orientation: "vertical"
 
         MDBoxLayout:
             size_hint_y: 0.05
@@ -643,9 +674,9 @@ Builder.load_string(
                     size: self.size
                     pos: self.pos
                     radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
-            ScrollView:
-                
-                AKSelectList:
+            
+            ScrollView:    
+                AKSelectList_etapa:
                     id: selectionlist
             BoxLayout:
                 size_hint_y: None

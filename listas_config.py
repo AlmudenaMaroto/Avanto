@@ -22,29 +22,21 @@ Builder.load_string(
     padding: dp(5)
     spacing: dp(5)
     on_release: root._choose_selection(_first_label.text)
-    FloatLayout:
-        MDIcon:
-            id: _box
-            pos_hint: {"center_x": 0.9, "center_y": 0.9}
-            size_hint: None,.2
-            font_size: 0
-            icon: "check-circle"
-            color: root.theme_cls.primary_color
     BoxLayout:
         size_hint_y: None
         height: dp(50)
-        orientation: "vertical"
+        orientation: "horizontal"
         spacing: dp(4)
         MDLabel:
             id: _first_label
+            size_hint_x:.9
             text: root.first_label
+            font_size:root.width*.1
             theme_text_color: "Primary"
             halign: "center"
-        MDLabel:
-            text: root.second_label
-            halign: "center"
-            theme_text_color: "Secondary"
-            font_style: "Caption"
+        CheckBox:
+            size_hint_x:.1
+            on_active: root.checkbox_click(self, self.active)
 """
 )
 
@@ -79,17 +71,22 @@ class AKSelectListAvatarItem_etapa(
         self.parent._selected_list = selected_list
 
     def _selection_anim(self):
-        anim = Animation(font_size=self.width / 3, t="out_bounce", duration=0.1)
-        anim.start(self.ids._box)
+        pass
+        # anim = Animation(font_size=self.width / 3, t="out_bounce", duration=0.1)
+        # anim.start(self.ids._box)
 
     def _deselection_anim(self):
-        anim = Animation(
-            font_size=0,
-            size=self.ids._box.texture_size,
-            t="in_bounce",
-            duration=0.1,
-        )
-        anim.start(self.ids._box)
+        pass
+        # anim = Animation(
+        #     font_size=0,
+        #     size=self.ids._box.texture_size,
+        #     t="in_bounce",
+        #     duration=0.1,
+        # )
+        # anim.start(self.ids._box)
+
+    def checkbox_click(self, a, b):
+        pass
 
 
 class AKSelectList_etapa(StackLayout):
