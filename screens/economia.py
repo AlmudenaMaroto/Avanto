@@ -396,7 +396,7 @@ class Economia(MDScreen):
             list_dict_etapa_importe[k] = linea.get(k)
             # dict_etapa_importe.append(linea)
         total_perc = sum(list_dict_etapa_importe.values())
-        list_dict_etapa_importe.update((x, y * 100/total_perc) for x, y in list_dict_etapa_importe.items())
+        list_dict_etapa_importe.update((x, round(y * 100/total_perc,0)) for x, y in list_dict_etapa_importe.items())
         # Eliminamos los registros 0% para mejorar el grafico
         list_dict_etapa_importe = {key: val for key, val in list_dict_etapa_importe.items() if val != 0}
         self.piechart = AKPieChart_etapas(
@@ -423,7 +423,7 @@ class Economia(MDScreen):
             list_dict_etapa_tiempo[etapa_i] = tiempo_en_etapa
 
         total_perc = sum(tiempos)
-        list_dict_etapa_tiempo.update((x, y * 100/total_perc) for x, y in list_dict_etapa_tiempo.items())
+        list_dict_etapa_tiempo.update((x, round(y * 100/total_perc,0)) for x, y in list_dict_etapa_tiempo.items())
         list_dict_etapa_tiempo = {key: val for key, val in list_dict_etapa_tiempo.items() if val != 0}
         self.piechart = AKPieChart_etapas(
             items=[list_dict_etapa_tiempo],
