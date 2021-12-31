@@ -26,7 +26,7 @@ color_mode
 """
 
 __all__ = (
-    "AKPieChart",
+    "AKPieChart_etapas",
     "AKLineChart_Almu",
     "AKBarChart_anomes",
 )
@@ -35,7 +35,7 @@ Builder.load_string(
     """
 <PieChartNumberLabel>
     size_hint: None, None
-    size: dp(40), dp(30)
+    size: dp(400), dp(30)
     text: "%s\\n%d%%" % (root.title, root.percent)
     font_size: dp(10)
     halign: "center"
@@ -97,7 +97,7 @@ class PieChartNumberLabel(MDLabel):
         self.y -= self.height / 2
 
 
-class AKPieChart(ThemableBehavior, BoxLayout):
+class AKPieChart_etapas(ThemableBehavior, BoxLayout):
     items = ListProperty()
     order = BooleanProperty(True)
     starting_animation = BooleanProperty(True)

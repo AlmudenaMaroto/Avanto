@@ -17,7 +17,7 @@ from kivymd.uix.dialog import BaseDialog
 from kivymd.theming import ThemableBehavior
 # from kivymd_extensions.akivymd.uix.selectionlist import AKSelectListAvatarItem
 from listas_config import AKSelectListAvatarItem_etapa
-from charts_almu import AKPieChart
+from charts_almu import AKPieChart_etapas
 from datetime import date
 
 today = date.today()
@@ -397,7 +397,9 @@ class Economia(MDScreen):
             # dict_etapa_importe.append(linea)
         total_perc = sum(list_dict_etapa_importe.values())
         list_dict_etapa_importe.update((x, y * 100/total_perc) for x, y in list_dict_etapa_importe.items())
-        self.piechart = AKPieChart(
+        # Eliminamos los registros 0% para mejorar el grafico
+        list_dict_etapa_importe = {key: val for key, val in list_dict_etapa_importe.items() if val != 0}
+        self.piechart = AKPieChart_etapas(
             items=[list_dict_etapa_importe],
             pos_hint={"center_x": 0.5, "center_y": 0.5},
             size_hint=[None, None],
@@ -422,7 +424,8 @@ class Economia(MDScreen):
 
         total_perc = sum(tiempos)
         list_dict_etapa_tiempo.update((x, y * 100/total_perc) for x, y in list_dict_etapa_tiempo.items())
-        self.piechart = AKPieChart(
+        list_dict_etapa_tiempo = {key: val for key, val in list_dict_etapa_tiempo.items() if val != 0}
+        self.piechart = AKPieChart_etapas(
             items=[list_dict_etapa_tiempo],
             pos_hint={"center_x": 0.5, "center_y": 0.5},
             size_hint=[None, None],
