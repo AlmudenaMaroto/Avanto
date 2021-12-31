@@ -126,6 +126,7 @@ class Economia(MDScreen):
         self.calc_ahorros()
         self.tasa_ahorro_tabla()
         self.pie_etapa_importe()
+        self.pie_etapa_tiempo()
 
         id_evtemp = self.ids.id_evtemp
         id_barmes = self.ids.id_barmes
@@ -385,7 +386,7 @@ class Economia(MDScreen):
 
     def pie_etapa_importe(self):
         # Para que no se duplique el grafico hay que borrarlo.
-        self.ids.chart_box.clear_widgets()
+        self.ids.chart_box_etapaimporte.clear_widgets()
         dict_etapa_importe = []
         list_dict_etapa_importe = {}
         for k, v in groupby(self.dict_eco_sorted, key=lambda x: x['etapa']):
@@ -402,7 +403,32 @@ class Economia(MDScreen):
             size_hint=[None, None],
             size=(dp(250), dp(250)),
         )
-        self.ids.chart_box.add_widget(self.piechart)
+        self.ids.chart_box_etapaimporte.add_widget(self.piechart)
+
+    def pie_etapa_tiempo(self):
+        # Para que no se duplique el grafico hay que borrarlo.
+        self.ids.chart_box_etapatiempo.clear_widgets()
+        # Conseguir lista de etapas que hay
+        tiempos = []
+        list_dict_etapa_tiempo = {}
+        lista_etapas_total = set(d['etapa'] for d in self.dict_eco_sorted)
+        for etapa_i in lista_etapas_total:
+            dict_etapa_i = [d for d in self.dict_eco_sorted if d['etapa'] in etapa_i]
+            max_epoch = max(dict_etapa_i, key=lambda x: x['epoch']).get('epoch')
+            min_epoch = min(dict_etapa_i, key=lambda x: x['epoch']).get('epoch')
+            tiempo_en_etapa = max_epoch-min_epoch
+            tiempos.append(tiempo_en_etapa)
+            list_dict_etapa_tiempo[etapa_i] = tiempo_en_etapa
+
+        total_perc = sum(tiempos)
+        list_dict_etapa_tiempo.update((x, y * 100/total_perc) for x, y in list_dict_etapa_tiempo.items())
+        self.piechart = AKPieChart(
+            items=[list_dict_etapa_tiempo],
+            pos_hint={"center_x": 0.5, "center_y": 0.5},
+            size_hint=[None, None],
+            size=(dp(250), dp(250)),
+        )
+        self.ids.chart_box_etapatiempo.add_widget(self.piechart)
 
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
@@ -603,8 +629,21 @@ Builder.load_string(
                     id:domiciliaciones_mes
                     halign: "center"
                     valign: "center"
+                MDLabel:
+                    text: '% ingresos de cada etapa:'
+                    halign: "center"
+                    valign: "center"
                 MDBoxLayout:
-                    id: chart_box
+                    id: chart_box_etapaimporte
+                    adaptive_height: True
+                    padding:dp(24)
+                    orientation: "vertical"
+                MDLabel:
+                    text: '% tiempo de cada etapa:'
+                    halign: "center"
+                    valign: "center"
+                MDBoxLayout:
+                    id: chart_box_etapatiempo
                     adaptive_height: True
                     padding:dp(24)
                     orientation: "vertical"
