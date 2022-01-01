@@ -281,9 +281,12 @@ class AKChartBase(DrawTools, ThemableBehavior, RelativeLayout):
                 _size - self._bottom_line_y() - padding
             )
         else:
-            res = ((val - _min) / 1) * (
-                _size - self._bottom_line_y() - padding
-            )
+            if val == 0:
+                res = 0
+            else:
+                res = 1 * (
+                    _size - self._bottom_line_y() - padding
+                )
         return f_update * res + self._bottom_line_y()
 
     def normalized_labels(self, val, mode, f_update=1):
@@ -313,9 +316,12 @@ class AKChartBase(DrawTools, ThemableBehavior, RelativeLayout):
                     _size - self._bottom_line_y() - padding
             )
         else:
-            res = ((val - _min) / 1) * (
-                    _size - self._bottom_line_y() - padding
-            )
+            if val == 0:
+                res = 0
+            else:
+                res = 1 * (
+                        _size - self._bottom_line_y() - padding
+                )
         return f_update * res + self._bottom_line_y()
 
     def do_layout(self, *args, **kwargs):

@@ -5,17 +5,18 @@ import os
 import sqlite3
 from kivy.utils import platform
 
+# Permisos de acceso a las carpetas del movil para poder importar y exportar
 if platform == 'android':
     from android.permissions import request_permissions, Permission
 
     request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
-
+# Esto cuando se me jodio la grafica, ya funciona
 if platform != 'android':
     pass
     # os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 
 from kivy.config import Config
-
+# Pantalla:
 Config.set("graphics", "width", "340")
 Config.set("graphics", "hight", "640")
 
@@ -32,7 +33,7 @@ from kivymd_extensions.akivymd.uix.statusbarcolor import (  # noqa
     change_statusbar_color,
 )
 
-
+# Funciones de creacion de tablas. Si ya estan creadas, no se vuelven a crear.
 def create_table_movimientos(cursor):
     cursor.execute(
         '''
@@ -78,6 +79,7 @@ def create_table_vbles_globales(cursor):
     )
 
 
+# De forma inicial, creamos las tablas. Añadir nuevas tablas aqui!!
 ruta_APP_PATH = os.getcwd()
 ruta_DB_PATH_movimientos = ruta_APP_PATH + '/movimientos.db'
 ruta_DB_PATH_deporte = ruta_APP_PATH + '/deporte.db'
@@ -139,7 +141,7 @@ class DemoApp(MDApp):
             self.data_screens = ast.literal_eval(read_file.read())
             data_screens = list(self.data_screens.keys())
             data_screens.sort()
-
+        # ocultamos las pantallas que no queramos ver con la variable menu del screens.json
         for list_item in data_screens:
             if self.data_screens[list_item]["menu"] == "si":
                 self.root.ids.menu_list.add_widget(

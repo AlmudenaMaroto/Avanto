@@ -28,7 +28,7 @@ lista_etapas_posibles = []
 global inicial_etapas_tick
 inicial_etapas_tick = 1
 
-
+# conversion de epoch a fechas:
 def epoch2human(epoch):
     return time.strftime('%m/%y',
                          time.localtime(int(epoch)))
@@ -38,7 +38,7 @@ def epoch2human_year(epoch):
     return time.strftime('%Y',
                          time.localtime(int(epoch)))
 
-
+# Funciones para filtrar dict_sorted_eco.
 def filtrar_dict_fechas(dic, epoch_ini, epoch_fin):
     return epoch_ini < dic['epoch'] < epoch_fin
 
