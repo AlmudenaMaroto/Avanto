@@ -102,7 +102,7 @@ class Export_data(BoxLayout):
         cursor.execute(orden_execute)
         if bbdd == 'movimientos':
             for i in cursor:
-                wid = DataWid()
+                wid = DataWid_import()
                 r0 = 'ID: ' + str(i[0]) + ' '
                 r1 = i[1] + ' \n'
                 r2 = i[2] + '\n'
@@ -115,7 +115,7 @@ class Export_data(BoxLayout):
                 self.ids.container.add_widget(wid)
         elif bbdd == 'deporte':
             for i in cursor:
-                wid = DataWid_deporte()
+                wid = DataWid_import_deporte()
                 r0 = 'ID: ' + str(i[0]) + ' '
                 r1 = i[1] + ' \n'
                 r2 = i[2] + '\n'
@@ -155,13 +155,13 @@ class Export_data(BoxLayout):
             os.chdir('/storage/emulated/0/')
         if self.bbdd == 'movimientos':
             data = cur.execute("SELECT * FROM movimientos")
-            with open('movimientos.csv', 'w', newline='') as f:
+            with open('movimientos.csv', 'w', newline='',encoding='latin') as f:
                 writer = csv.writer(f, delimiter=';')
                 writer.writerows(data)
 
         elif self.bbdd == 'deporte':
             data = cur.execute("SELECT * FROM deporte")
-            with open('deporte.csv', 'w', newline='') as f:
+            with open('deporte.csv', 'w', newline='',encoding='latin') as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
         con.commit()
@@ -182,7 +182,7 @@ class Import_data(BoxLayout):
 
     def open_file(self, path, filename):
         if ".csv" in filename[0]:
-            with open(os.path.join(path, filename[0])) as f:
+            with open(os.path.join(path, filename[0]),encoding='latin') as f:
                 row = f.read()
                 row2 = row.split('\n')
                 i = 0
@@ -229,9 +229,9 @@ class Import_data(BoxLayout):
         self.current = 'import_main'
         self.add_widget(Import_main())
 
-class UpdateDataWid_movimientos(BoxLayout):
+class UpdateDataWid_import_movimientos_import(BoxLayout):
     def __init__(self, data_id, **kwargs):
-        super(UpdateDataWid_movimientos, self).__init__()
+        super(UpdateDataWid_import_movimientos_import, self).__init__()
         self.data_id = data_id
         self.ruta_APP_PATH = os.getcwd()
         self.ruta_DB_PATH_movimientos = self.ruta_APP_PATH + '/movimientos.db'
@@ -300,9 +300,9 @@ class UpdateDataWid_movimientos(BoxLayout):
         self.add_widget(Eliminado())
 
 
-class UpdateDataWid_deporte(BoxLayout):
+class UpdateDataWid_import_deporte_import(BoxLayout):
     def __init__(self, data_id, **kwargs):
-        super(UpdateDataWid_deporte, self).__init__()
+        super(UpdateDataWid_import_deporte_import, self).__init__()
         self.data_id = data_id
         self.ruta_APP_PATH = os.getcwd()
         self.ruta_DB_PATH_movimientos = self.ruta_APP_PATH + '/movimientos.db'
@@ -365,24 +365,24 @@ class UpdateDataWid_deporte(BoxLayout):
         self.add_widget(Eliminado())
 
 
-class DataWid(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
+class DataWid_import(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
     def __init__(self, **kwargs):
-        super(DataWid, self).__init__()
+        super(DataWid_import, self).__init__()
 
     def update_data(self, data_id):
         self.clear_widgets()
         self.current = 'update_movimientos'
-        self.add_widget(UpdateDataWid_movimientos(data_id))
+        self.add_widget(UpdateDataWid_import_movimientos_import(data_id))
 
 
-class DataWid_deporte(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
+class DataWid_import_deporte(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
     def __init__(self, **kwargs):
-        super(DataWid_deporte, self).__init__()
+        super(DataWid_import_deporte, self).__init__()
 
     def update_data(self, data_id):
         self.clear_widgets()
         self.current = 'update_deporte'
-        self.add_widget(UpdateDataWid_deporte(data_id))
+        self.add_widget(UpdateDataWid_import_deporte_import(data_id))
 
 
 Builder.load_string(
@@ -513,8 +513,8 @@ WindowManager_select:
             on_selection: my_widget.selectfile(filechooser.selection)
 
 
-<DataWid>:
-    name:"datawid"
+<DataWid_import>:
+    name:"DataWid_import"
     data: ''
     data_id: ''
     canvas:
@@ -532,8 +532,8 @@ WindowManager_select:
         text: 'Edit'
         on_press: root.update_data(root.data_id)
         
-<DataWid_deporte>:
-    name:"datawid"
+<DataWid_import_deporte>:
+    name:"DataWid_import"
     data: ''
     data_id: ''
     canvas:
