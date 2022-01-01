@@ -725,10 +725,6 @@ Builder.load_string(
                 text: "Actualizar"
                 on_release: root.update()
 
-            MDLabel:
-                id: _label
-                halign: "center"
-                valign: "center"
 <Selectionlist_etapa>:
     size_hint: None, None
     size:

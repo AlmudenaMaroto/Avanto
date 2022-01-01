@@ -51,7 +51,7 @@ Builder.load_string(
             height: dp(50)
             canvas.before:
                 Color:
-                    rgba: root.theme_cls.primary_color
+                    rgba: 95/255,166/255,182/255,1
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
@@ -63,11 +63,11 @@ Builder.load_string(
             height: dp(50)
             canvas.before:
                 Color:
-                    rgba: root.theme_cls.primary_color
+                    rgba: 95/255,166/255,182/255,1
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
-                    radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
+                    radius:[(0.0, 0.0), (0.0, 0.0), (0, 0), (0, 0)]
                  
             MDLabeltitle2:
                 text: root._year_title
@@ -145,7 +145,7 @@ Builder.load_string(
             height: dp(50)
             canvas.before:
                 Color:
-                    rgba: root.theme_cls.primary_color
+                    rgba: 95/255,166/255,182/255,1
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
@@ -157,11 +157,11 @@ Builder.load_string(
             height: dp(50)
             canvas.before:
                 Color:
-                    rgba: root.theme_cls.primary_color
+                    rgba: 95/255,166/255,182/255,1
                 RoundedRectangle:
                     size: self.size
                     pos: self.pos
-                    radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
+                    radius:[(0.0, 0.0), (0.0, 0.0), (0, 0), (0, 0)]
                  
             MDLabeltitle2:
                 text: root._year_title
