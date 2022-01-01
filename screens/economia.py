@@ -174,7 +174,7 @@ class Economia(MDScreen):
         if ticks_sobrecarga == 0:
             ticks_sobrecarga = 1
         for i in cursor:
-            saldo = round(saldo + i[4], 2)
+            # saldo = round(saldo + i[4], 2)
             try:
                 utc_time = time.strptime(i[1], "%d/%m/%Y")
                 epoch_time = timegm(utc_time)
@@ -184,7 +184,7 @@ class Economia(MDScreen):
                 row_i['anomes'] = ano_mes
                 row_i['epoch'] = epoch_time
                 row_i['importe'] = i[4]
-                row_i['saldo'] = saldo
+                # row_i['saldo'] = saldo
                 row_i['concepto'] = i[2]
                 row_i['categoria'] = i[3]
                 row_i['etapa'] = i[5]
@@ -196,8 +196,15 @@ class Economia(MDScreen):
                 pass
         con.close()
 
-        ################ FILTROS ####################
+        ###########################
+        # Ordenamos y añadimos saldo
         self.dict_eco_sorted = sorted(dict_eco, key=lambda d: d['epoch'], reverse=False)
+        i = 0
+        for row_i in self.dict_eco_sorted:
+            saldo = saldo + row_i['importe']
+            self.dict_eco_sorted[i]['saldo'] = round(saldo,2)
+            i = i+1
+        ################ FILTROS ####################
         if self.fecha_ini != '':
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_ini(d, self.fecha_ini)]
         if self.fecha_fin != '':
@@ -397,6 +404,12 @@ class Economia(MDScreen):
             # dict_etapa_importe.append(linea)
         total_perc = sum(list_dict_etapa_importe.values())
         list_dict_etapa_importe.update((x, round(y * 100/total_perc,0)) for x, y in list_dict_etapa_importe.items())
+        porc_real = sum(list_dict_etapa_importe.values())
+        lista_etapas_total = set(d['etapa'] for d in self.dict_eco_sorted)
+        for etapa_i in lista_etapas_total:
+            pass
+        if porc_real != 100:
+            list_dict_etapa_importe[etapa_i] = list_dict_etapa_importe[etapa_i] + 100 - porc_real
         # Eliminamos los registros 0% para mejorar el grafico
         list_dict_etapa_importe = {key: val for key, val in list_dict_etapa_importe.items() if val != 0}
         self.piechart = AKPieChart_etapas(
@@ -424,6 +437,10 @@ class Economia(MDScreen):
 
         total_perc = sum(tiempos)
         list_dict_etapa_tiempo.update((x, round(y * 100/total_perc,0)) for x, y in list_dict_etapa_tiempo.items())
+        porc_real = sum(list_dict_etapa_tiempo.values())
+        if porc_real != 100:
+            list_dict_etapa_tiempo[etapa_i] = list_dict_etapa_tiempo[etapa_i] + 100 - porc_real
+
         list_dict_etapa_tiempo = {key: val for key, val in list_dict_etapa_tiempo.items() if val != 0}
         self.piechart = AKPieChart_etapas(
             items=[list_dict_etapa_tiempo],

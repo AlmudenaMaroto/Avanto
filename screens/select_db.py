@@ -539,11 +539,11 @@ WindowManager_select:
                     text:'Prueba'
                 Button:
                     size_hint_y: 0.1
-                    text:'Movimientos'
+                    text:'Movimientos bancarios'
                     on_release:root.goto_movimientos()
                 Button:
                     size_hint_y: 0.1
-                    text:'Deporte'
+                    text:'Registro deporte'
                     on_release:root.goto_deporte()
                 Button:
                     size_hint_y: 0.1

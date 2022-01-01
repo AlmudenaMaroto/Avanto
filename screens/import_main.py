@@ -19,6 +19,7 @@ from kivy.uix.popup import Popup
 from kivy.utils import platform
 import csv
 
+
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
 
@@ -43,7 +44,6 @@ class WindowManager_select(ScreenManager):
         pass
 
 
-
 class Import_main(MDScreen):
     def __init__(self, **kwargs):
         super(Import_main, self).__init__()
@@ -52,32 +52,39 @@ class Import_main(MDScreen):
     def export_db(self):
         bbdd = self.ids.click_label.text
         self.name_db = bbdd  # Variable usable a nivel general
-        if bbdd == 'movimientos':
+        if bbdd == 'Movimientos bancarios':
+            bbdd = 'movimientos'
             full_path = os.getcwd() + '/movimientos.db'
             self.clear_widgets()
             self.current = 'export_data'
             self.add_widget(Export_data(full_path, bbdd))
-        elif bbdd == 'deporte':
+        elif bbdd == 'Registro deporte':
+            bbdd = 'deporte'
             full_path = os.getcwd() + '/deporte.db'
             self.clear_widgets()
             self.current = 'export_data'
             self.add_widget(Export_data(full_path, bbdd))
+        elif bbdd == 'Variables globales':
+            bbdd = 'globales'
+
 
     def import_db(self):
         bbdd = self.ids.click_label.text
         self.name_db = bbdd  # Variable usable a nivel general
-        if bbdd == 'movimientos':
+        if bbdd == 'Movimientos bancarios':
+            bbdd = 'movimientos'
             full_path = os.getcwd() + '/movimientos.db'
             self.clear_widgets()
             self.current = 'import_data'
             self.add_widget(Import_data(full_path, bbdd))
-        elif bbdd == 'deporte':
+        elif bbdd == 'Registro deporte':
+            bbdd = 'deporte'
             full_path = os.getcwd() + '/deporte.db'
             self.clear_widgets()
             self.current = 'import_data'
             self.add_widget(Import_data(full_path, bbdd))
-
-
+        elif bbdd == 'Variables globales':
+            bbdd = 'globales'
 
     def spinner_clicked(self, value):
         self.ids.click_label.text = value
@@ -155,13 +162,13 @@ class Export_data(BoxLayout):
             os.chdir('/storage/emulated/0/')
         if self.bbdd == 'movimientos':
             data = cur.execute("SELECT * FROM movimientos")
-            with open('movimientos.csv', 'w', newline='',encoding='latin') as f:
+            with open('movimientos.csv', 'w', newline='', encoding='latin') as f:
                 writer = csv.writer(f, delimiter=';')
                 writer.writerows(data)
 
         elif self.bbdd == 'deporte':
             data = cur.execute("SELECT * FROM deporte")
-            with open('deporte.csv', 'w', newline='',encoding='latin') as f:
+            with open('deporte.csv', 'w', newline='', encoding='latin') as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
         con.commit()
@@ -173,7 +180,7 @@ class Export_data(BoxLayout):
 
 
 class Import_data(BoxLayout):
-    def __init__(self, full_path, bbdd,**kwargs):
+    def __init__(self, full_path, bbdd, **kwargs):
         super(Import_data, self).__init__()
         self.file_name = ''
         self.Popup = MessagePopup_import()
@@ -182,7 +189,7 @@ class Import_data(BoxLayout):
 
     def open_file(self, path, filename):
         if ".csv" in filename[0]:
-            with open(os.path.join(path, filename[0]),encoding='latin') as f:
+            with open(os.path.join(path, filename[0]), encoding='latin') as f:
                 row = f.read()
                 row2 = row.split('\n')
                 i = 0
@@ -190,7 +197,7 @@ class Import_data(BoxLayout):
                 for each_row in row2:
                     try:
                         string_list = each_row.split(";")
-                        string_list[0] = string_list[0].replace("ï»¿","")
+                        string_list[0] = string_list[0].replace("ï»¿", "")
                         string_list[4] = string_list[4].replace(",", ".")
                         string_list = tuple(string_list)
                         if self.bbdd == 'movimientos':
@@ -214,7 +221,7 @@ class Import_data(BoxLayout):
                 message = self.Popup.ids.message
                 self.Popup.open()
                 self.Popup.title = "Líneas generadas"
-                message.text = "Hay " + str(incorrectas-1) + " con formato incorrecto o ID repetido"
+                message.text = "Hay " + str(incorrectas - 1) + " con formato incorrecto o ID repetido"
         else:
             message = self.Popup.ids.message
             self.Popup.open()
@@ -228,6 +235,7 @@ class Import_data(BoxLayout):
         self.clear_widgets()
         self.current = 'import_main'
         self.add_widget(Import_main())
+
 
 class UpdateDataWid_import_movimientos_import(BoxLayout):
     def __init__(self, data_id, **kwargs):
@@ -425,7 +433,7 @@ WindowManager_select:
         Spinner:
             id: spinner_id
             text: 'Elige la base de datos'
-            values: ["movimientos", "deporte"]
+            values: ["Movimientos bancarios", "Registro deporte", "Variables globales"]
             size_hint_y: .1
     
             on_text: root.spinner_clicked(spinner_id.text)
