@@ -23,6 +23,10 @@ from datetime import date
 today = date.today()
 lista_seleccionada_etapa = []
 lista_seleccionada_categoria = []
+global lista_etapas_posibles
+lista_etapas_posibles = []
+global inicial_etapas_tick
+inicial_etapas_tick = 1
 
 
 def epoch2human(epoch):
@@ -118,8 +122,10 @@ class Economia(MDScreen):
         con.close()
         self.calculos()
         if self.error == 1:
+            self.error = 0
             return
         if self.error == 2:
+            self.error = 0
             return
         self.barchart_datos()
         self.barchart_ano()
@@ -202,8 +208,8 @@ class Economia(MDScreen):
         i = 0
         for row_i in self.dict_eco_sorted:
             saldo = saldo + row_i['importe']
-            self.dict_eco_sorted[i]['saldo'] = round(saldo,2)
-            i = i+1
+            self.dict_eco_sorted[i]['saldo'] = round(saldo, 2)
+            i = i + 1
         ################ FILTROS ####################
         if self.fecha_ini != '':
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_ini(d, self.fecha_ini)]
@@ -359,9 +365,11 @@ class Economia(MDScreen):
 
     def choose_etapa(self):
         # Si ya hemos calculado las etapas, no hay que calcularlas de nuevo, o perdemos elementos de la lista.
+        global lista_etapas_posibles
         if self.filtrado_etapa:
             self.etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted if 'etapa' in d]))
         self.filtrado_etapa = 0
+        lista_etapas_posibles = self.etapas_posibles.copy()
         a = Selectionlist_etapa()
         a.on_enter(self.etapas_posibles)
         a.open()
@@ -397,13 +405,13 @@ class Economia(MDScreen):
         dict_etapa_importe = []
         list_dict_etapa_importe = {}
         for k, v in groupby(self.dict_eco_sorted, key=lambda x: x['etapa']):
-            linea = {k: sum(int(d['importe'])*100/self.saldo_total for d in v)}
+            linea = {k: sum(int(d['importe']) * 100 / self.saldo_total for d in v)}
             if linea[k] < 0:
                 linea[k] = 0
             list_dict_etapa_importe[k] = linea.get(k)
             # dict_etapa_importe.append(linea)
         total_perc = sum(list_dict_etapa_importe.values())
-        list_dict_etapa_importe.update((x, round(y * 100/total_perc,0)) for x, y in list_dict_etapa_importe.items())
+        list_dict_etapa_importe.update((x, round(y * 100 / total_perc, 0)) for x, y in list_dict_etapa_importe.items())
         porc_real = sum(list_dict_etapa_importe.values())
         lista_etapas_total = set(d['etapa'] for d in self.dict_eco_sorted)
         for etapa_i in lista_etapas_total:
@@ -431,12 +439,12 @@ class Economia(MDScreen):
             dict_etapa_i = [d for d in self.dict_eco_sorted if d['etapa'] in etapa_i]
             max_epoch = max(dict_etapa_i, key=lambda x: x['epoch']).get('epoch')
             min_epoch = min(dict_etapa_i, key=lambda x: x['epoch']).get('epoch')
-            tiempo_en_etapa = max_epoch-min_epoch
+            tiempo_en_etapa = max_epoch - min_epoch
             tiempos.append(tiempo_en_etapa)
             list_dict_etapa_tiempo[etapa_i] = tiempo_en_etapa
 
         total_perc = sum(tiempos)
-        list_dict_etapa_tiempo.update((x, round(y * 100/total_perc,0)) for x, y in list_dict_etapa_tiempo.items())
+        list_dict_etapa_tiempo.update((x, round(y * 100 / total_perc, 0)) for x, y in list_dict_etapa_tiempo.items())
         porc_real = sum(list_dict_etapa_tiempo.values())
         if porc_real != 100:
             list_dict_etapa_tiempo[etapa_i] = list_dict_etapa_tiempo[etapa_i] + 100 - porc_real
@@ -452,15 +460,38 @@ class Economia(MDScreen):
 
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
-
     def on_enter(self, etapas_posibles):
+        global inicial_etapas_tick
+        global lista_seleccionada_etapa
+        if inicial_etapas_tick:
+            lista_estados_a_marcar = [True] * len(lista_etapas_posibles)
+            inicial_etapas_tick = 0
+        else:
+            # Si el elemento sigue en pie en lista_seleccionada_etapa, es true, si no es false.
+            # No me preguntes por qué pero a la hora de añadirlo al checkboxid, va con uno de retraso, así que añadimos un
+            # elemento 0 que no se va a usar a la lista.
+            lista_estados_a_marcar = [True] * (1 + len(lista_etapas_posibles))
+            i = -1
+            for elemento_i in lista_etapas_posibles:
+                if elemento_i in lista_seleccionada_etapa:
+                    estado_i = True
+                    lista_estados_a_marcar[i] = estado_i
+                    if i == -1:
+                        lista_estados_a_marcar[0] = estado_i
+                else:
+                    estado_i = False
+                    lista_estados_a_marcar[i] = estado_i
+                    if i == -1:
+                        lista_estados_a_marcar[0] = estado_i
+                i = i + 1
+
         self.ids.selectionlist.clear_widgets()
+        i = 0
         for x in etapas_posibles:
+            estado_check_box = lista_estados_a_marcar[i]
             self.ids.selectionlist.add_widget(
-                AKSelectListAvatarItem_etapa(
-                    first_label=x
-                )
-            )
+                AKSelectListAvatarItem_etapa(first_label=x, estado_check=estado_check_box))
+            i = i + 1
 
     def cancel(self):
         self.on_leave()
@@ -468,7 +499,11 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
 
     def _choose(self):
         global lista_seleccionada_etapa
-        lista_seleccionada_etapa = self.ids.selectionlist.get_selection()
+        global lista_etapas_posibles
+        for element in self.ids.selectionlist.get_selection():
+            if element in lista_etapas_posibles:
+                lista_etapas_posibles.remove(element)
+        lista_seleccionada_etapa = lista_etapas_posibles
         self.on_leave()
         self.dismiss()
 
@@ -496,7 +531,7 @@ class Selectionlist_categoria(BaseDialog, ThemableBehavior):
         for x in categorias_posibles:
             self.ids.selectionlist_categoria.add_widget(
                 AKSelectListAvatarItem_etapa(
-                    first_label=x
+                    first_label=x, estado_check=True
                 )
             )
 

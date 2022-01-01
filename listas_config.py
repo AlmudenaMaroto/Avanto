@@ -6,6 +6,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.stacklayout import StackLayout
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.behaviors import CircularRippleBehavior
+from kivy.properties import ObjectProperty
+
+global dict_estados_etapas
+dict_estados_etapas = []
 
 Builder.load_string(
     """
@@ -36,7 +40,10 @@ Builder.load_string(
             halign: "center"
         CheckBox:
             size_hint_x:.1
+            color: .5, .5, .5, 1
+            id:check_box_id
             on_active: root.checkbox_click(self, self.active)
+            active: root.check_box_id
 """
 )
 
@@ -49,9 +56,12 @@ class AKSelectListAvatarItem_etapa(
     first_label = StringProperty("")
     second_label = StringProperty("")
     animate_start = BooleanProperty(True)
+    check_box_id = ObjectProperty(True)
 
-    def __init__(self, **kwargs):
+    def __init__(self, estado_check, **kwargs):
         super().__init__(**kwargs)
+        __class__.check_box_id = estado_check
+        self.dict_estados = {}
 
     def _choose_selection(self, select):
 
@@ -85,8 +95,11 @@ class AKSelectListAvatarItem_etapa(
         # )
         # anim.start(self.ids._box)
 
-    def checkbox_click(self, a, b):
+    def checkbox_click(self, useless, estado_check):
         pass
+        # self.dict_estados[self.ids._first_label.text] = self.ids.check_box_id.active
+        # dict_estados_etapas.append(self.dict_estados)
+        # # self.ids.check_box_id.active = ObjectProperty(estado_check)
 
 
 class AKSelectList_etapa(StackLayout):

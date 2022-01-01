@@ -46,14 +46,14 @@
     	"factory": "Selectionlist",
     	"screen_name": "selectionlist",
     	"icon": "list-status",
-		"menu": "si"
+		"menu": "no"
     },
     "Piechart": {
     	"import": "piechart",
     	"factory": "Piechart",
     	"screen_name": "piechart",
     	"icon": "chart-pie",
-		"menu": "si"
+		"menu": "no"
     },
     "Linechart": {
     	"import": "linechart",
