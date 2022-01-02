@@ -20,6 +20,7 @@ from listas_config import AKSelectListAvatarItem_etapa
 from charts_almu import AKPieChart_etapas
 from datetime import date
 
+import collections
 today = date.today()
 lista_seleccionada_etapa = []
 lista_seleccionada_categoria = []
@@ -27,6 +28,7 @@ global lista_etapas_posibles
 lista_etapas_posibles = []
 global inicial_etapas_tick
 inicial_etapas_tick = 1
+
 
 # conversion de epoch a fechas:
 def epoch2human(epoch):
@@ -37,6 +39,7 @@ def epoch2human(epoch):
 def epoch2human_year(epoch):
     return time.strftime('%Y',
                          time.localtime(int(epoch)))
+
 
 # Funciones para filtrar dict_sorted_eco.
 def filtrar_dict_fechas(dic, epoch_ini, epoch_fin):
@@ -133,6 +136,8 @@ class Economia(MDScreen):
         self.tasa_ahorro_tabla()
         self.pie_etapa_importe()
         self.pie_etapa_tiempo()
+        self.ranking_gastos()
+        self.ranking_ingresos()
 
         id_evtemp = self.ids.id_evtemp
         id_barmes = self.ids.id_barmes
@@ -458,6 +463,46 @@ class Economia(MDScreen):
         )
         self.ids.chart_box_etapatiempo.add_widget(self.piechart)
 
+    def ranking_gastos(self):
+        # Filtramos por gastos (<0)
+        # Con counter agrupamos los importes del mismo concepto.
+        # ordenamos por max valor sorted_x.reverse() para inverso y redondeamos. Cogemos 10 primeros
+        list_of_dict_gastos = [d for d in self.dict_eco_sorted if d['importe'] < 0]
+        ranking_gastos = collections.Counter()
+        for d in list_of_dict_gastos:
+            ranking_gastos[d['concepto']] += (d['importe'])
+        ranking_gastos = dict(ranking_gastos)
+        ranking_gastos = dict(sorted(ranking_gastos.items(), key=lambda item: item[1]))
+        ranking_gastos = {key : round(ranking_gastos[key], 2) for key in ranking_gastos}
+        ranking_gastos = {k: ranking_gastos[k] for k in list(ranking_gastos)[:10]}
+
+        # Labels y values para el grafico
+
+        self.ids.id_ranking_gastos.y_values = list(ranking_gastos.values())
+        # x_value es la longitud del ranking
+        label_y_paso = []
+        i = 0
+        for i in range(len(ranking_gastos)):
+            paso_y = (max(self.ids.id_ranking_gastos.y_values) - min(self.ids.id_ranking_gastos.y_values)) / len(ranking_gastos)
+            label_y_paso.append(min(self.ids.id_ranking_gastos.y_values) + i * paso_y)
+
+        self.ids.id_ranking_gastos.x_values = [*range(len(ranking_gastos))]
+        self.ids.id_ranking_gastos.x_labels = list(ranking_gastos.keys())
+        self.ids.id_ranking_gastos.y_labels = label_y_paso
+
+        a = 0
+
+    def ranking_ingresos(self):
+        list_of_dict_ingresos = [d for d in self.dict_eco_sorted if d['importe'] > 0]
+        ranking_ingresos = collections.Counter()
+        for d in list_of_dict_ingresos:
+            ranking_ingresos[d['concepto']] += (d['importe'])
+        ranking_ingresos = dict(ranking_ingresos)
+        ranking_ingresos = dict(sorted(ranking_ingresos.items(), key=lambda item: item[1],reverse=True))
+        ranking_ingresos = {key: round(ranking_ingresos[key], 2) for key in ranking_ingresos}
+        ranking_ingresos = {k: ranking_ingresos[k] for k in list(ranking_ingresos)[:10]}
+        a = 0
+
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
     def on_enter(self, etapas_posibles):
@@ -471,19 +516,19 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
             # No me preguntes por qué pero a la hora de añadirlo al checkboxid, va con uno de retraso, así que añadimos un
             # elemento 0 que no se va a usar a la lista.
             lista_estados_a_marcar = [True] * (1 + len(lista_etapas_posibles))
-            i = -1
-            for elemento_i in lista_etapas_posibles:
-                if elemento_i in lista_seleccionada_etapa:
-                    estado_i = True
-                    lista_estados_a_marcar[i] = estado_i
-                    if i == -1:
-                        lista_estados_a_marcar[0] = estado_i
-                else:
-                    estado_i = False
-                    lista_estados_a_marcar[i] = estado_i
-                    if i == -1:
-                        lista_estados_a_marcar[0] = estado_i
-                i = i + 1
+            # i = -1
+            # for elemento_i in lista_etapas_posibles:
+            #     if elemento_i in lista_seleccionada_etapa:
+            #         estado_i = True
+            #         lista_estados_a_marcar[i] = estado_i
+            #         if i == -1:
+            #             lista_estados_a_marcar[0] = estado_i
+            #     else:
+            #         estado_i = False
+            #         lista_estados_a_marcar[i] = estado_i
+            #         if i == -1:
+            #             lista_estados_a_marcar[0] = estado_i
+            #     i = i + 1
 
         self.ids.selectionlist.clear_widgets()
         i = 0
@@ -579,6 +624,14 @@ Builder.load_string(
     label_size: dp(12)
 
 <Barras_ano@AKBarChart_ano>
+    size_hint_y: None
+    height: dp(180)
+    x_values: [0, 5, 8, 15]
+    y_values: [0, 10, 6, 8]
+    label_size: dp(12)
+    
+
+<Barras_horizontal@AKBarChart_horizontal>
     size_hint_y: None
     height: dp(180)
     x_values: [0, 5, 8, 15]
@@ -702,6 +755,21 @@ Builder.load_string(
                     adaptive_height: True
                     padding:dp(24)
                     orientation: "vertical"
+                MDLabel:
+                    text: 'Ranking gastos:'
+                    halign: "center"
+                    valign: "center"    
+                Barras_ano:
+                    id: id_ranking_gastos
+                    labels: True
+                    anim: True
+                    bg_color: 106/255, 188/255, 206/255, 1
+                    #lines_color: [40/255, 107/255, 122/255, 1]
+                    line_width:dp(1)
+                    #bars_color: [40/255, 107/255, 122/255, 1]
+                    labels_color: 40/255, 107/255, 122/255, 1
+                    trim: True
+                    #on_select: root.set_text(args)
 
         MDBoxLayout:
             size_hint_y: 0.05
