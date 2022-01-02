@@ -169,7 +169,7 @@ class Export_data(BoxLayout):
         elif self.bbdd == 'deporte':
             data = cur.execute("SELECT * FROM deporte")
             with open('deporte.csv', 'w', newline='', encoding='latin') as f:
-                writer = csv.writer(f)
+                writer = csv.writer(f, delimiter=';')
                 writer.writerows(data)
         con.commit()
         con.close()
@@ -198,7 +198,7 @@ class Import_data(BoxLayout):
                     try:
                         string_list = each_row.split(";")
                         string_list[0] = string_list[0].replace("ï»¿", "")
-                        string_list[4] = string_list[4].replace(",", ".")
+                        string_list[3] = string_list[3].replace(",", ".")
                         string_list = tuple(string_list)
                         if self.bbdd == 'movimientos':
                             con = sqlite3.connect(self.full_path)
