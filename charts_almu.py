@@ -94,7 +94,7 @@ Builder.load_string(
         id: _canvas
         canvas.before:
             Color:
-                rgba: root.bg_color if root.bg_color else root.theme_cls.primary_color
+                rgba: 1, 1, 1, 1
             RoundedRectangle:
                 pos: self.pos
                 size: root.size
@@ -910,6 +910,7 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
                 pos=[bottom_line_y + 20, new_x-50],
             )
             posicion_barras_save.append([bottom_line_y + 30, new_x-55])
+        num = 0
         for i in range(0, len(self.x_labels)):
             if self.labels:
                 x_label = self.x_labels[i] if self.x_labels else False
@@ -917,12 +918,17 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
                 y_label = self.y_labels[i] if self.y_labels else False
                 new_x = self.normalized_labels(x_label_num, "x", f_update)
                 new_y = self.normalized_labels(y_label, "y", f_update)
-                y_pos = [new_y + 10, 0]
+                y_pos = [new_x-10, 0]
                 x_pos = posicion_barras_save[i]
                 x_pos[0] = x_pos[0] + len(x_label)*3
+                if num % 3 == 0:
+                    label_y_text = str(int(y_label / 1000)) + 'k'
+                else:
+                    label_y_text = ""
+                num = num + 1
                 self.draw_label(
                     text_x=x_label if x_label else str(x),
-                    text_y=str(int(y_label / 1000)) + 'k' if type(str(y_label)) == str else '',
+                    text_y=label_y_text,
                     center_pos_x=x_pos,
                     center_pos_y=y_pos,
                     idx=len(self.x_labels) - i - 1,

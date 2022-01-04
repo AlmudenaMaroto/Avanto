@@ -478,6 +478,7 @@ class Economia(MDScreen):
         dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1]))
         dict_ranking_gastos = {key: round(-dict_ranking_gastos[key], 2) for key in dict_ranking_gastos}
         dict_ranking_gastos = {k: dict_ranking_gastos[k] for k in list(dict_ranking_gastos)[:10]}
+        dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1]))
 
         # Labels y values para el grafico
 
@@ -769,8 +770,8 @@ Builder.load_string(
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
-                    #bars_color: [40/255, 107/255, 122/255, 1]
-                    labels_color: 40/255, 107/255, 122/255, 1
+                    bars_color: 112/255, 196/255, 215/255, 1
+                    labels_color: 0,0,0, 1
                     trim: True
                     #on_select: root.set_text(args)
 
