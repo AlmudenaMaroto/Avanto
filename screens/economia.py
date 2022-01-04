@@ -144,10 +144,12 @@ class Economia(MDScreen):
         id_barmes = self.ids.id_barmes
         id_barano = self.ids.id_barano
         id_ranking_gastos = self.ids.id_ranking_gastos
+        id_ranking_ingresos = self.ids.id_ranking_ingresos
         id_evtemp.update()
         id_barmes.update()
         id_barano.update()
         id_ranking_gastos.update()
+        id_ranking_ingresos.update()
 
     def calculos(self):
         # Reseteo de nuevo
@@ -495,18 +497,31 @@ class Economia(MDScreen):
         self.ids.id_ranking_gastos.x_labels = list(dict_ranking_gastos.keys())
         self.ids.id_ranking_gastos.y_labels = label_y_paso
 
-        a = 0
-
     def ranking_ingresos(self):
-        list_of_dict_ingresos = [d for d in self.dict_eco_sorted if d['importe'] > 0]
-        ranking_ingresos = collections.Counter()
-        for d in list_of_dict_ingresos:
-            ranking_ingresos[d['concepto']] += (d['importe'])
-        ranking_ingresos = dict(ranking_ingresos)
-        ranking_ingresos = dict(sorted(ranking_ingresos.items(), key=lambda item: item[1], reverse=True))
-        ranking_ingresos = {key: round(ranking_ingresos[key], 2) for key in ranking_ingresos}
-        ranking_ingresos = {k: ranking_ingresos[k] for k in list(ranking_ingresos)[:10]}
-        a = 0
+        list_of_dict_gastos = [d for d in self.dict_eco_sorted if d['importe'] > 0]
+        dict_ranking_gastos = collections.Counter()
+        for d in list_of_dict_gastos:
+            dict_ranking_gastos[d['concepto']] += (d['importe'])
+        dict_ranking_gastos = dict(dict_ranking_gastos)
+        dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1], reverse=True))
+        dict_ranking_gastos = {key: round(dict_ranking_gastos[key], 2) for key in dict_ranking_gastos}
+        dict_ranking_gastos = {k: dict_ranking_gastos[k] for k in list(dict_ranking_gastos)[:10]}
+        dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1]))
+
+        # Labels y values para el grafico
+
+        self.ids.id_ranking_ingresos.y_values = list(dict_ranking_gastos.values())
+        # x_value es la longitud del ranking
+        label_y_paso = []
+        i = 0
+        for i in range(len(dict_ranking_gastos)):
+            paso_y = (max(self.ids.id_ranking_ingresos.y_values) - min(self.ids.id_ranking_ingresos.y_values)) / len(
+                dict_ranking_gastos)
+            label_y_paso.append(min(self.ids.id_ranking_ingresos.y_values) + i * paso_y)
+
+        self.ids.id_ranking_ingresos.x_values = [*range(len(dict_ranking_gastos))]
+        self.ids.id_ranking_ingresos.x_labels = list(dict_ranking_gastos.keys())
+        self.ids.id_ranking_ingresos.y_labels = label_y_paso
 
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
@@ -765,6 +780,21 @@ Builder.load_string(
                     valign: "center"    
                 Barras_horizontal:
                     id: id_ranking_gastos
+                    labels: True
+                    anim: True
+                    bg_color: 106/255, 188/255, 206/255, 1
+                    #lines_color: [40/255, 107/255, 122/255, 1]
+                    line_width:dp(1)
+                    bars_color: 112/255, 196/255, 215/255, 1
+                    labels_color: 0,0,0, 1
+                    trim: True
+                    #on_select: root.set_text(args)
+                MDLabel:
+                    text: 'Ranking ingresos:'
+                    halign: "center"
+                    valign: "center"    
+                Barras_horizontal:
+                    id: id_ranking_ingresos
                     labels: True
                     anim: True
                     bg_color: 106/255, 188/255, 206/255, 1
