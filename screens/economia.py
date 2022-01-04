@@ -21,6 +21,7 @@ from charts_almu import AKPieChart_etapas
 from datetime import date
 
 import collections
+
 today = date.today()
 lista_seleccionada_etapa = []
 lista_seleccionada_categoria = []
@@ -473,7 +474,7 @@ class Economia(MDScreen):
             ranking_gastos[d['concepto']] += (d['importe'])
         ranking_gastos = dict(ranking_gastos)
         ranking_gastos = dict(sorted(ranking_gastos.items(), key=lambda item: item[1]))
-        ranking_gastos = {key : round(ranking_gastos[key], 2) for key in ranking_gastos}
+        ranking_gastos = {key: round(-ranking_gastos[key], 2) for key in ranking_gastos}
         ranking_gastos = {k: ranking_gastos[k] for k in list(ranking_gastos)[:10]}
 
         # Labels y values para el grafico
@@ -483,7 +484,8 @@ class Economia(MDScreen):
         label_y_paso = []
         i = 0
         for i in range(len(ranking_gastos)):
-            paso_y = (max(self.ids.id_ranking_gastos.y_values) - min(self.ids.id_ranking_gastos.y_values)) / len(ranking_gastos)
+            paso_y = (max(self.ids.id_ranking_gastos.y_values) - min(self.ids.id_ranking_gastos.y_values)) / len(
+                ranking_gastos)
             label_y_paso.append(min(self.ids.id_ranking_gastos.y_values) + i * paso_y)
 
         self.ids.id_ranking_gastos.x_values = [*range(len(ranking_gastos))]
@@ -498,7 +500,7 @@ class Economia(MDScreen):
         for d in list_of_dict_ingresos:
             ranking_ingresos[d['concepto']] += (d['importe'])
         ranking_ingresos = dict(ranking_ingresos)
-        ranking_ingresos = dict(sorted(ranking_ingresos.items(), key=lambda item: item[1],reverse=True))
+        ranking_ingresos = dict(sorted(ranking_ingresos.items(), key=lambda item: item[1], reverse=True))
         ranking_ingresos = {key: round(ranking_ingresos[key], 2) for key in ranking_ingresos}
         ranking_ingresos = {k: ranking_ingresos[k] for k in list(ranking_ingresos)[:10]}
         a = 0
@@ -759,7 +761,7 @@ Builder.load_string(
                     text: 'Ranking gastos:'
                     halign: "center"
                     valign: "center"    
-                Barras_ano:
+                Barras_horizontal:
                     id: id_ranking_gastos
                     labels: True
                     anim: True
