@@ -19,7 +19,7 @@ from kivymd.theming import ThemableBehavior
 from kivymd.uix.label import MDLabel
 
 from kivymd_extensions.akivymd.helper import point_on_circle
-from kivymd_extensions.akivymd.utils.draw_tools import DrawTools
+from draw_tools_almu import DrawTools
 
 """issues
 color_mode
@@ -472,12 +472,12 @@ class AKChartBase_horizontal(DrawTools, ThemableBehavior, RelativeLayout):
         if mode == "x":
             _min = min_x
             _distance = x_distance
-            _size = size[0]
+            _size = size[1]
             f_update = 1
         else:
             _min = min_y
             _distance = y_distance
-            _size = size[1]
+            _size = size[0]
         if _distance != 0:
             res = ((val - _min) / _distance) * (
                     _size - self._bottom_line_y() - padding
@@ -891,7 +891,7 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
         bottom_line_y = self._bottom_line_y()
         count = len(self.y_values)
         bars_x_list = self.get_bar_x(count)
-        bar_width = self.get_bar_width()
+        bar_width = self.get_bar_width()/2
         f_update = self._loaded if anim else 1
         posicion_barras_save = []
         for i in range(0, count):
@@ -906,10 +906,10 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
                 canvas=canvas.after,
                 color=self.bars_color,
                 radius=[self.bars_radius, self.bars_radius, 0, 0],
-                size=[bar_width, new_y - bottom_line_y],
-                pos=[new_x, bottom_line_y + 20],
+                size=[new_y - bottom_line_y, bar_width],
+                pos=[bottom_line_y + 20, new_x-50],
             )
-            posicion_barras_save.append([new_x + bar_width * 0.5, bottom_line_y])
+            posicion_barras_save.append([bottom_line_y + 30, new_x-55])
         for i in range(0, len(self.x_labels)):
             if self.labels:
                 x_label = self.x_labels[i] if self.x_labels else False
@@ -917,8 +917,9 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
                 y_label = self.y_labels[i] if self.y_labels else False
                 new_x = self.normalized_labels(x_label_num, "x", f_update)
                 new_y = self.normalized_labels(y_label, "y", f_update)
-                y_pos = [20, new_y + 10]
+                y_pos = [new_y + 10, 0]
                 x_pos = posicion_barras_save[i]
+                x_pos[0] = x_pos[0] + len(x_label)*3
                 self.draw_label(
                     text_x=x_label if x_label else str(x),
                     text_y=str(int(y_label / 1000)) + 'k' if type(str(y_label)) == str else '',
@@ -941,7 +942,7 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
         self._myinit = False
 
     def get_bar_x(self, bar_count):
-        bar_width = self.get_bar_width()
+        bar_width = self.get_bar_width()/2
         total_width = (
                 bar_width * bar_count
                 + (bar_count - 1) * self.bars_spacing

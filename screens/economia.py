@@ -143,9 +143,11 @@ class Economia(MDScreen):
         id_evtemp = self.ids.id_evtemp
         id_barmes = self.ids.id_barmes
         id_barano = self.ids.id_barano
+        id_ranking_gastos = self.ids.id_ranking_gastos
         id_evtemp.update()
         id_barmes.update()
         id_barano.update()
+        id_ranking_gastos.update()
 
     def calculos(self):
         # Reseteo de nuevo
@@ -469,27 +471,27 @@ class Economia(MDScreen):
         # Con counter agrupamos los importes del mismo concepto.
         # ordenamos por max valor sorted_x.reverse() para inverso y redondeamos. Cogemos 10 primeros
         list_of_dict_gastos = [d for d in self.dict_eco_sorted if d['importe'] < 0]
-        ranking_gastos = collections.Counter()
+        dict_ranking_gastos = collections.Counter()
         for d in list_of_dict_gastos:
-            ranking_gastos[d['concepto']] += (d['importe'])
-        ranking_gastos = dict(ranking_gastos)
-        ranking_gastos = dict(sorted(ranking_gastos.items(), key=lambda item: item[1]))
-        ranking_gastos = {key: round(-ranking_gastos[key], 2) for key in ranking_gastos}
-        ranking_gastos = {k: ranking_gastos[k] for k in list(ranking_gastos)[:10]}
+            dict_ranking_gastos[d['concepto']] += (d['importe'])
+        dict_ranking_gastos = dict(dict_ranking_gastos)
+        dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1]))
+        dict_ranking_gastos = {key: round(-dict_ranking_gastos[key], 2) for key in dict_ranking_gastos}
+        dict_ranking_gastos = {k: dict_ranking_gastos[k] for k in list(dict_ranking_gastos)[:10]}
 
         # Labels y values para el grafico
 
-        self.ids.id_ranking_gastos.y_values = list(ranking_gastos.values())
+        self.ids.id_ranking_gastos.y_values = list(dict_ranking_gastos.values())
         # x_value es la longitud del ranking
         label_y_paso = []
         i = 0
-        for i in range(len(ranking_gastos)):
+        for i in range(len(dict_ranking_gastos)):
             paso_y = (max(self.ids.id_ranking_gastos.y_values) - min(self.ids.id_ranking_gastos.y_values)) / len(
-                ranking_gastos)
+                dict_ranking_gastos)
             label_y_paso.append(min(self.ids.id_ranking_gastos.y_values) + i * paso_y)
 
-        self.ids.id_ranking_gastos.x_values = [*range(len(ranking_gastos))]
-        self.ids.id_ranking_gastos.x_labels = list(ranking_gastos.keys())
+        self.ids.id_ranking_gastos.x_values = [*range(len(dict_ranking_gastos))]
+        self.ids.id_ranking_gastos.x_labels = list(dict_ranking_gastos.keys())
         self.ids.id_ranking_gastos.y_labels = label_y_paso
 
         a = 0
@@ -668,7 +670,6 @@ Builder.load_string(
                 spacing: dp(25)
                 padding: dp(25)
                 adaptive_height: True
-                
                 MDLabel:
                     id:saldo_total
                     halign: "center"
