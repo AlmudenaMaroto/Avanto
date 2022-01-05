@@ -19,6 +19,7 @@ from kivymd.theming import ThemableBehavior
 from listas_config import AKSelectListAvatarItem_etapa
 from charts_almu import AKPieChart_etapas
 from datetime import date
+from kivy.utils import platform
 import csv
 import collections
 
@@ -65,6 +66,8 @@ def filtrar_fecha_fin(dic, fecha_fin):
 
 def filtrar_etapa(dic, lista_etapas):
     try:
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
         with open('etapas_seleccionadas.csv', 'r', newline='', encoding='latin') as f:
             reader = csv.reader(f, delimiter=';')
             lista_etapas_seleccionadas = list(reader)
@@ -389,6 +392,8 @@ class Economia(MDScreen):
             self.etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted if 'etapa' in d]))
         self.filtrado_etapa = 0
         lista_etapas_posibles = self.etapas_posibles.copy()
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
         with open('etapas_lista.csv', 'w', newline='', encoding='latin') as f:
             writer = csv.writer(f, delimiter=';')
             writer.writerow(lista_etapas_posibles)
@@ -544,7 +549,8 @@ class Economia(MDScreen):
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
     def on_enter(self, etapas_posibles):
-
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
         with open('etapas_lista.csv', 'r', newline='', encoding='latin') as f:
             reader = csv.reader(f, delimiter=';')
             self.lista_etapas_posibles = list(reader)
@@ -554,6 +560,8 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
 
         lista_estados_a_marcar = [False] * (len(self.lista_etapas_posibles[0]))
         # Leemos el csv con las que si estan marcadas
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
         with open('etapas_seleccionadas.csv', 'r', newline='', encoding='latin') as f:
             reader = csv.reader(f, delimiter=';')
             lista_etapas_seleccionadas = list(reader)

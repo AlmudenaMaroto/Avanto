@@ -808,9 +808,9 @@ class AKBarChart_ano(AKChartBase):
                 color=self.bars_color,
                 radius=[self.bars_radius, self.bars_radius, 0, 0],
                 size=[bar_width, new_y - bottom_line_y],
-                pos=[new_x, bottom_line_y + 20],
+                pos=[new_x, bottom_line_y],
             )
-            posicion_barras_save.append([new_x + bar_width * 0.5, bottom_line_y])
+            posicion_barras_save.append([new_x + bar_width * 0.5, bottom_line_y - 20])
         for i in range(0, len(self.x_labels)):
             if self.labels:
                 x_label = self.x_labels[i] if self.x_labels else False
@@ -833,8 +833,8 @@ class AKBarChart_ano(AKChartBase):
             shape_name="line",
             canvas=canvas,
             points=[
-                [self._bottom_line_y(), dis + 20],
-                [self.width - self._bottom_line_y(), dis + 20],
+                [self._bottom_line_y(), dis],
+                [self.width - self._bottom_line_y(), dis],
             ],
             line_width=self.line_width,
             color=self.lines_color,
