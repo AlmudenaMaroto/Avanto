@@ -18,6 +18,7 @@ from datetime import datetime
 from kivy.uix.popup import Popup
 from kivy.utils import platform
 import csv
+from kivy.uix.label import Label
 
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
@@ -66,6 +67,10 @@ class Import_main(MDScreen):
             self.add_widget(Export_data(full_path, bbdd))
         elif bbdd == 'Variables globales':
             bbdd = 'globales'
+            full_path = os.getcwd() + '/globales.db'
+            self.clear_widgets()
+            self.current = 'export_data'
+            self.add_widget(Export_data(full_path, bbdd))
 
 
     def import_db(self):
@@ -130,6 +135,8 @@ class Export_data(BoxLayout):
                 wid.data_id = str(i[0])
                 wid.data = r0 + r1 + r2 + r3
                 self.ids.container.add_widget(wid)
+        elif bbdd == 'globales':
+            self.ids.container.add_widget(Label(text="¿Desea guardar en un csv las variables globales?"), index=0)
         con.close()
 
     def return_button(self):
@@ -169,6 +176,11 @@ class Export_data(BoxLayout):
         elif self.bbdd == 'deporte':
             data = cur.execute("SELECT * FROM deporte")
             with open('deporte.csv', 'w', newline='', encoding='latin') as f:
+                writer = csv.writer(f, delimiter=';')
+                writer.writerows(data)
+        elif self.bbdd == 'globales':
+            data = cur.execute("SELECT * FROM globales")
+            with open('globales.csv', 'w', newline='', encoding='latin') as f:
                 writer = csv.writer(f, delimiter=';')
                 writer.writerows(data)
         con.commit()

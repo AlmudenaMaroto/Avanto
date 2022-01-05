@@ -525,6 +525,12 @@ WindowManager_select:
 
 <Selectdb>:
     name:"selectdb"
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
     MDBoxLayout:
         orientation: "vertical"
 
@@ -536,7 +542,7 @@ WindowManager_select:
                 orientation: "vertical"
                 Label:
                     size_hint_y: 0.1
-                    text:'Prueba'
+                    text:' '
                 Button:
                     size_hint_y: 0.1
                     text:'Movimientos bancarios'
