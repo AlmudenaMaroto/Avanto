@@ -64,12 +64,15 @@ def filtrar_fecha_fin(dic, fecha_fin):
 
 
 def filtrar_etapa(dic, lista_etapas):
-    with open('etapas_seleccionadas.csv', 'r', newline='', encoding='latin') as f:
-        reader = csv.reader(f, delimiter=';')
-        lista_etapas_seleccionadas = list(reader)
-    for etapa_i in lista_etapas_seleccionadas[0]:
-        if dic['etapa'] == etapa_i:
-            return True
+    try:
+        with open('etapas_seleccionadas.csv', 'r', newline='', encoding='latin') as f:
+            reader = csv.reader(f, delimiter=';')
+            lista_etapas_seleccionadas = list(reader)
+        for etapa_i in lista_etapas_seleccionadas[0]:
+            if dic['etapa'] == etapa_i:
+                return True
+    except FileNotFoundError:
+        return True
 
 
 def filtrar_categoria(dic, lista_categoria):
@@ -113,6 +116,7 @@ class Economia(MDScreen):
         self.error = 0
         self.piechart = ''
         self.ini_etapas = 1
+        self.ini_etapa_filtro = True
         self.update()
 
     def update(self):
@@ -229,8 +233,9 @@ class Economia(MDScreen):
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_ini(d, self.fecha_ini)]
         if self.fecha_fin != '':
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_fin(d, self.fecha_fin)]
-
-        self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
+        if not self.ini_etapa_filtro:
+            self.ini_etapa_filtro = False
+            self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
         if lista_seleccionada_categoria != []:
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if
                                     filtrar_categoria(d, lista_seleccionada_categoria)]
