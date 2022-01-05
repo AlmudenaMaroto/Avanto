@@ -19,7 +19,7 @@ from kivymd.theming import ThemableBehavior
 from listas_config import AKSelectListAvatarItem_etapa
 from charts_almu import AKPieChart_etapas
 from datetime import date
-
+import csv
 import collections
 
 today = date.today()
@@ -64,7 +64,10 @@ def filtrar_fecha_fin(dic, fecha_fin):
 
 
 def filtrar_etapa(dic, lista_etapas):
-    for etapa_i in lista_etapas:
+    with open('etapas_seleccionadas.csv', 'r', newline='', encoding='latin') as f:
+        reader = csv.reader(f, delimiter=';')
+        lista_etapas_seleccionadas = list(reader)
+    for etapa_i in lista_etapas_seleccionadas[0]:
         if dic['etapa'] == etapa_i:
             return True
 
@@ -109,6 +112,7 @@ class Economia(MDScreen):
         self.date = ''
         self.error = 0
         self.piechart = ''
+        self.ini_etapas = 1
         self.update()
 
     def update(self):
@@ -225,8 +229,8 @@ class Economia(MDScreen):
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_ini(d, self.fecha_ini)]
         if self.fecha_fin != '':
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_fin(d, self.fecha_fin)]
-        if lista_seleccionada_etapa != []:
-            self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
+
+        self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
         if lista_seleccionada_categoria != []:
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if
                                     filtrar_categoria(d, lista_seleccionada_categoria)]
@@ -380,6 +384,15 @@ class Economia(MDScreen):
             self.etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted if 'etapa' in d]))
         self.filtrado_etapa = 0
         lista_etapas_posibles = self.etapas_posibles.copy()
+        with open('etapas_lista.csv', 'w', newline='', encoding='latin') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(lista_etapas_posibles)
+        if self.ini_etapas:
+            with open('etapas_seleccionadas.csv', 'w', newline='', encoding='latin') as f:
+                writer = csv.writer(f, delimiter=';')
+                writer.writerow(lista_etapas_posibles)
+            self.ini_etapas = 0
+
         a = Selectionlist_etapa()
         a.on_enter(self.etapas_posibles)
         a.open()
@@ -526,30 +539,37 @@ class Economia(MDScreen):
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
     def on_enter(self, etapas_posibles):
-        global inicial_etapas_tick
-        global lista_seleccionada_etapa
-        if inicial_etapas_tick:
-            lista_estados_a_marcar = [True] * len(lista_etapas_posibles)
-            inicial_etapas_tick = 0
-        else:
-            # Si el elemento sigue en pie en lista_seleccionada_etapa, es true, si no es false.
-            # No me preguntes por qué pero a la hora de añadirlo al checkboxid, va con uno de retraso, así que añadimos un
-            # elemento 0 que no se va a usar a la lista.
-            lista_estados_a_marcar = [True] * (1 + len(lista_etapas_posibles))
-            # i = -1
-            # for elemento_i in lista_etapas_posibles:
-            #     if elemento_i in lista_seleccionada_etapa:
-            #         estado_i = True
-            #         lista_estados_a_marcar[i] = estado_i
-            #         if i == -1:
-            #             lista_estados_a_marcar[0] = estado_i
-            #     else:
-            #         estado_i = False
-            #         lista_estados_a_marcar[i] = estado_i
-            #         if i == -1:
-            #             lista_estados_a_marcar[0] = estado_i
-            #     i = i + 1
 
+        with open('etapas_lista.csv', 'r', newline='', encoding='latin') as f:
+            reader = csv.reader(f, delimiter=';')
+            self.lista_etapas_posibles = list(reader)
+        lista_estados_a_marcar = [True] * len(self.lista_etapas_posibles[0])
+        self.inicial_etapas_tick = 0
+
+
+        lista_estados_a_marcar = [False] * (len(self.lista_etapas_posibles[0]))
+        # Leemos el csv con las que si estan marcadas
+        with open('etapas_seleccionadas.csv', 'r', newline='', encoding='latin') as f:
+            reader = csv.reader(f, delimiter=';')
+            lista_etapas_seleccionadas = list(reader)
+        i = 0
+        for element in self.lista_etapas_posibles[0]:
+            if element in lista_etapas_seleccionadas[0]:
+                if i == 0:
+                    lista_estados_a_marcar[len(lista_estados_a_marcar)-1] = True
+                else:
+                    lista_estados_a_marcar[i - 1] = True
+            i = i + 1
+
+        # Hay que duplicar esto por no se por que alguna razon no coge bien el tick del primer termino
+        # lista_estados_a_marcar = [True, True, True, True, False]
+        self.ids.selectionlist.clear_widgets()
+        i = 0
+        for x in etapas_posibles:
+            estado_check_box = lista_estados_a_marcar[i]
+            self.ids.selectionlist.add_widget(
+                AKSelectListAvatarItem_etapa(first_label=x, estado_check=estado_check_box))
+            i = i + 1
         self.ids.selectionlist.clear_widgets()
         i = 0
         for x in etapas_posibles:
@@ -563,12 +583,13 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
         self.dismiss()
 
     def _choose(self):
-        global lista_seleccionada_etapa
-        global lista_etapas_posibles
+        lista_seleccionadas = self.lista_etapas_posibles[0].copy()
         for element in self.ids.selectionlist.get_selection():
-            if element in lista_etapas_posibles:
-                lista_etapas_posibles.remove(element)
-        lista_seleccionada_etapa = lista_etapas_posibles
+            if element in self.lista_etapas_posibles[0]:
+                lista_seleccionadas.remove(element)
+        with open('etapas_seleccionadas.csv', 'w', newline='', encoding='latin') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(lista_seleccionadas)
         self.on_leave()
         self.dismiss()
 

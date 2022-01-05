@@ -31,12 +31,13 @@ Builder.load_string(
         height: dp(50)
         orientation: "horizontal"
         spacing: dp(4)
-        MDLabel:
+        Label:
             id: _first_label
             size_hint_x:.9
             text: root.first_label
             font_size:root.width*.1
-            theme_text_color: "Primary"
+            #theme_text_color: 0,0,0,1
+            color: 0, 0, 0, 1
             halign: "center"
         CheckBox:
             size_hint_x:.1
