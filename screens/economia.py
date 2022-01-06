@@ -237,8 +237,8 @@ class Economia(MDScreen):
         if self.fecha_fin != '':
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_fin(d, self.fecha_fin)]
         if not self.ini_etapa_filtro:
-            self.ini_etapa_filtro = False
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
+        self.ini_etapa_filtro = False
         if lista_seleccionada_categoria != []:
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if
                                     filtrar_categoria(d, lista_seleccionada_categoria)]
