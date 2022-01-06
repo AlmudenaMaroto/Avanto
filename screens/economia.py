@@ -627,9 +627,13 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
 
     def _choose(self):
         lista_seleccionadas = self.lista_etapas_posibles[0].copy()
+        # Al clickar estas retirandolo, la lista contiente los que NO se deben seleccionar.
+        # Entonces, cuando limpiemos, la lista debe estar completa
+
         for element in self.ids.selectionlist.get_selection():
             if element in self.lista_etapas_posibles[0]:
                 lista_seleccionadas.remove(element)
+
         with open('etapas_seleccionadas.csv', 'w', newline='', encoding='latin') as f:
             writer = csv.writer(f, delimiter=';')
             writer.writerow(lista_seleccionadas)
@@ -638,6 +642,14 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
 
     def _unselect(self):
         pass
+        # global lista_etapas_posibles
+        # lista_seleccionadas = []
+        # with open('etapas_seleccionadas.csv', 'w', newline='', encoding='latin') as f:
+        #     writer = csv.writer(f, delimiter=';')
+        #     writer.writerow(lista_seleccionadas)
+        # for element in lista_etapas_posibles:
+        #     self.ids.selectionlist.
+        # self.on_enter(lista_etapas_posibles)
 
     def on_leave(self):
         return self.clear_selected()
