@@ -31,6 +31,12 @@ lista_etapas_posibles = []
 global inicial_etapas_tick
 inicial_etapas_tick = 1
 
+lista_seleccionada_categoria = []
+global lista_categorias_posibles
+lista_categorias_posibles = []
+global inicial_categorias_tick
+inicial_categorias_tick = 1
+
 
 # conversion de epoch a fechas:
 def epoch2human(epoch):
@@ -79,9 +85,17 @@ def filtrar_etapa(dic, lista_etapas):
 
 
 def filtrar_categoria(dic, lista_categoria):
-    for categoria_i in lista_categoria:
-        if dic['categoria'] == categoria_i:
-            return True
+    try:
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
+        with open('categorias_seleccionadas.csv', 'r', newline='', encoding='latin') as f:
+            reader = csv.reader(f, delimiter=';')
+            lista_categorias_seleccionadas = list(reader)
+        for categoria_i in lista_categorias_seleccionadas[0]:
+            if dic['categoria'] == categoria_i:
+                return True
+    except FileNotFoundError:
+        return True
 
 
 class MessagePopup_eco(Popup):
@@ -120,6 +134,8 @@ class Economia(MDScreen):
         self.piechart = ''
         self.ini_etapas = 1
         self.ini_etapa_filtro = True
+        self.ini_categorias = 1
+        self.ini_categoria_filtro = True
         self.update()
 
     def update(self):
@@ -239,9 +255,10 @@ class Economia(MDScreen):
         if not self.ini_etapa_filtro:
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_etapa(d, lista_seleccionada_etapa)]
         self.ini_etapa_filtro = False
-        if lista_seleccionada_categoria != []:
+        if not self.ini_categoria_filtro:
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if
                                     filtrar_categoria(d, lista_seleccionada_categoria)]
+        self.ini_categoria_filtro = False
 
         # Si está vacío mensaje de error y reseteamos los filtros:
         if self.dict_eco_sorted == []:
@@ -408,10 +425,24 @@ class Economia(MDScreen):
         a.open()
 
     def choose_categoria(self):
+        # Si ya hemos calculado las etapas, no hay que calcularlas de nuevo, o perdemos elementos de la lista.
+        global lista_categorias_posibles
         if self.filtrado_categoria:
             self.categorias_posibles = list(
                 dict.fromkeys([d['categoria'] for d in self.dict_eco_sorted if 'categoria' in d]))
         self.filtrado_categoria = 0
+        lista_categorias_posibles = self.categorias_posibles.copy()
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
+        with open('categorias_lista.csv', 'w', newline='', encoding='latin') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(lista_categorias_posibles)
+        if self.ini_categorias:
+            with open('categorias_seleccionadas.csv', 'w', newline='', encoding='latin') as f:
+                writer = csv.writer(f, delimiter=';')
+                writer.writerow(lista_categorias_posibles)
+            self.ini_categorias = 0
+
         a = Selectionlist_categoria()
         a.on_enter(self.categorias_posibles)
         a.open()
@@ -557,7 +588,6 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
         lista_estados_a_marcar = [True] * len(self.lista_etapas_posibles[0])
         self.inicial_etapas_tick = 0
 
-
         lista_estados_a_marcar = [False] * (len(self.lista_etapas_posibles[0]))
         # Leemos el csv con las que si estan marcadas
         if platform == 'android':
@@ -569,7 +599,7 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
         for element in self.lista_etapas_posibles[0]:
             if element in lista_etapas_seleccionadas[0]:
                 if i == 0:
-                    lista_estados_a_marcar[len(lista_estados_a_marcar)-1] = True
+                    lista_estados_a_marcar[len(lista_estados_a_marcar) - 1] = True
                 else:
                     lista_estados_a_marcar[i - 1] = True
             i = i + 1
@@ -606,6 +636,9 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
         self.on_leave()
         self.dismiss()
 
+    def _unselect(self):
+        pass
+
     def on_leave(self):
         return self.clear_selected()
 
@@ -624,41 +657,81 @@ class Selectionlist_etapa(BaseDialog, ThemableBehavior):
 
 
 class Selectionlist_categoria(BaseDialog, ThemableBehavior):
-
     def on_enter(self, categorias_posibles):
-        self.ids.selectionlist_categoria.clear_widgets()
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
+        with open('categorias_lista.csv', 'r', newline='', encoding='latin') as f:
+            reader = csv.reader(f, delimiter=';')
+            self.lista_categorias_posibles = list(reader)
+        lista_estados_a_marcar = [True] * len(self.lista_categorias_posibles[0])
+        self.inicial_categorias_tick = 0
+
+        lista_estados_a_marcar = [False] * (len(self.lista_categorias_posibles[0]))
+        # Leemos el csv con las que si estan marcadas
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
+        with open('categorias_seleccionadas.csv', 'r', newline='', encoding='latin') as f:
+            reader = csv.reader(f, delimiter=';')
+            lista_categorias_seleccionadas = list(reader)
+        i = 0
+        for element in self.lista_categorias_posibles[0]:
+            if element in lista_categorias_seleccionadas[0]:
+                if i == 0:
+                    lista_estados_a_marcar[len(lista_estados_a_marcar) - 1] = True
+                else:
+                    lista_estados_a_marcar[i - 1] = True
+            i = i + 1
+
+        # Hay que duplicar esto por no se por que alguna razon no coge bien el tick del primer termino
+        # lista_estados_a_marcar = [True, True, True, True, False]
+        self.ids.selectionlist.clear_widgets()
+        i = 0
         for x in categorias_posibles:
-            self.ids.selectionlist_categoria.add_widget(
-                AKSelectListAvatarItem_etapa(
-                    first_label=x, estado_check=True
-                )
-            )
+            estado_check_box = lista_estados_a_marcar[i]
+            self.ids.selectionlist.add_widget(
+                AKSelectListAvatarItem_etapa(first_label=x, estado_check=estado_check_box))
+            i = i + 1
+        self.ids.selectionlist.clear_widgets()
+        i = 0
+        for x in categorias_posibles:
+            estado_check_box = lista_estados_a_marcar[i]
+            self.ids.selectionlist.add_widget(
+                AKSelectListAvatarItem_etapa(first_label=x, estado_check=estado_check_box))
+            i = i + 1
 
     def cancel(self):
         self.on_leave()
         self.dismiss()
 
     def _choose(self):
-        global lista_seleccionada_categoria
-        lista_seleccionada_categoria = self.ids.selectionlist_categoria.get_selection()
+        lista_seleccionadas = self.lista_categorias_posibles[0].copy()
+        for element in self.ids.selectionlist.get_selection():
+            if element in self.lista_categorias_posibles[0]:
+                lista_seleccionadas.remove(element)
+        with open('categorias_seleccionadas.csv', 'w', newline='', encoding='latin') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(lista_seleccionadas)
         self.on_leave()
         self.dismiss()
+
+    def _unselect(self):
+        pass
 
     def on_leave(self):
         return self.clear_selected()
 
     def get_selected(self):
-        items = self.ids.selectionlist_categoria.get_selection()
+        items = self.ids.selectionlist.get_selection()
         text = ""
         for x in items:
             text += ", %s" % x
         return text
 
     def clear_selected(self):
-        return self.ids.selectionlist_categoria.clear_selection()
+        return self.ids.selectionlist.clear_selection()
 
     def select_all(self):
-        return self.ids.selectionlist_categoria.select_all()
+        return self.ids.selectionlist.select_all()
 
 
 Builder.load_string(
@@ -921,6 +994,10 @@ Builder.load_string(
                     pos_hint: {"center_x": .5, "center_y": .5}
                     on_release: root.cancel()
                 MDFlatButton:
+                    text: "Limpiar"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_release: root._unselect()
+                MDFlatButton:
                     text: "Seleccionar"
                     pos_hint: {"center_x": .5, "center_y": .5}
                     on_release: root._choose()
@@ -964,10 +1041,10 @@ Builder.load_string(
                     size: self.size
                     pos: self.pos
                     radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
-            ScrollView:
-                
-                AKSelectList:
-                    id: selectionlist_categoria
+            
+            ScrollView:    
+                AKSelectList_etapa:
+                    id: selectionlist
             BoxLayout:
                 size_hint_y: None
                 height: dp(40)

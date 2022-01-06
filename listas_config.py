@@ -25,7 +25,7 @@ Builder.load_string(
     height: self.width * 0.5
     padding: dp(5)
     spacing: dp(5)
-    on_release: root._choose_selection(_first_label.text)
+    
     BoxLayout:
         size_hint_y: None
         height: dp(50)
@@ -45,6 +45,7 @@ Builder.load_string(
             id:check_box_id
             on_active: root.checkbox_click(self, self.active)
             active: root.check_box_id
+            on_release: root._choose_selection(_first_label.text)
 """
 )
 
