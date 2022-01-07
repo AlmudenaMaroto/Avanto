@@ -400,7 +400,6 @@ class Economia(MDScreen):
         dict_domic_fech = [d for d in dict_domic if filtrar_dict_fechas(d, epoch_ini, epoch_fin)]
         self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech), 2)) + ' €'
 
-
     def choose_etapa(self):
         # Si ya hemos calculado las etapas, no hay que calcularlas de nuevo, o perdemos elementos de la lista.
         global lista_etapas_posibles
@@ -581,8 +580,17 @@ class Economia(MDScreen):
         list_of_dict_gastos = [d for d in self.dict_eco_sorted if d['categoria'] not in self.ingresos]
         list_of_dict_ingresos = [d for d in self.dict_eco_sorted if d['categoria'] in self.ingresos]
         a = 0
-
-        self.date = AKDatePicker_ini(callback=self.callback_ini)
+        tabla_dict_tasas = [{'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
+                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
+                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
+                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
+                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
+                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
+                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
+                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
+                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
+                            {'anomes': '2020-02', 'gastos': '105', 'ingresos': '210', 'tasa': '0.48'}]
+        self.date = Tabla_tasa_ahorro(tabla_dict=tabla_dict_tasas, callback=self.callback_ini)
         self.date.open()
 
 
@@ -826,7 +834,10 @@ Builder.load_string(
                     bg_color: 106/255, 188/255, 206/255, 1
                     #on_select: root.set_text_evtemp(args)
                     line_width:dp(1)
-                
+                MDRaisedButton:
+                    md_bg_color: 143/255, 219/255, 236/255, 1
+                    text: "Tabla Tasa de ahorro"
+                    on_release: root.tabla_tasa_ahorro() 
                 Barras_mes:
                     id: id_barmes
                     labels: True
@@ -850,7 +861,7 @@ Builder.load_string(
                     labels_color: 40/255, 107/255, 122/255, 1
                     trim: True
                     #on_select: root.set_text(args)
-                    
+                   
                 MDLabel:
                     text: '% del ahorro objetivo:'
                     halign: "center"
@@ -931,10 +942,7 @@ Builder.load_string(
                     labels_color: 0,0,0, 1
                     trim: True
                     #on_select: root.set_text(args)
-                MDRaisedButton:
-                    md_bg_color: 143/255, 219/255, 236/255, 1
-                    text: "Tabla Tasa de ahorro"
-                    on_release: root.tabla_tasa_ahorro()
+                
 
         MDBoxLayout:
             size_hint_y: 0.05

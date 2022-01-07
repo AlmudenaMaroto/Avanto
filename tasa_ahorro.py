@@ -8,30 +8,37 @@ from kivymd.theming import ThemableBehavior
 from kivymd.uix.behaviors import RectangularRippleBehavior
 from kivymd.uix.dialog import BaseDialog
 from datetime import date
+
 today = date.today()
 
 Builder.load_string(
     """
-<MDLabeltitle2@MDLabel>:
+<MDLabeltitle_22_2@MDLabel>:
     theme_text_color: "Custom"
     text_color: 1, 1, 1, 1
     halign: "center"
     vlighn: "center"
     fon_style: "H5"
-<MDLabeltitle@MDLabel>
+<MDLabeltitle_2@MDLabel>
     theme_text_color: "Primary"
     halign: "center"
     vlighn: "center"
     fon_style: "Caption"
-<ButtonBase>
+<ButtonBase2>
     size_hint_y: None
     height: dp(40)
-    MDLabel:
-        id: value
-        text: root.text
-        theme_text_color: "Primary"
-        halign: "center"
-        vlighn: "center"
+    BoxLayout:
+        MDLabel:
+            id: value
+            text: root.text
+            theme_text_color: "Primary"
+            halign: "center"
+            vlighn: "center"
+        MDLabel:
+            text: 'prueba'
+            theme_text_color: "Primary"
+            halign: "center"
+            vlighn: "center"
 <Tabla_tasa_ahorro>:
     size_hint: None, None
     size:
@@ -56,7 +63,7 @@ Builder.load_string(
                     size: self.size
                     pos: self.pos
                     radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
-            MDLabeltitle2:
+            MDLabeltitle_22_2:
                 text:'Fecha de inicio'
         BoxLayout:
             size_hint_y: None
@@ -69,12 +76,6 @@ Builder.load_string(
                     pos: self.pos
                     radius:[(0.0, 0.0), (0.0, 0.0), (0, 0), (0, 0)]
                  
-            MDLabeltitle2:
-                text: root._year_title
-            MDLabeltitle2:
-                text: root._month_title
-            MDLabeltitle2:
-                text: root._day_title
         BoxLayout:
             size_hint_y: None
             height: dp(50)
@@ -84,28 +85,21 @@ Builder.load_string(
                 Rectangle:
                     size: self.size
                     pos: self.pos
-            MDLabeltitle:
-                text: "Year"
-            MDLabeltitle:
-                text: "Month"
-            MDLabeltitle:
-                text: "Day"
+            MDLabeltitle_2:
+                text: "Año-Mes"
+            MDLabeltitle_2:
+                text: "Ingresos"
+            MDLabeltitle_2:
+                text: "Gastos"
+            MDLabeltitle_2:
+                text: "Tasa"
         BoxLayout:
             ScrollView:
                 MDBoxLayout:
                     id: year_view
                     orientation: "vertical"
                     adaptive_height: True
-            ScrollView:
-                MDBoxLayout:
-                    id: month_view
-                    orientation: "vertical"
-                    adaptive_height: True
-            ScrollView:
-                MDBoxLayout:
-                    id: day_view
-                    orientation: "vertical"
-                    adaptive_height: True
+
         BoxLayout:
             size_hint_y: None
             height: dp(40)
@@ -133,47 +127,29 @@ Builder.load_string(
 
 class Tabla_tasa_ahorro(BaseDialog, ThemableBehavior):
     year_today = today.strftime("%Y")
-    year_range = ListProperty([1990, int(year_today)+1])
+    year_range = ListProperty([1990, int(year_today) + 1])
     month_type = OptionProperty("string", options=["string", "int"])
     _day_title = StringProperty("-")
     _month_title = StringProperty("-")
     _year_title = StringProperty("-")
 
-    def __init__(self, callback=None, **kwargs):
+    def __init__(self, tabla_dict, callback=None, **kwargs):
         super(Tabla_tasa_ahorro, self).__init__(**kwargs)
-        self.month_dic = {
-            "1": "Enero",
-            "2": "Febrero",
-            "3": "Marzo",
-            "4": "Abril",
-            "5": "Mayo",
-            "6": "Junio",
-            "7": "Julio",
-            "8": "Agosto",
-            "9": "Septiembre",
-            "10": "Octubre",
-            "11": "Noviembre",
-            "12": "Diciembre",
-        }
 
-        self.callback = callback
-        for x in reversed(range(self.year_range[0], self.year_range[1])):
+        for fila in tabla_dict:
             self.ids.year_view.add_widget(
-                ButtonBase(text="%d" % x, on_release=self._set_year)
+                ButtonBase2(text="%s" % fila.get('anomes'))
             )
-        for x in reversed(range(1, 13)):
-            if self.month_type == "string":
-                month = self.month_dic[str(x)]
-            else:
-                month = str(x)
 
-            self.ids.month_view.add_widget(
-                ButtonBase(text=month, on_release=self._set_month)
-            )
-        for x in reversed(range(1, 32)):
-            self.ids.day_view.add_widget(
-                ButtonBase(text="%d" % x, on_release=self._set_day)
-            )
+        # for fila in tabla_dict:
+        #     self.ids.month_view.add_widget(
+        #         ButtonBase2(text="%s %s" % (fila.get('anomes'), str(fila.get('gastos'))), on_release=self._set_year)
+        #     )
+        self.callback = callback
+        # for x in reversed(range(self.year_range[0], self.year_range[1])):
+        #     self.ids.year_view.add_widget(
+        #         ButtonBase2(text="%d %d" % (x, x), on_release=self._set_year)
+        #     )
 
     def _set_day(self, instance):
         self._day_title = instance.text
@@ -216,7 +192,5 @@ class Tabla_tasa_ahorro(BaseDialog, ThemableBehavior):
         self.dismiss()
 
 
-
-
-class ButtonBase(RectangularRippleBehavior, ButtonBehavior, BoxLayout):
+class ButtonBase2(RectangularRippleBehavior, ButtonBehavior, BoxLayout):
     text = StringProperty()
