@@ -102,6 +102,8 @@ class DataBaseWid_movimientos(MDScreen):
             r4 = i[5] + '\n'
             r5 = str(i[4]) + ' €\n'
             r6 = i[6][0:20] + '...\n'
+            if r6 == '...\n':
+                r6 = '\n'
             wid.data_id = str(i[0])
             wid.data = r0 + r1 + r2 + r3 + r4 + r5 + r6
             self.ids.container.add_widget(wid)
@@ -796,9 +798,11 @@ WindowManager_select:
         TextInput:
             id: ti_Etapa
             multiline: False
+            hint_text: 'Etapa'
         TextInput:
             id: ti_Ubi
             multiline: False
+            hint_text: 'Ubicación'
     BoxLayout:
         Button:
             text: 'Actualizar'
@@ -877,12 +881,6 @@ WindowManager_select:
         id: Obj_fecha
         multiline: False
         hint_text: '01/01/2022'
-    Label: # ---------- Concepto
-        text: ' Objetivo peso (Kg):'
-    TextInput:
-        id: Obj_peso
-        multiline: False
-        hint_text: ' Kg'
     Label: # ---------- Domiciliaciones
         text: ' Domiciliaciones (separados por coma):'
     TextInput:
@@ -901,6 +899,14 @@ WindowManager_select:
         id: Obj_tasa
         multiline: False
         hint_text: '%'
+    Label: # ---------- 
+        text: ' En desarrollo para futuros módulos:'
+    Label: # ---------- Concepto
+        text: ' Objetivo peso (Kg):'
+    TextInput:
+        id: Obj_peso
+        multiline: False
+        hint_text: ' Kg'
     BoxLayout:
         size_hint_y: 4
     BoxLayout:

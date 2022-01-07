@@ -74,7 +74,7 @@ Builder.load_string(
                     pos: self.pos
                     radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
             MDLabeltitle_22_2:
-                text:'Fecha de inicio'
+                text:'Tasa de ahorro mensual'
                  
         BoxLayout:
             size_hint_y: None
