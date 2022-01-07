@@ -577,19 +577,41 @@ class Economia(MDScreen):
 
     def tabla_tasa_ahorro(self):
         # self.dict_eco_sorted
-        list_of_dict_gastos = [d for d in self.dict_eco_sorted if d['categoria'] not in self.ingresos]
-        list_of_dict_ingresos = [d for d in self.dict_eco_sorted if d['categoria'] in self.ingresos]
-        a = 0
-        tabla_dict_tasas = [{'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
-                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
-                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
-                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
-                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
-                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
-                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
-                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
-                            {'anomes': '2020-01', 'gastos': '10', 'ingresos': '20', 'tasa': '0.8'},
-                            {'anomes': '2020-02', 'gastos': '105', 'ingresos': '210', 'tasa': '0.48'}]
+        # self.dict_eco_sorted_asc = self.dict_eco_sorted.copy()[::-1]
+        list_of_dict_gastos = [d for d in self.dict_eco_sorted if d['categoria'] not in self.ingresos][::-1]
+        list_of_dict_ingresos = [d for d in self.dict_eco_sorted if d['categoria'] in self.ingresos][::-1]
+        dict_anomes_gastos = collections.Counter()
+
+        for d in list_of_dict_gastos:
+            dict_anomes_gastos[d['anomes']] += (d['importe'])
+        dict_anomes_gastos = dict(dict_anomes_gastos)
+        list_anomes_gastos = list(map(list, dict_anomes_gastos.items()))
+
+        dict_anomes_ingresos = collections.Counter()
+        for d in list_of_dict_ingresos:
+            dict_anomes_ingresos[d['anomes']] += (d['importe'])
+        dict_anomes_ingresos = dict(dict_anomes_ingresos)
+        list_anomes_ingresos = list(map(list, dict_anomes_ingresos.items()))
+
+        # Join ambos dict
+        tabla_dict_tasas = []
+        i = 0
+        for anomes in list_anomes_gastos:
+            dict_anomes = {}
+            dict_anomes['anomes'] = anomes[0]
+            dict_anomes['gastos'] = -anomes[1]
+            dict_anomes['ingresos'] = dict_anomes_ingresos.get(anomes[0])
+            if dict_anomes['ingresos']:
+                dict_anomes['tasa'] = str(
+                    round((dict_anomes['ingresos'] - dict_anomes['gastos']) * 100 / dict_anomes['ingresos'], 2)) + ' %'
+                dict_anomes['ingresos'] = str(round(dict_anomes['ingresos'], 2)) + ' €'
+            else:
+                dict_anomes['tasa'] = '-'
+                dict_anomes['ingresos'] = '-'
+            dict_anomes['gastos'] = '-' + str(round(dict_anomes['gastos'], 2)) + ' €'
+
+            tabla_dict_tasas.append(dict_anomes)
+
         self.date = Tabla_tasa_ahorro(tabla_dict=tabla_dict_tasas, callback=self.callback_ini)
         self.date.open()
 
@@ -834,10 +856,6 @@ Builder.load_string(
                     bg_color: 106/255, 188/255, 206/255, 1
                     #on_select: root.set_text_evtemp(args)
                     line_width:dp(1)
-                MDRaisedButton:
-                    md_bg_color: 143/255, 219/255, 236/255, 1
-                    text: "Tabla Tasa de ahorro"
-                    on_release: root.tabla_tasa_ahorro() 
                 Barras_mes:
                     id: id_barmes
                     labels: True
@@ -942,6 +960,10 @@ Builder.load_string(
                     labels_color: 0,0,0, 1
                     trim: True
                     #on_select: root.set_text(args)
+                MDRaisedButton:
+                    md_bg_color: 143/255, 219/255, 236/255, 1
+                    text: "Tabla Tasa de ahorro"
+                    on_release: root.tabla_tasa_ahorro() 
                 
 
         MDBoxLayout:

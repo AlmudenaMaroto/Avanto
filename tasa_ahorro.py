@@ -35,7 +35,17 @@ Builder.load_string(
             halign: "center"
             vlighn: "center"
         MDLabel:
-            text: 'prueba'
+            text: root.text2
+            theme_text_color: "Primary"
+            halign: "center"
+            vlighn: "center"
+        MDLabel:
+            text: root.text3
+            theme_text_color: "Primary"
+            halign: "center"
+            vlighn: "center"
+        MDLabel:
+            text: root.text4
             theme_text_color: "Primary"
             halign: "center"
             vlighn: "center"
@@ -65,16 +75,6 @@ Builder.load_string(
                     radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
             MDLabeltitle_22_2:
                 text:'Fecha de inicio'
-        BoxLayout:
-            size_hint_y: None
-            height: dp(50)
-            canvas.before:
-                Color:
-                    rgba: 95/255,166/255,182/255,1
-                RoundedRectangle:
-                    size: self.size
-                    pos: self.pos
-                    radius:[(0.0, 0.0), (0.0, 0.0), (0, 0), (0, 0)]
                  
         BoxLayout:
             size_hint_y: None
@@ -100,26 +100,6 @@ Builder.load_string(
                     orientation: "vertical"
                     adaptive_height: True
 
-        BoxLayout:
-            size_hint_y: None
-            height: dp(40)
-            padding: [dp(10), 0]
-            spacing: dp(10)
-            canvas.before:
-                Color:
-                    rgba: root.theme_cls.bg_dark
-                RoundedRectangle:
-                    size: self.size
-                    pos: self.pos
-                    radius: [(0.0, 10.0), (0.0, 10.0), (10, 10), (10, 10)]
-            MDFlatButton:
-                text: "Cancelar"
-                pos_hint: {"center_x": .5, "center_y": .5}
-                on_release: root.cancel()
-            MDFlatButton:
-                text: "Seleccionar"
-                pos_hint: {"center_x": .5, "center_y": .5}
-                on_release: root._choose()
 
 """
 )
@@ -138,7 +118,8 @@ class Tabla_tasa_ahorro(BaseDialog, ThemableBehavior):
 
         for fila in tabla_dict:
             self.ids.year_view.add_widget(
-                ButtonBase2(text="%s" % fila.get('anomes'))
+                ButtonBase2(text="%s" % fila.get('anomes'), text2="%s" % fila.get('ingresos'),
+                            text3="%s" % fila.get('gastos'), text4="%s" % fila.get('tasa'))
             )
 
         # for fila in tabla_dict:
@@ -194,3 +175,6 @@ class Tabla_tasa_ahorro(BaseDialog, ThemableBehavior):
 
 class ButtonBase2(RectangularRippleBehavior, ButtonBehavior, BoxLayout):
     text = StringProperty()
+    text2 = StringProperty()
+    text3 = StringProperty()
+    text4 = StringProperty()
