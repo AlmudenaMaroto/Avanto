@@ -696,18 +696,18 @@ class Selectionlist_categoria(BaseDialog, ThemableBehavior):
 
         # Hay que duplicar esto por no se por que alguna razon no coge bien el tick del primer termino
         # lista_estados_a_marcar = [True, True, True, True, False]
-        self.ids.selectionlist.clear_widgets()
+        self.ids.selectionlist_categoria.clear_widgets()
         i = 0
         for x in categorias_posibles:
             estado_check_box = lista_estados_a_marcar[i]
-            self.ids.selectionlist.add_widget(
+            self.ids.selectionlist_categoria.add_widget(
                 AKSelectListAvatarItem_etapa(first_label=x, estado_check=estado_check_box))
             i = i + 1
-        self.ids.selectionlist.clear_widgets()
+        self.ids.selectionlist_categoria.clear_widgets()
         i = 0
         for x in categorias_posibles:
             estado_check_box = lista_estados_a_marcar[i]
-            self.ids.selectionlist.add_widget(
+            self.ids.selectionlist_categoria.add_widget(
                 AKSelectListAvatarItem_etapa(first_label=x, estado_check=estado_check_box))
             i = i + 1
 
@@ -717,7 +717,7 @@ class Selectionlist_categoria(BaseDialog, ThemableBehavior):
 
     def _choose(self):
         lista_seleccionadas = self.lista_categorias_posibles[0].copy()
-        for element in self.ids.selectionlist.get_selection():
+        for element in self.ids.selectionlist_categoria.get_selection():
             if element in self.lista_categorias_posibles[0]:
                 lista_seleccionadas.remove(element)
         with open('categorias_seleccionadas.csv', 'w', newline='', encoding='latin') as f:
@@ -733,17 +733,17 @@ class Selectionlist_categoria(BaseDialog, ThemableBehavior):
         return self.clear_selected()
 
     def get_selected(self):
-        items = self.ids.selectionlist.get_selection()
+        items = self.ids.selectionlist_categoria.get_selection()
         text = ""
         for x in items:
             text += ", %s" % x
         return text
 
     def clear_selected(self):
-        return self.ids.selectionlist.clear_selection()
+        return self.ids.selectionlist_categoria.clear_selection()
 
     def select_all(self):
-        return self.ids.selectionlist.select_all()
+        return self.ids.selectionlist_categoria.select_all()
 
 
 Builder.load_string(
@@ -1056,7 +1056,7 @@ Builder.load_string(
             
             ScrollView:    
                 AKSelectList_etapa:
-                    id: selectionlist
+                    id: selectionlist_categoria
             BoxLayout:
                 size_hint_y: None
                 height: dp(40)
