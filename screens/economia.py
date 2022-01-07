@@ -9,6 +9,7 @@ import time
 from calendar import timegm
 import charts_almu
 import chart_progress
+from tasa_ahorro import Tabla_tasa_ahorro
 from date_pick_esp import AKDatePicker_ini, AKDatePicker_fin
 import datetime
 from itertools import groupby
@@ -161,7 +162,7 @@ class Economia(MDScreen):
         self.barchart_datos()
         self.barchart_ano()
         self.calc_ahorros()
-        self.tasa_ahorro_tabla()
+        # self.tabla_tasa_ahorro()
         self.pie_etapa_importe()
         self.pie_etapa_tiempo()
         self.ranking_gastos()
@@ -399,8 +400,6 @@ class Economia(MDScreen):
         dict_domic_fech = [d for d in dict_domic if filtrar_dict_fechas(d, epoch_ini, epoch_fin)]
         self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech), 2)) + ' €'
 
-    def tasa_ahorro_tabla(self):
-        pass
 
     def choose_etapa(self):
         # Si ya hemos calculado las etapas, no hay que calcularlas de nuevo, o perdemos elementos de la lista.
@@ -576,6 +575,15 @@ class Economia(MDScreen):
         self.ids.id_ranking_ingresos.x_values = [*range(len(dict_ranking_gastos))]
         self.ids.id_ranking_ingresos.x_labels = list(dict_ranking_gastos.keys())
         self.ids.id_ranking_ingresos.y_labels = label_y_paso
+
+    def tabla_tasa_ahorro(self):
+        # self.dict_eco_sorted
+        list_of_dict_gastos = [d for d in self.dict_eco_sorted if d['categoria'] not in self.ingresos]
+        list_of_dict_ingresos = [d for d in self.dict_eco_sorted if d['categoria'] in self.ingresos]
+        a = 0
+
+        self.date = AKDatePicker_ini(callback=self.callback_ini)
+        self.date.open()
 
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
@@ -923,6 +931,10 @@ Builder.load_string(
                     labels_color: 0,0,0, 1
                     trim: True
                     #on_select: root.set_text(args)
+                MDRaisedButton:
+                    md_bg_color: 143/255, 219/255, 236/255, 1
+                    text: "Tabla Tasa de ahorro"
+                    on_release: root.tabla_tasa_ahorro()
 
         MDBoxLayout:
             size_hint_y: 0.05
