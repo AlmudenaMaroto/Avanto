@@ -138,6 +138,7 @@ class Economia(MDScreen):
         self.ini_etapa_filtro = True
         self.ini_categorias = 1
         self.ini_categoria_filtro = True
+        self.hay_eleccion = 1
         self.update()
 
     def update(self):
@@ -158,7 +159,11 @@ class Economia(MDScreen):
         # No se puede invertir el orden porque inicial_csv necesita de un dict_eco_sorted para funcionar,
         # que procede de "calculos"
         self.calculos()
-        self.inicial_csv()
+        if self.hay_eleccion:
+            self.inicial_csv()
+        else:
+            self.hay_eleccion = 1
+
         # Si ha habido algun error previamente, lo reseteamos para que no nos expulse.
         if self.error == 1:
             self.error = 0
@@ -317,23 +322,23 @@ class Economia(MDScreen):
 
     def inicial_csv(self):
         # Reseteamos los csv en caso de que se hayan añadido registros. Para que no sea necesario cerrar la app
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
+
         global lista_etapas_posibles
         self.etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted_no_filt if 'etapa' in d]))
         lista_etapas_posibles = self.etapas_posibles.copy()
-        if platform == 'android':
-            os.chdir('/storage/emulated/0/')
         with open('etapas_lista.csv', 'w', newline='', encoding='latin') as f:
             writer = csv.writer(f, delimiter=';')
             writer.writerow(lista_etapas_posibles)
         with open('etapas_seleccionadas.csv', 'w', newline='', encoding='latin') as f:
             writer = csv.writer(f, delimiter=';')
             writer.writerow(lista_etapas_posibles)
+
         global lista_categorias_posibles
         self.categorias_posibles = list(
             dict.fromkeys([d['categoria'] for d in self.dict_eco_sorted_no_filt if 'categoria' in d]))
         lista_categorias_posibles = self.categorias_posibles.copy()
-        if platform == 'android':
-            os.chdir('/storage/emulated/0/')
         with open('categorias_lista.csv', 'w', newline='', encoding='latin') as f:
             writer = csv.writer(f, delimiter=';')
             writer.writerow(lista_categorias_posibles)
@@ -442,6 +447,7 @@ class Economia(MDScreen):
         self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech), 2)) + ' €'
 
     def choose_etapa(self):
+        self.hay_eleccion = 0
         # Si ya hemos calculado las etapas, no hay que calcularlas de nuevo, o perdemos elementos de la lista.
         global lista_etapas_posibles
         if self.filtrado_etapa:
@@ -464,6 +470,7 @@ class Economia(MDScreen):
         a.open()
 
     def choose_categoria(self):
+        self.hay_eleccion = 0
         # Si ya hemos calculado las etapas, no hay que calcularlas de nuevo, o perdemos elementos de la lista.
         global lista_categorias_posibles
         if self.filtrado_categoria:
