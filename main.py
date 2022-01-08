@@ -8,15 +8,11 @@ from kivy.utils import platform
 # Permisos de acceso a las carpetas del movil para poder importar y exportar
 if platform == 'android':
     from android.permissions import request_permissions, Permission
-    # from jnius import autoclass
-    #
-    # PythonActivity = autoclass("org.kivy.android.PythonActivity")
-    # ActivityInfo = autoclass("android.content.pm.ActivityInfo")
-    # activity = PythonActivity.mActivity
-    # # set orientation according to user's preference
-    # activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER)
 
     request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
+
+
+
 # Esto cuando se me jodio la grafica, ya funciona
 if platform != 'android':
     pass
@@ -142,6 +138,14 @@ class DemoApp(MDApp):
         self.root = Builder.load_string(kv)
 
     def on_start(self):
+        if platform == 'android':
+            from jnius import autoclass
+
+            PythonActivity = autoclass("org.kivy.android.PythonActivity")
+            ActivityInfo = autoclass("android.content.pm.ActivityInfo")
+            activity = PythonActivity.mActivity
+            # set orientation according to user's preference
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER)
         with open(
                 path.join(path.dirname(__file__), "screens.json"), encoding='utf-8'
         ) as read_file:
