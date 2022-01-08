@@ -316,6 +316,7 @@ class Economia(MDScreen):
         self.ids.saldo_total.text = str(round(self.saldo_total, 2)) + ' €'
 
     def inicial_csv(self):
+        # Reseteamos los csv en caso de que se hayan añadido registros. Para que no sea necesario cerrar la app
         global lista_etapas_posibles
         self.etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted_no_filt if 'etapa' in d]))
         lista_etapas_posibles = self.etapas_posibles.copy()
@@ -341,6 +342,7 @@ class Economia(MDScreen):
             writer.writerow(lista_categorias_posibles)
 
     def barchart_datos(self):
+        # Gráfico de barras de cada mes
         for row_i in self.dict_eco_sorted:
             barmes_i = {}
             barmes_i['importe'] = row_i['importe']
@@ -375,7 +377,7 @@ class Economia(MDScreen):
         self.ids.id_barmes.y_labels = label_y_paso
 
     def barchart_ano(self):
-
+        # Gráfico de barras de cada año
         for row_i in self.dict_eco_sorted:
             barmes_i = {}
             barmes_i['importe'] = row_i['importe']
@@ -410,6 +412,7 @@ class Economia(MDScreen):
         self.ids.id_barano.y_labels = label_y_paso
 
     def set_text_evtemp(self, args):
+        # TODO: Señalar punto donde ponemos el dedo y indicar fecha y saldo.
         # Como hemos guardado los valores de los ejes max y min en self podemos usarlos para calcular
         # la conversion y hacer print del valor.
         # size = [50, 180]
@@ -421,7 +424,7 @@ class Economia(MDScreen):
         pass
 
     def calc_ahorros(self):
-
+        # Calculamos lo relacionado con los ahorros.
         # Porcentaje de ahorro:
         porcentaje_ahorro = self.saldo_total * 100 / self.obj_cuenta
         self.ids.progress_percent.cambiar_porc(porcentaje_ahorro)
