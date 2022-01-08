@@ -109,6 +109,7 @@ class Economia(MDScreen):
         self.Popup = MessagePopup_eco()
         self.path_app = os.getcwd()
         self.dict_eco_sorted = {}
+        self.dict_eco_sorted_no_filt = {}
         self.dict_barmes = []
         self.dict_barano = []
         self.max_epoch_evtemp = 0
@@ -152,22 +153,30 @@ class Economia(MDScreen):
             self.ingresos = i[5]
             self.obj_tasa = i[6]
         con.close()
+        # Hay que dar click dos veces a Actualizar cuando se añade algo nuevo.
+        # ¿Por qué? porque 1)actualiza el csv 2) actualiza "calculos".
+        # No se puede invertir el orden porque inicial_csv necesita de un dict_eco_sorted para funcionar,
+        # que procede de "calculos"
         self.calculos()
+        self.inicial_csv()
+        # Si ha habido algun error previamente, lo reseteamos para que no nos expulse.
         if self.error == 1:
             self.error = 0
             return
         if self.error == 2:
             self.error = 0
             return
+        # Relanzamos todos los graficos
         self.barchart_datos()
         self.barchart_ano()
         self.calc_ahorros()
-        # self.tabla_tasa_ahorro()
+        # self.tabla_tasa_ahorro() # no hace falta, es un boton interno
         self.pie_etapa_importe()
         self.pie_etapa_tiempo()
         self.ranking_gastos()
         self.ranking_ingresos()
 
+        # Update de todos los graficos
         id_evtemp = self.ids.id_evtemp
         id_barmes = self.ids.id_barmes
         id_barano = self.ids.id_barano
@@ -206,7 +215,7 @@ class Economia(MDScreen):
             return
         con.close()
 
-        # Linea temporal: creamos una list of dict
+        # Linea temporal: creamos una list of dict -> self.dict_eco_sorted sera el usado para toodo
         row_i = {}
         dict_eco = []
         saldo = 0
@@ -218,7 +227,6 @@ class Economia(MDScreen):
         if ticks_sobrecarga == 0:
             ticks_sobrecarga = 1
         for i in cursor:
-            # saldo = round(saldo + i[4], 2)
             try:
                 utc_time = time.strptime(i[1], "%d/%m/%Y")
                 epoch_time = timegm(utc_time)
@@ -228,7 +236,6 @@ class Economia(MDScreen):
                 row_i['anomes'] = ano_mes
                 row_i['epoch'] = epoch_time
                 row_i['importe'] = i[4]
-                # row_i['saldo'] = saldo
                 row_i['concepto'] = i[2]
                 row_i['categoria'] = i[3]
                 row_i['etapa'] = i[5]
@@ -241,14 +248,19 @@ class Economia(MDScreen):
         con.close()
 
         ###########################
-        # Ordenamos y añadimos saldo
+        # Ordenamos y añadimos saldo. Creamos un no filt, que no le afecten los filtros para cuando añadimos nuevos
+        # registros.
         self.dict_eco_sorted = sorted(dict_eco, key=lambda d: d['epoch'], reverse=False)
+        self.dict_eco_sorted_no_filt = sorted(dict_eco, key=lambda d: d['epoch'], reverse=False)
         i = 0
         for row_i in self.dict_eco_sorted:
             saldo = saldo + row_i['importe']
             self.dict_eco_sorted[i]['saldo'] = round(saldo, 2)
             i = i + 1
-        ################ FILTROS ####################
+        ################
+        #   FILTROS    #
+        ################
+        # En la primera vuelta no filtramos.
         if self.fecha_ini != '':
             self.dict_eco_sorted = [d for d in self.dict_eco_sorted if filtrar_fecha_ini(d, self.fecha_ini)]
         if self.fecha_fin != '':
@@ -277,6 +289,7 @@ class Economia(MDScreen):
         max_epoch = max(self.dict_eco_sorted, key=lambda x: x['epoch']).get('epoch')
         min_epoch = min(self.dict_eco_sorted, key=lambda x: x['epoch']).get('epoch')
 
+        # Eje y a 1000 €. TODO: Algo que organize por normal, k , M €...
         eje_y_max = round(maximo_saldo, -3) + 1000
         eje_y_min = round(minimo_saldo, -3)
 
@@ -301,6 +314,31 @@ class Economia(MDScreen):
         self.saldo_total = 0
         self.saldo_total = sum(item['importe'] for item in self.dict_eco_sorted)
         self.ids.saldo_total.text = str(round(self.saldo_total, 2)) + ' €'
+
+    def inicial_csv(self):
+        global lista_etapas_posibles
+        self.etapas_posibles = list(dict.fromkeys([d['etapa'] for d in self.dict_eco_sorted_no_filt if 'etapa' in d]))
+        lista_etapas_posibles = self.etapas_posibles.copy()
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
+        with open('etapas_lista.csv', 'w', newline='', encoding='latin') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(lista_etapas_posibles)
+        with open('etapas_seleccionadas.csv', 'w', newline='', encoding='latin') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(lista_etapas_posibles)
+        global lista_categorias_posibles
+        self.categorias_posibles = list(
+            dict.fromkeys([d['categoria'] for d in self.dict_eco_sorted_no_filt if 'categoria' in d]))
+        lista_categorias_posibles = self.categorias_posibles.copy()
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
+        with open('categorias_lista.csv', 'w', newline='', encoding='latin') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(lista_categorias_posibles)
+        with open('categorias_seleccionadas.csv', 'w', newline='', encoding='latin') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(lista_categorias_posibles)
 
     def barchart_datos(self):
         for row_i in self.dict_eco_sorted:
