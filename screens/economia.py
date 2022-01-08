@@ -931,7 +931,7 @@ Builder.load_string(
                     padding:dp(24)
                     orientation: "vertical"
                 MDLabel:
-                    text: 'Ranking gastos:'
+                    text: 'Ranking Gastos:'
                     halign: "center"
                     valign: "center"    
                 Barras_horizontal:
@@ -946,7 +946,7 @@ Builder.load_string(
                     trim: True
                     #on_select: root.set_text(args)
                 MDLabel:
-                    text: 'Ranking ingresos:'
+                    text: 'Ranking Ingresos:'
                     halign: "center"
                     valign: "center"    
                 Barras_horizontal:

@@ -95,15 +95,17 @@ class DataBaseWid_movimientos(MDScreen):
         cursor.execute(orden_execute)
         for i in cursor:
             wid = DataWid()
-            r0 = 'ID: ' + str(i[0]) + ' '
-            r1 = i[1] + ' \n'
-            r2 = i[2] + '\n'
-            r3 = str(i[3]) + ' '
-            r4 = i[5] + '\n'
-            r5 = str(i[4]) + ' €\n'
-            r6 = i[6][0:20] + '...\n'
-            if r6 == '...\n':
-                r6 = '\n'
+            r0 = ' ID: ' + str(i[0]) + '                 '
+            r1 = i[1] + ' \n '
+            r2 = i[2] + ', '
+            r3 = str(i[3]) + '\n '
+            r4 = i[5] + '\n '
+            r5 = str(i[4]) + ' €\n '
+            r6 = i[6][0:30] + '...\n '
+            if r6 == '...\n ':
+                r6 = '\n '
+            if i[6][0:30] == i[6]:
+                r6 = i[6][0:30] + '\n '
             wid.data_id = str(i[0])
             wid.data = r0 + r1 + r2 + r3 + r4 + r5 + r6
             self.ids.container.add_widget(wid)
@@ -146,7 +148,7 @@ class DataBaseWid_deporte(MDScreen):
         cursor.execute(orden_execute)
         for i in cursor:
             wid = DataWid_deporte()
-            r0 = 'ID: ' + str(i[0]) + ' '
+            r0 = 'ID: ' + str(i[0]) + '                 '
             r1 = i[1] + ' \n'
             r2 = i[2] + '\n'
             r3 = str(i[3]) + ' '
@@ -629,17 +631,18 @@ WindowManager_select:
     data_id: ''
     canvas:
         Color:
-            rgb: 0.2,0.2,0.2
+            rgb: 198/255,235/255,244/255
         Rectangle:
             size: self.size
             pos: self.pos
-    Label:
-        size_hint_x: 0.9
+    MDLabel:
+        size_hint_x: 0.85
         size_font: self.width*0.4
         text: root.data
+        font_color: 0,0,0
     Button:
-        size_hint_x: 0.1
-        text: 'Edit'
+        size_hint_x: 0.15
+        text: 'Editar'
         on_press: root.update_data(root.data_id)
         
 <DataWid_deporte>:
@@ -648,17 +651,18 @@ WindowManager_select:
     data_id: ''
     canvas:
         Color:
-            rgb: 0.2,0.2,0.2
+            rgb: 0.8,0.8,0.8
         Rectangle:
             size: self.size
             pos: self.pos
-    Label:
-        size_hint_x: 0.9
+    MDLabel:
+        size_hint_x: 0.85
         size_font: self.width*0.4
         text: root.data
+        font_color: 0,0,0
     Button:
-        size_hint_x: 0.1
-        text: 'Edit'
+        size_hint_x: 0.15
+        text: 'Editar'
         on_press: root.update_data(root.data_id)
 
                        
