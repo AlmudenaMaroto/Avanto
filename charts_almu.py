@@ -263,7 +263,7 @@ class AKChartBase(DrawTools, ThemableBehavior, RelativeLayout):
     t = StringProperty("out_quad")
     labels = BooleanProperty(True)
     labels_color = ColorProperty([1, 1, 1, 1])
-    label_size = NumericProperty("15dp")
+    label_size = NumericProperty("500dp")
     bars_color = ColorProperty([1, 1, 1, 1])
     line_width = NumericProperty("2dp")
     lines_color = ColorProperty([1, 1, 1, 1])
@@ -578,14 +578,16 @@ class AKChartBase_horizontal(DrawTools, ThemableBehavior, RelativeLayout):
                 text=text_y,
                 center=center_pos_y,
                 _owner=self,
-                height=self.label_size * 2,
+                height=self.label_size * 2,  # AQUI PARA RETOCAR EL TAMAÑO DE LOS LABEL Y QUE NO LO PONGA EN DOS LINEAS
+                width=self.label_size * 10
             )
             label_y.font_size = self.label_size
             label_x = AKChartLabel(
                 text=text_x,
                 center=center_pos_x,
                 _owner=self,
-                height=self.label_size * 2,
+                height=self.label_size * 2,  # AQUI PARA RETOCAR EL TAMAÑO DE LOS LABEL Y QUE NO LO PONGA EN DOS LINEAS
+                width=self.label_size * 10
             )
             label_x.font_size = self.label_size
             labels_y_box.add_widget(label_y)
@@ -931,10 +933,10 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
                     label_y_text = str(int(y_label / 1000)) + 'k'
                 num = num + 1
                 self.draw_label(
-                    text_x=x_label if x_label else str(x),
-                    text_y=label_y_text,
-                    center_pos_x=x_pos,
-                    center_pos_y=y_pos,
+                    text_x=label_y_text,
+                    text_y=x_label if x_label else str(x),
+                    center_pos_x=y_pos,
+                    center_pos_y=x_pos,
                     idx=len(self.x_labels) - i - 1,
                 )
         dis = bottom_line_y
@@ -971,7 +973,7 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
     def get_bar_width(self):
         bars_count = len(self.x_values)
         spacing = self.bars_spacing
-        width = self.height*0.9
+        width = self.height * 0.9
         bar_width = (
                             width - (bars_count + 2) * spacing
                     ) / bars_count

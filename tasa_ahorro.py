@@ -32,25 +32,21 @@ Builder.load_string(
             id: value
             text: root.text
             theme_text_color: "Primary"
-            font_size: 13
             halign: "center"
             vlighn: "center"
         MDLabel:
             text: root.text2
             theme_text_color: "Primary"
-            font_size: 13
             halign: "center"
             vlighn: "center"
         MDLabel:
             text: root.text3
             theme_text_color: "Primary"
-            font_size: 13
             halign: "center"
             vlighn: "center"
         MDLabel:
             text: root.text4
             theme_text_color: "Primary"
-            font_size: 13
             halign: "center"
             vlighn: "center"
 <Tabla_tasa_ahorro>:

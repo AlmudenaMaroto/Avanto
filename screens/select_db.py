@@ -287,7 +287,7 @@ class InsertDataWid_movimientos(BoxLayout):
                 return
         d3 = self.ids.ti_Concepto.text
         d4 = self.ids.ti_Categoria.text
-        d5 = self.ids.ti_Importe.text
+        d5 = self.ids.ti_Importe.text.replace(",", ".")
         d6 = self.ids.ti_Etapa.text
         d7 = self.ids.ti_Ubi.text
         a1 = (d1, d2, d3, d4, d5, d6, d7)
@@ -371,7 +371,6 @@ class InsertDataWid_deporte(BoxLayout):
             else:
                 message.text = str(e)
             con.close()
-
 
     def back_to_dbw(self):
         self.clear_widgets()

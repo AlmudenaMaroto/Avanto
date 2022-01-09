@@ -72,7 +72,6 @@ class Import_main(MDScreen):
             self.current = 'export_data'
             self.add_widget(Export_data(full_path, bbdd))
 
-
     def import_db(self):
         bbdd = self.ids.click_label.text
         self.name_db = bbdd  # Variable usable a nivel general
@@ -210,7 +209,7 @@ class Import_data(BoxLayout):
                     try:
                         string_list = each_row.split(";")
                         string_list[0] = string_list[0].replace("ï»¿", "")
-                        string_list[3] = string_list[3].replace(",", ".")
+                        string_list[4] = round(float(string_list[4].replace(",", ".")),2)
                         string_list = tuple(string_list)
                         if self.bbdd == 'movimientos':
                             con = sqlite3.connect(self.full_path)

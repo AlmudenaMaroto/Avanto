@@ -20,6 +20,13 @@
     	"icon": "chart-bell-curve-cumulative",
 		"menu": "si"
     },
+	"4. Bendiciones": {
+    	"import": "laso",
+    	"factory": "ImageViewer",
+    	"screen_name": "laso",
+    	"icon": "view-carousel-outline",
+		"menu": "si"
+    },
     "Bottom Navigation": {
     	"import": "bottomnavigation",
     	"factory": "BottomNavigation",
