@@ -94,7 +94,7 @@ Builder.load_string(
         id: _canvas
         canvas.before:
             Color:
-                rgba: 1, 1, 1, 1
+                rgba: 0.95, 0.95, 0.95, 1
             RoundedRectangle:
                 pos: self.pos
                 size: root.size
@@ -489,7 +489,7 @@ class AKChartBase_horizontal(DrawTools, ThemableBehavior, RelativeLayout):
                 res = 1 * (
                         _size - self._bottom_line_y() - padding
                 )
-        return f_update * res + self._bottom_line_y()
+        return f_update * res
 
     def normalized_labels(self, val, mode, f_update=1):
         x_values = [*range(0, len(self.x_labels), 1)]
@@ -888,10 +888,10 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
         canvas = self._canvas.canvas
         drawer = self.draw_shape
         # bottom line
-        bottom_line_y = self._bottom_line_y()
+        bottom_line_y = self._bottom_line_y()  # label_size*2
         count = len(self.y_values)
         bars_x_list = self.get_bar_x(count)
-        bar_width = self.get_bar_width()/2
+        bar_width = self.get_bar_width()
         f_update = self._loaded if anim else 1
         posicion_barras_save = []
         for i in range(0, count):
@@ -905,11 +905,11 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
                 shape_name="roundedRectangle",
                 canvas=canvas.after,
                 color=self.bars_color,
-                radius=[self.bars_radius, self.bars_radius, 0, 0],
+                radius=[0, 0, 0, 0],
                 size=[new_y - bottom_line_y, bar_width],
-                pos=[bottom_line_y + 20, new_x-50],
+                pos=[bottom_line_y + 10, new_x],
             )
-            posicion_barras_save.append([bottom_line_y + 30, new_x-55])
+            posicion_barras_save.append([new_y, new_x])
         num = 0
         for i in range(0, len(self.x_labels)):
             if self.labels:
@@ -918,13 +918,17 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
                 y_label = self.y_labels[i] if self.y_labels else False
                 new_x = self.normalized_labels(x_label_num, "x", f_update)
                 new_y = self.normalized_labels(y_label, "y", f_update)
-                y_pos = [new_x-10, 0]
+                y_pos = [new_x, 0]
                 x_pos = posicion_barras_save[i]
-                x_pos[0] = x_pos[0] + len(x_label)*3
-                if num % 3 == 0:
-                    label_y_text = str(int(y_label / 1000)) + 'k'
+                x_pos[0] = self.width * 0.25
+                # Para evitar que no pinte nada cuando hay pocas barras:
+                if len(self.y_labels) > 4:
+                    if num % 3 == 0:
+                        label_y_text = str(int(y_label / 1000)) + 'k'
+                    else:
+                        label_y_text = ""
                 else:
-                    label_y_text = ""
+                    label_y_text = str(int(y_label / 1000)) + 'k'
                 num = num + 1
                 self.draw_label(
                     text_x=x_label if x_label else str(x),
@@ -934,33 +938,32 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
                     idx=len(self.x_labels) - i - 1,
                 )
         dis = bottom_line_y
-        self.draw_shape(
-            "line",
-            shape_name="line",
-            canvas=canvas,
-            points=[
-                [self._bottom_line_y(), dis + 20],
-                [self.width - self._bottom_line_y(), dis + 20],
-            ],
-            line_width=self.line_width,
-            color=self.lines_color,
-        )
+        # self.draw_shape(
+        #     "line",
+        #     shape_name="line",
+        #     canvas=canvas,
+        #     points=[
+        #         [self._bottom_line_y(), dis + 20],
+        #         [self.width - self._bottom_line_y(), dis + 20],
+        #     ],
+        #     line_width=self.line_width,
+        #     color=self.lines_color,
+        # )
         self._myinit = False
 
     def get_bar_x(self, bar_count):
-        bar_width = self.get_bar_width()/2
+        bar_width = self.get_bar_width()
         total_width = (
                 bar_width * bar_count
                 + (bar_count - 1) * self.bars_spacing
-                + self.label_size * 4
         )
-        start_pos = (self.width - total_width) / 2
+        # Al ser horizontal, tenemos en cuenta la altura, no el ancho self.width no vale
+        start_pos = (self.height - total_width) / 2  # Para que quede centrado
         x_list = []
         for x in range(0, bar_count):
             x_pos = (
                     start_pos
                     + (bar_width + self.bars_spacing) * x
-                    + self.label_size * 2
             )
             x_list.append(x_pos)
         return x_list
@@ -968,9 +971,9 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
     def get_bar_width(self):
         bars_count = len(self.x_values)
         spacing = self.bars_spacing
-        width = self.width
+        width = self.height*0.9
         bar_width = (
-                            width - (bars_count + 1) * spacing - self.label_size * 4
+                            width - (bars_count + 2) * spacing
                     ) / bars_count
         if bar_width > self.max_bar_width:
             return self.max_bar_width

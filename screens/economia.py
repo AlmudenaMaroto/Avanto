@@ -858,7 +858,7 @@ Builder.load_string(
 
 <Barras_horizontal@AKBarChart_horizontal>
     size_hint_y: None
-    height: dp(180)
+    height: dp(200)
     x_values: [0, 5, 8, 15]
     y_values: [0, 10, 6, 8]
     label_size: dp(12)
@@ -985,7 +985,7 @@ Builder.load_string(
                 Barras_horizontal:
                     id: id_ranking_gastos
                     labels: True
-                    anim: True
+                    anim: False
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
@@ -1000,7 +1000,7 @@ Builder.load_string(
                 Barras_horizontal:
                     id: id_ranking_ingresos
                     labels: True
-                    anim: True
+                    anim: False
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
