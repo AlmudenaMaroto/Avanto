@@ -10,7 +10,7 @@
     	"import": "import_main",
     	"factory": "Import_main",
     	"screen_name": "import_main",
-    	"icon": "window-maximize",
+    	"icon": "database-import",
 		"menu": "si"
     },
 	"3. Economía": {
@@ -24,6 +24,13 @@
     	"import": "laso",
     	"factory": "ImageViewer",
     	"screen_name": "laso",
+    	"icon": "view-carousel-outline",
+		"menu": "si"
+    },
+	"5. Drop list": {
+    	"import": "droplist",
+    	"factory": "Droplista",
+    	"screen_name": "droplist",
     	"icon": "view-carousel-outline",
 		"menu": "si"
     },
