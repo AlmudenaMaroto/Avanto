@@ -10,8 +10,11 @@ Builder.load_string(
     '''
 #:import images_path kivymd.images_path
 <CustomOneLineIconListItem>
+    on_release:root.parent.parent.parent.parent.selected_categoria(self.text)
     IconLeftWidget:
         icon: root.icon
+        
+
 <Droplista>
     MDBoxLayout:
         orientation: 'vertical'
@@ -36,6 +39,7 @@ Builder.load_string(
                 size_hint_y: None
                 height: self.minimum_height
                 orientation: 'vertical'
+
 '''
 )
 
@@ -43,6 +47,9 @@ Builder.load_string(
 class CustomOneLineIconListItem(OneLineIconListItem):
     icon = StringProperty()
 
+    def selected_categoria(self):
+        a = 0
+        pass
 
 class Droplista(MDScreen):
 
@@ -53,18 +60,25 @@ class Droplista(MDScreen):
             self.ids.rv.data.append(
                 {
                     "viewclass": "CustomOneLineIconListItem",
-                    "icon": name_icon,
                     "text": name_icon,
                     "callback": lambda x: x,
                 }
             )
 
         self.ids.rv.data = []
-        for name_icon in md_icons.keys():
+        lista_categorias = ['Abono', 'Agua', 'Alquiler', 'Amazon', 'Amazon Prime', 'Beca', 'Bizum', 'Caprichos', 'Cena',
+                            'Comida', 'Comida', 'Compras', 'Depósito', 'Desayuno', 'Fianza', 'Gas', 'Gasolina',
+                            'Gastos', 'HBO', 'Hostelería', 'Luz', 'Netflix', 'Ocio', 'Restaurante', 'Ropa', 'Salario',
+                            'Subscripción', 'Supermercado', 'Teléfono', 'Transporte']
+        for name_icon in lista_categorias:
             if search:
                 if text in name_icon:
                     add_icon_item(name_icon)
             else:
                 add_icon_item(name_icon)
+
+    def selected_categoria(self, texto):
+        self.ids.search_field.text = texto
+        pass
 
 
