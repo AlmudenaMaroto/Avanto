@@ -20,6 +20,12 @@ from kivy.utils import platform
 import csv
 from kivy.uix.label import Label
 
+# Permisos de acceso a las carpetas del movil para poder importar y exportar
+if platform == 'android':
+    from android.permissions import request_permissions, Permission
+
+    request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
+
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
@@ -209,7 +215,7 @@ class Import_data(BoxLayout):
                     try:
                         string_list = each_row.split(";")
                         string_list[0] = string_list[0].replace("ï»¿", "")
-                        string_list[4] = round(float(string_list[4].replace(",", ".")),2)
+                        string_list[4] = round(float(string_list[4].replace(",", ".")), 2)
                         string_list = tuple(string_list)
                         if self.bbdd == 'movimientos':
                             con = sqlite3.connect(self.full_path)

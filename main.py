@@ -5,11 +5,6 @@ import os
 import sqlite3
 from kivy.utils import platform
 
-# Permisos de acceso a las carpetas del movil para poder importar y exportar
-if platform == 'android':
-    from android.permissions import request_permissions, Permission
-
-    request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
 
 
 
