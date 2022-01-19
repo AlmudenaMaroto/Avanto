@@ -215,15 +215,17 @@ class Import_data(BoxLayout):
                     try:
                         string_list = each_row.split(";")
                         string_list[0] = string_list[0].replace("ï»¿", "")
-                        string_list[4] = round(float(string_list[4].replace(",", ".")), 2)
-                        string_list = tuple(string_list)
                         if self.bbdd == 'movimientos':
+                            string_list[4] = round(float(string_list[4].replace(",", ".")), 2)
+                            string_list = tuple(string_list)
                             con = sqlite3.connect(self.full_path)
                             cursor = con.cursor()
                             s1 = 'INSERT INTO movimientos(ID, [Fecha Operación], Concepto, Categoría, Importe, Etapa, Ubicación)'
                             s2 = 'VALUES(%s,"%s","%s","%s",%s,"%s","%s")' % string_list
                             cursor.execute(s1 + ' ' + s2)
                         elif self.bbdd == 'deporte':
+                            string_list[3] = round(float(string_list[3].replace(",", ".")), 2)
+                            string_list = tuple(string_list)
                             con = sqlite3.connect(self.full_path)
                             cursor = con.cursor()
                             s1 = 'INSERT INTO deporte(ID,	[Fecha Operación],	Concepto, Tiempo)'
