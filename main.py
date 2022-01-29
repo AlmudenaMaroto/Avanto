@@ -5,6 +5,8 @@ import os
 import sqlite3
 from kivy.utils import platform
 
+# Marron para alimentos: #d47100
+# Rojo para deporte:#d40700
 
 
 

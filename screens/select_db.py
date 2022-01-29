@@ -543,13 +543,12 @@ WindowManager_select:
     height: dp(20)
     theme_text_color: "Primary"
     halign: "left"
-    
-    
+       
 <Selectdb>:
     name:"selectdb"
     canvas:
         Color:
-            rgb: .254,.556,.627
+            rgb: 1,1,1,1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -594,10 +593,15 @@ WindowManager_select:
                     text:'Variables Globales'
                     on_release:root.goto_vblesglobales()
                 
-            
-
 <DataBaseWid_movimientos>:
     name:"db_movimientos"
+    canvas:
+        Color:
+            rgb: 33/255,148/255,161/255,1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    
     MDBoxLayout:
         orientation: "vertical"
 
@@ -631,6 +635,12 @@ WindowManager_select:
                 
 <DataBaseWid_deporte>:
     name:"db_deporte"
+    canvas:
+        Color:
+            rgb: 173/255,36/255,31/255,1
+        Rectangle:
+            pos: self.pos
+            size: self.size
     MDBoxLayout:
         orientation: "vertical"
 
@@ -735,8 +745,6 @@ WindowManager_select:
             DataloaderLabel:
                 text:  root.dataTM
 
-
-                       
 <InsertDataWid_movimientos>:
     name:"insert_movimientos"
     orientation: 'vertical'
@@ -886,7 +894,6 @@ WindowManager_select:
             text: 'Eliminar'
             on_press: root.delete_data()
             
-            
 <UpdateDataWid_deporte>:
     name: "update_deporte"
     orientation: 'vertical'
@@ -932,7 +939,6 @@ WindowManager_select:
         orientation: 'vertical'
         Label:
             text: 'Registro actualizado'
-            
             
 <Vbles_globalesWid>:
     name:"db_vblesglob"
