@@ -637,7 +637,8 @@ WindowManager_select:
     name:"db_deporte"
     canvas:
         Color:
-            rgb: 173/255,36/255,31/255,1
+            #rgb: 173/255,36/255,31/255,1
+            rgb: 33/255,148/255,161/255,1
         Rectangle:
             pos: self.pos
             size: self.size
