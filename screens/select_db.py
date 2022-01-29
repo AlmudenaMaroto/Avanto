@@ -548,7 +548,7 @@ WindowManager_select:
     name:"selectdb"
     canvas:
         Color:
-            rgb: 1,1,1,1
+            rgb: 33/255,148/255,161/255,1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -740,7 +740,8 @@ WindowManager_select:
         MDBoxLayout:
             orientation: "vertical"
             size_hint_x: .7
-            
+            MDLabel:
+                text: ""
             DataloaderLabel:
                 text:  root.dataID
                 font_size: root.width * .04
@@ -748,11 +749,20 @@ WindowManager_select:
             
             DataloaderLabel:
                 text:  root.dataCO
+            MDLabel:
+                text: ""
                 
-            MDSeparator:
-            
+        MDBoxLayout:
+            size_hint_x: .3
+            orientation:"vertical"
+            MDLabel:
+                text: ""
             DataloaderLabel:
                 text:  root.dataTM
+                halign: "center"
+                valign: "center"
+            MDLabel:
+                text: ""
 
 <InsertDataWid_movimientos>:
     name:"insert_movimientos"
