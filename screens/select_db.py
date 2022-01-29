@@ -16,6 +16,7 @@ import os
 from datetime import date
 from datetime import datetime
 from kivy.uix.popup import Popup
+from kivymd.uix.card import MDCard
 
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
@@ -96,18 +97,23 @@ class DataBaseWid_movimientos(MDScreen):
         for i in cursor:
             wid = DataWid()
             r0 = ' ID: ' + str(i[0]) + '                 '
-            r1 = i[1] + ' \n '
+            r1 = i[1] + '  '
             r2 = i[2] + ', '
-            r3 = str(i[3]) + '\n '
-            r4 = i[5] + '\n '
-            r5 = str(i[4]) + ' €\n '
-            r6 = i[6][0:30] + '...\n '
-            if r6 == '...\n ':
-                r6 = '\n '
+            r3 = str(i[3]) + ' '
+            r4 = i[5] + ' '
+            r5 = str(i[4]) + ' € '
+            r6 = i[6][0:30] + '... '
+            if r6 == '... ':
+                r6 = ' '
             if i[6][0:30] == i[6]:
-                r6 = i[6][0:30] + '\n '
+                r6 = i[6][0:30] + ' '
             wid.data_id = str(i[0])
-            wid.data = r0 + r1 + r2 + r3 + r4 + r5 + r6
+            wid.dataID = r0 + r1 # ID + fecha
+            wid.dataCC = r2 + r3 # Concepto, categoria
+            wid.dataIM = r5 # Importe
+            wid.dataET = r4 # Etapa
+            wid.dataUB = r6 # Ubicacion
+
             self.ids.container.add_widget(wid)
         con.close()
 
@@ -226,7 +232,7 @@ class Vbles_globalesWid(BoxLayout):
         self.add_widget(Selectdb())
 
 
-class DataWid(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
+class DataWid(MDCard):  # Usado en el check_memory para visualizar los registros en cada widget mini
     def __init__(self, **kwargs):
         super(DataWid, self).__init__()
         self.Selectdb = Selectdb
@@ -525,7 +531,14 @@ WindowManager_select:
     update_movimientos:
     eliminado:
     actualizado:
-
+    
+<DataloaderLabel@AKLabelLoader>
+    size_hint_y: None
+    height: dp(20)
+    theme_text_color: "Primary"
+    halign: "left"
+    
+    
 <Selectdb>:
     name:"selectdb"
     canvas:
@@ -644,6 +657,53 @@ WindowManager_select:
                 height: self.minimum_height
 
 <DataWid>:
+    padding: "8dp"
+    name:"datawid"
+    size_hint: None, None
+    size: dp(320), dp(140)
+    pos_hint: {"center_x": .5, "center_y": .5}
+    dataID: ""
+    dataCC: ""
+    dataIM: ""
+    dataET: ""
+    dataUB: ""
+    data_id: ''
+
+    MDBoxLayout:
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint_x: .7
+            
+            DataloaderLabel:
+                
+                text:  root.dataID
+                font_size_hint: .01
+            MDSeparator:
+            
+            DataloaderLabel:
+                text:  root.dataCC
+                
+            MDSeparator:
+            
+            DataloaderLabel:
+                text:  root.dataET
+            MDSeparator:
+            
+            DataloaderLabel:
+                text:  root.dataUB
+            MDSeparator:
+            
+            DataloaderLabel:
+                text:  root.dataIM
+            
+            
+        Button:
+            size_hint_x: 0.15
+            text: 'Editar'
+            on_press: root.update_data(root.data_id)
+
+
+<DataWid_prev>:
     name:"datawid"
     data: ''
     data_id: ''
