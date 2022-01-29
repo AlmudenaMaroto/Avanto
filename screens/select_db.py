@@ -96,7 +96,7 @@ class DataBaseWid_movimientos(MDScreen):
         cursor.execute(orden_execute)
         for i in cursor:
             wid = DataWid()
-            r0 = ' ID: ' + str(i[0]) + '                 '
+            r0 = ' ID: ' + str(i[0]) + '                                         '
             r1 = i[1] + '  '
             r2 = i[2] + ', '
             r3 = str(i[3]) + ' '
@@ -662,8 +662,8 @@ WindowManager_select:
 <DataWid>:
     padding: "8dp"
     name:"datawid"
-    size_hint: None, None
-    size: dp(320), dp(140)
+    size_hint: .9, .2
+    #size: dp(320), dp(140)
     radius: [dp(10),]
     pos_hint: {"center_x": .5, "center_y": .5}
     dataID: ""
@@ -672,6 +672,7 @@ WindowManager_select:
     dataET: ""
     dataUB: ""
     data_id: ''
+    on_release: root.update_data(root.data_id)
 
     MDBoxLayout:
         MDBoxLayout:
@@ -700,12 +701,6 @@ WindowManager_select:
                 text:  root.dataIM
                 halign: "center"
                 
-            
-            
-        Button:
-            size_hint_x: 0.15
-            text: 'Editar'
-            on_press: root.update_data(root.data_id)
 
 
 <DataWid_prev>:
