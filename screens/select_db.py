@@ -17,7 +17,7 @@ from datetime import date
 from datetime import datetime
 from kivy.uix.popup import Popup
 from kivymd.uix.card import MDCard
-
+#from tools.loader_mod import AKLabelLoader_mod
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
@@ -100,6 +100,7 @@ class DataBaseWid_movimientos(MDScreen):
             r1 = i[1] + '  '
             r2 = i[2] + ', '
             r3 = str(i[3]) + ' '
+            r23 = r2 + r3
             r4 = i[5] + ' '
             r5 = str(i[4]) + ' € '
             r6 = i[6][0:30] + '... '
@@ -107,9 +108,11 @@ class DataBaseWid_movimientos(MDScreen):
                 r6 = ' '
             if i[6][0:30] == i[6]:
                 r6 = i[6][0:30] + ' '
+            if r23[0:28] != r23:
+                r23 = r23[0:28] + '... '
             wid.data_id = str(i[0])
             wid.dataID = r0 + r1 # ID + fecha
-            wid.dataCC = r2 + r3 # Concepto, categoria
+            wid.dataCC = r23 # Concepto, categoria
             wid.dataIM = r5 # Importe
             wid.dataET = r4 # Etapa
             wid.dataUB = r6 # Ubicacion
@@ -661,6 +664,7 @@ WindowManager_select:
     name:"datawid"
     size_hint: None, None
     size: dp(320), dp(140)
+    radius: [dp(10),]
     pos_hint: {"center_x": .5, "center_y": .5}
     dataID: ""
     dataCC: ""
@@ -675,9 +679,8 @@ WindowManager_select:
             size_hint_x: .7
             
             DataloaderLabel:
-                
                 text:  root.dataID
-                font_size_hint: .01
+                font_size: root.width * .04
             MDSeparator:
             
             DataloaderLabel:
@@ -695,6 +698,8 @@ WindowManager_select:
             
             DataloaderLabel:
                 text:  root.dataIM
+                halign: "center"
+                
             
             
         Button:
