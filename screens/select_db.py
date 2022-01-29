@@ -158,11 +158,14 @@ class DataBaseWid_deporte(MDScreen):
         for i in cursor:
             wid = DataWid_deporte()
             r0 = 'ID: ' + str(i[0]) + '                 '
-            r1 = i[1] + ' \n'
-            r2 = i[2] + '\n'
+            r1 = i[1] + ' '
+            r2 = i[2] + ''
             r3 = str(i[3]) + ' '
             wid.data_id = str(i[0])
-            wid.data = r0 + r1 + r2 + r3
+            # wid.data = r0 + r1 + r2 + r3
+            wid.dataID = r0 + r1
+            wid.dataCO = r2
+            wid.dataTM = r3
             self.ids.container.add_widget(wid)
         con.close()
 
@@ -246,7 +249,7 @@ class DataWid(MDCard):  # Usado en el check_memory para visualizar los registros
         self.add_widget(UpdateDataWid_movimientos(data_id))
 
 
-class DataWid_deporte(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
+class DataWid_deporte(MDCard):  # Usado en el check_memory para visualizar los registros en cada widget mini
     def __init__(self, **kwargs):
         super(DataWid_deporte, self).__init__()
         self.Selectdb = Selectdb
@@ -701,47 +704,37 @@ WindowManager_select:
                 text:  root.dataIM
                 halign: "center"
                 
-
-
-<DataWid_prev>:
-    name:"datawid"
-    data: ''
-    data_id: ''
-    canvas:
-        Color:
-            rgb: 198/255,235/255,244/255
-        Rectangle:
-            size: self.size
-            pos: self.pos
-    MDLabel:
-        size_hint_x: 0.85
-        size_font: self.width*0.4
-        text: root.data
-        font_color: 0,0,0
-    Button:
-        size_hint_x: 0.15
-        text: 'Editar'
-        on_press: root.update_data(root.data_id)
-        
 <DataWid_deporte>:
+    padding: "8dp"
     name:"datawid"
-    data: ''
+    size_hint: .9, .2
+    #size: dp(320), dp(140)
+    radius: [dp(10),]
+    pos_hint: {"center_x": .5, "center_y": .5}
+    dataID: ""
+    dataCO: ""
+    dataTM: ""
     data_id: ''
-    canvas:
-        Color:
-            rgb: 0.8,0.8,0.8
-        Rectangle:
-            size: self.size
-            pos: self.pos
-    MDLabel:
-        size_hint_x: 0.85
-        size_font: self.width*0.4
-        text: root.data
-        font_color: 0,0,0
-    Button:
-        size_hint_x: 0.15
-        text: 'Editar'
-        on_press: root.update_data(root.data_id)
+    on_release: root.update_data(root.data_id)
+
+    MDBoxLayout:
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint_x: .7
+            
+            DataloaderLabel:
+                text:  root.dataID
+                font_size: root.width * .04
+            MDSeparator:
+            
+            DataloaderLabel:
+                text:  root.dataCO
+                
+            MDSeparator:
+            
+            DataloaderLabel:
+                text:  root.dataTM
+
 
                        
 <InsertDataWid_movimientos>:
