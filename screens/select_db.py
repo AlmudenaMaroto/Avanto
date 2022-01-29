@@ -96,20 +96,20 @@ class DataBaseWid_movimientos(MDScreen):
         cursor.execute(orden_execute)
         for i in cursor:
             wid = DataWid()
-            r0 = ' ID: ' + str(i[0]) + '                                         '
+            r0 = ' ID: ' + str(i[0]) + '                       '
             r1 = i[1] + '  '
             r2 = i[2] + ', '
             r3 = str(i[3]) + ' '
             r23 = r2 + r3
             r4 = i[5] + ' '
             r5 = str(i[4]) + ' € '
-            r6 = i[6][0:30] + '... '
+            r6 = i[6][0:25] + '... '
             if r6 == '... ':
                 r6 = ' '
-            if i[6][0:30] == i[6]:
-                r6 = i[6][0:30] + ' '
-            if r23[0:28] != r23:
-                r23 = r23[0:28] + '... '
+            if i[6][0:25] == i[6]:
+                r6 = i[6][0:25] + ' '
+            if r23[0:23] != r23:
+                r23 = r23[0:23] + '... '
             wid.data_id = str(i[0])
             wid.dataID = r0 + r1 # ID + fecha
             wid.dataCC = r23 # Concepto, categoria
@@ -711,9 +711,17 @@ WindowManager_select:
                 text:  root.dataUB
             MDSeparator:
             
+        MDBoxLayout:
+            size_hint_x: .3
+            orientation:"vertical"
+            MDLabel:
+                text: ""
             DataloaderLabel:
                 text:  root.dataIM
                 halign: "center"
+                valign: "center"
+            MDLabel:
+                text: ""
                 
 <DataWid_deporte>:
     padding: "8dp"
@@ -816,7 +824,6 @@ WindowManager_select:
     TextInput:
         id: ti_fechao
         multiline: False
-#        hint_text: 'Fecha Operación:'
     Label: # ---------- Concepto
         text: ' Concepto:'
     TextInput:
