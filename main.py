@@ -114,13 +114,8 @@ class IconListItem(OneLineAvatarListItem):
 
 
 class DemoApp(MDApp):
-    intro = """\n\n\n\n¡Bienvenid@ a Avanto! \n\n\n\n\n\n\n
-        Para empezar a añadir registros, haz click en "Seleccionar Tabla".
-        Hay varias tablas en las que registrar diferente información.
-        Para hacer una importación masiva haz click en "Importar/Exportar" 
-        El formato debe ser el adecuado.
-        También puedes exportar los datos guardados en un csv para no perderlos. 
-        Para todo lo demás, las pestañas de análisis.
+    intro = """\n
+
     """
 
     def __init__(self, **kwargs):

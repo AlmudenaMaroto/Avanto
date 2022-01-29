@@ -545,7 +545,7 @@ WindowManager_select:
                 orientation: "vertical"
                 Label:
                     size_hint_y: 0.1
-                    text:' '
+                    text:' Seleccione la tabla:'
                 Button:
                     size_hint_y: 0.1
                     text:'Movimientos bancarios'
@@ -556,8 +556,25 @@ WindowManager_select:
                     on_release:root.goto_deporte()
                 Button:
                     size_hint_y: 0.1
+                    text:'Tablas Ejercicio'
+                    on_release:pass
+                Button:
+                    size_hint_y: 0.1
+                    text:'Registro Alimentación'
+                    on_release:pass
+                Button:
+                    size_hint_y: 0.1
+                    text:'Registro Compras'
+                    on_release:pass
+                Button:
+                    size_hint_y: 0.1
+                    text:'Tablas Alimentos'
+                    on_release:pass
+                Button:
+                    size_hint_y: 0.1
                     text:'Variables Globales'
                     on_release:root.goto_vblesglobales()
+                
             
 
 <DataBaseWid_movimientos>:
@@ -567,6 +584,7 @@ WindowManager_select:
 
         MyToolbar:
             id: _toolbar
+            title: "Movimientos Bancarios"
         MDBoxLayout:
             size_hint_y: 0.1
             Button: # -----------Back
@@ -599,6 +617,7 @@ WindowManager_select:
 
         MyToolbar:
             id: _toolbar
+            title: "Registro Deporte"
         MDBoxLayout:
             size_hint_y: 0.1
             Button: # -----------Back
