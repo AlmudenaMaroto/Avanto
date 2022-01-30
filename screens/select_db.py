@@ -641,7 +641,6 @@ WindowManager_select:
     name:"db_deporte"
     canvas:
         Color:
-            #rgb: 173/255,36/255,31/255,1
             rgb: 4/255,150/255,163/255,1
         Rectangle:
             pos: self.pos
@@ -700,6 +699,8 @@ WindowManager_select:
             orientation: "vertical"
             size_hint_x: .7
             
+            MDLabel:
+                text: ""
             DataloaderLabel:
                 text:  root.dataID
                 font_size: root.width * .04
@@ -716,7 +717,8 @@ WindowManager_select:
             
             DataloaderLabel:
                 text:  root.dataUB
-            MDSeparator:
+            MDLabel:
+                text: ""
             
         MDBoxLayout:
             size_hint_x: .3
