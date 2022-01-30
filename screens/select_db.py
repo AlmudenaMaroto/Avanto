@@ -548,7 +548,7 @@ WindowManager_select:
     name:"selectdb"
     canvas:
         Color:
-            rgb: 33/255,148/255,161/255,1
+            rgb: 4/255,150/255,163/255,1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -597,7 +597,7 @@ WindowManager_select:
     name:"db_movimientos"
     canvas:
         Color:
-            rgb: 33/255,148/255,161/255,1
+            rgb: 4/255,150/255,163/255,1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -608,20 +608,7 @@ WindowManager_select:
         MyToolbar:
             id: _toolbar
             title: "Movimientos Bancarios"
-        MDBoxLayout:
-            size_hint_y: 0.1
-            Button: # -----------Back
-                font_size: self.height*0.25
-                text: 'Atrás'
-                on_press: root.goto_main()
-            Button: # -----------Add 10 rows
-                font_size: self.height*0.25
-                text: 'Añadir 10 filas'
-                on_press: root.add_10_more()
-            Button: # ---------Add
-                font_size: self.height*0.35
-                text: '+'
-                on_press: root.create_new_product()
+
         ScrollView:
             size: self.size
             GridLayout:
@@ -633,12 +620,29 @@ WindowManager_select:
                 row_default_height: root.height*0.2
                 height: self.minimum_height
                 
+        AKFloatingRoundedAppbar:
+
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "keyboard-return"
+                text: "Atrás"
+                on_release: root.goto_main()
+    
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "card-plus-outline"
+                text: "Añadir 10"
+                on_release: root.add_10_more()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "plus-circle-outline"
+                text: "Añadir"
+                on_release: root.create_new_product()
+                
 <DataBaseWid_deporte>:
     name:"db_deporte"
     canvas:
         Color:
             #rgb: 173/255,36/255,31/255,1
-            rgb: 33/255,148/255,161/255,1
+            rgb: 4/255,150/255,163/255,1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -648,20 +652,6 @@ WindowManager_select:
         MyToolbar:
             id: _toolbar
             title: "Registro Deporte"
-        MDBoxLayout:
-            size_hint_y: 0.1
-            Button: # -----------Back
-                font_size: self.height*0.25
-                text: 'Atrás'
-                on_press: root.goto_main()
-            Button: # -----------Add 10 rows
-                font_size: self.height*0.25
-                text: 'Añadir 10 filas'
-                on_press: root.add_10_more()
-            Button: # ---------Add
-                font_size: self.height*0.35
-                text: '+'
-                on_press: root.create_new_product()
         ScrollView:
             size: self.size
             GridLayout:
@@ -672,6 +662,23 @@ WindowManager_select:
                 cols: 1
                 row_default_height: root.height*0.2
                 height: self.minimum_height
+                
+        AKFloatingRoundedAppbar:
+
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "keyboard-return"
+                text: "Atrás"
+                on_release: root.goto_main()
+    
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "card-plus-outline"
+                text: "Añadir 10"
+                on_release: root.add_10_more()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "plus-circle-outline"
+                text: "Añadir"
+                on_release: root.create_new_product()
 
 <DataWid>:
     padding: "8dp"
@@ -964,7 +971,7 @@ WindowManager_select:
     data_id: ''
     canvas:
         Color:
-            rgb: 33/255,148/255,161/255,1
+            rgb: 4/255,150/255,163/255,1
         Rectangle:
             pos: self.pos
             size: self.size

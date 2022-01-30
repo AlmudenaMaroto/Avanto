@@ -28,6 +28,7 @@ from kivymd.app import MDApp  # noqa
 from kivymd.uix.list import OneLineAvatarListItem  # noqa
 from kivymd.uix.toolbar import MDToolbar  # noqa
 from kivy.uix.screenmanager import ScreenManager, Screen
+from tools.cardstack import AKCardStack
 
 from kivymd_extensions.akivymd.uix.statusbarcolor import (  # noqa
     change_statusbar_color,
@@ -123,6 +124,23 @@ class DemoApp(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.theme_cls.primary_palette = "Cyan"
+        self.theme_cls.primary_hue = "800"
+        # Elegir entre
+        # "Cyan": {
+        #     "50": "E0F7FA",
+        #     "100": "B2EBF2",
+        #     "200": "80DEEA",
+        #     "300": "4DD0E1",
+        #     "400": "26C6DA",
+        #     "500": "00BCD4",
+        #     "600": "00ACC1",
+        #     "700": "0097A7",
+        #     "800": "00838F",
+        #     "900": "006064",
+        #     "A100": "84FFFF",
+        #     "A200": "18FFFF",
+        #     "A400": "00E5FF",
+        #     "A700": "00B8D4",
         self.title = "              Avanto"
         change_statusbar_color(self.theme_cls.primary_color)
 
