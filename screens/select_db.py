@@ -17,7 +17,7 @@ from datetime import date
 from datetime import datetime
 from kivy.uix.popup import Popup
 from kivymd.uix.card import MDCard
-#from tools.loader_mod import AKLabelLoader_mod
+
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
@@ -111,11 +111,11 @@ class DataBaseWid_movimientos(MDScreen):
             if r23[0:23] != r23:
                 r23 = r23[0:23] + '... '
             wid.data_id = str(i[0])
-            wid.dataID = r0 + r1 # ID + fecha
-            wid.dataCC = r23 # Concepto, categoria
-            wid.dataIM = r5 # Importe
-            wid.dataET = r4 # Etapa
-            wid.dataUB = r6 # Ubicacion
+            wid.dataID = r0 + r1  # ID + fecha
+            wid.dataCC = r23  # Concepto, categoria
+            wid.dataIM = r5  # Importe
+            wid.dataET = r4  # Etapa
+            wid.dataUB = r6  # Ubicacion
 
             self.ids.container.add_widget(wid)
         con.close()
@@ -160,7 +160,7 @@ class DataBaseWid_deporte(MDScreen):
             r0 = 'ID: ' + str(i[0]) + '                 '
             r1 = i[1] + ' '
             r2 = i[2] + ''
-            r3 = str(i[3]) + ' '
+            r3 = str(i[3]) + ' h'
             wid.data_id = str(i[0])
             # wid.data = r0 + r1 + r2 + r3
             wid.dataID = r0 + r1
@@ -964,57 +964,64 @@ WindowManager_select:
     data_id: ''
     canvas:
         Color:
-            rgb: .254,.556,.627
+            rgb: 33/255,148/255,161/255,1
         Rectangle:
             pos: self.pos
             size: self.size
-    Label:
-        text: ' Objetivo cuenta (€):'
-    TextInput:
-        id: Obj_cuenta
-        multiline: False
-        hint_text: '€'
-    Label:
-        text: ' Fecha límite para conseguirlo:'
-    TextInput:
-        id: Obj_fecha
-        multiline: False
-        hint_text: '01/01/2022'
-    Label: # ---------- Domiciliaciones
-        text: ' Domiciliaciones (separados por coma):'
-    TextInput:
-        id: Domiciliaciones
-        multiline: False
-        hint_text: 'ABONO, SPOTIFY,...'
-    Label: # ---------- Ingresos
-        text: ' Ingresos (separados por coma):'
-    TextInput:
-        id: Ingresos
-        multiline: False
-        hint_text: 'SALARIO, BECA,...'
-    Label: # ---------- Importe
-        text: ' Objetivo tasa de ahorro (%):'
-    TextInput:
-        id: Obj_tasa
-        multiline: False
-        hint_text: '%'
-    Label: # ---------- 
-        text: ' En desarrollo para futuros módulos:'
-    Label: # ---------- Concepto
-        text: ' Objetivo peso (Kg):'
-    TextInput:
-        id: Obj_peso
-        multiline: False
-        hint_text: ' Kg'
-    BoxLayout:
-        size_hint_y: 4
-    BoxLayout:
-        Button:
-            text: 'Salir'
-            on_press: root.back_to_dbw()
-        Button:
-            text: 'Actualizar'
-            on_press: root.update_data()
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MyToolbar:
+            id: _toolbar
+            title: "Variables Globales"
+            
+        Label:
+            text: ' Objetivo cuenta (€):'
+        TextInput:
+            id: Obj_cuenta
+            multiline: False
+            hint_text: '€'
+        Label:
+            text: ' Fecha límite para conseguirlo:'
+        TextInput:
+            id: Obj_fecha
+            multiline: False
+            hint_text: '01/01/2022'
+        Label: # ---------- Domiciliaciones
+            text: ' Domiciliaciones (separados por coma):'
+        TextInput:
+            id: Domiciliaciones
+            multiline: False
+            hint_text: 'ABONO, SPOTIFY,...'
+        Label: # ---------- Ingresos
+            text: ' Ingresos (separados por coma):'
+        TextInput:
+            id: Ingresos
+            multiline: False
+            hint_text: 'SALARIO, BECA,...'
+        Label: # ---------- Importe
+            text: ' Objetivo tasa de ahorro (%):'
+        TextInput:
+            id: Obj_tasa
+            multiline: False
+            hint_text: '%'
+        Label: # ---------- 
+            text: ' En desarrollo para futuros módulos:'
+        Label: # ---------- Concepto
+            text: ' Objetivo peso (Kg):'
+        TextInput:
+            id: Obj_peso
+            multiline: False
+            hint_text: ' Kg'
+        BoxLayout:
+            size_hint_y: 4
+        BoxLayout:
+            Button:
+                text: 'Salir'
+                on_press: root.back_to_dbw()
+            Button:
+                text: 'Actualizar'
+                on_press: root.update_data()
 
 """
 )

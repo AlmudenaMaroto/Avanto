@@ -19,6 +19,7 @@ from kivy.uix.popup import Popup
 from kivy.utils import platform
 import csv
 from kivy.uix.label import Label
+from kivymd.uix.card import MDCard
 
 # Permisos de acceso a las carpetas del movil para poder importar y exportar
 if platform == 'android':
@@ -120,25 +121,40 @@ class Export_data(BoxLayout):
         if bbdd == 'movimientos':
             for i in cursor:
                 wid = DataWid_import()
-                r0 = 'ID: ' + str(i[0]) + ' '
-                r1 = i[1] + ' \n'
-                r2 = i[2] + '\n'
+                r0 = ' ID: ' + str(i[0]) + '                       '
+                r1 = i[1] + '  '
+                r2 = i[2] + ', '
                 r3 = str(i[3]) + ' '
-                r4 = i[5] + '\n'
-                r5 = str(i[4]) + ' €\n'
-                r6 = i[6][0:20] + '...\n'
+                r23 = r2 + r3
+                r4 = i[5] + ' '
+                r5 = str(i[4]) + ' € '
+                r6 = i[6][0:25] + '... '
+                if r6 == '... ':
+                    r6 = ' '
+                if i[6][0:25] == i[6]:
+                    r6 = i[6][0:25] + ' '
+                if r23[0:23] != r23:
+                    r23 = r23[0:23] + '... '
                 wid.data_id = str(i[0])
-                wid.data = r0 + r1 + r2 + r3 + r4 + r5 + r6
+                wid.data_id = str(i[0])
+                wid.dataID = r0 + r1  # ID + fecha
+                wid.dataCC = r23  # Concepto, categoria
+                wid.dataIM = r5  # Importe
+                wid.dataET = r4  # Etapa
+                wid.dataUB = r6  # Ubicacion
                 self.ids.container.add_widget(wid)
         elif bbdd == 'deporte':
             for i in cursor:
                 wid = DataWid_import_deporte()
-                r0 = 'ID: ' + str(i[0]) + ' '
-                r1 = i[1] + ' \n'
-                r2 = i[2] + '\n'
-                r3 = str(i[3]) + ' '
+                r0 = 'ID: ' + str(i[0]) + '                 '
+                r1 = i[1] + ' '
+                r2 = i[2] + ''
+                r3 = str(i[3]) + ' h'
                 wid.data_id = str(i[0])
-                wid.data = r0 + r1 + r2 + r3
+                # wid.data = r0 + r1 + r2 + r3
+                wid.dataID = r0 + r1
+                wid.dataCO = r2
+                wid.dataTM = r3
                 self.ids.container.add_widget(wid)
         elif bbdd == 'globales':
             self.ids.container.add_widget(Label(text="¿Desea guardar en un csv las variables globales?"), index=0)
@@ -392,7 +408,7 @@ class UpdateDataWid_import_deporte_import(BoxLayout):
         self.add_widget(Eliminado())
 
 
-class DataWid_import(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
+class DataWid_import(MDCard):  # Usado en el check_memory para visualizar los registros en cada widget mini
     def __init__(self, **kwargs):
         super(DataWid_import, self).__init__()
 
@@ -402,7 +418,7 @@ class DataWid_import(BoxLayout):  # Usado en el check_memory para visualizar los
         self.add_widget(UpdateDataWid_import_movimientos_import(data_id))
 
 
-class DataWid_import_deporte(BoxLayout):  # Usado en el check_memory para visualizar los registros en cada widget mini
+class DataWid_import_deporte(MDCard):  # Usado en el check_memory para visualizar los registros en cada widget mini
     def __init__(self, **kwargs):
         super(DataWid_import_deporte, self).__init__()
 
@@ -420,7 +436,13 @@ WindowManager_select:
     selectDBWid_md:
     export_data:
     import_data:
-
+    
+<DataloaderLabel@AKLabelLoader>
+    size_hint_y: None
+    height: dp(20)
+    theme_text_color: "Primary"
+    halign: "left"
+    
 <Import_main>:
     name:"import_main"
     orientation: 'vertical'
@@ -539,44 +561,95 @@ WindowManager_select:
             id:filechooser
             on_selection: my_widget.selectfile(filechooser.selection)
 
-
 <DataWid_import>:
+    padding: "8dp"
     name:"DataWid_import"
-    data: ''
+    size_hint: .9, .2
+    #size: dp(320), dp(140)
+    radius: [dp(10),]
+    pos_hint: {"center_x": .5, "center_y": .5}
+    dataID: ""
+    dataCC: ""
+    dataIM: ""
+    dataET: ""
+    dataUB: ""
     data_id: ''
-    canvas:
-        Color:
-            rgb: 0.2,0.2,0.2
-        Rectangle:
-            size: self.size
-            pos: self.pos
-    Label:
-        size_hint_x: 0.9
-        size_font: self.width*0.4
-        text: root.data
-    Button:
-        size_hint_x: 0.1
-        text: 'Edit'
-        on_press: root.update_data(root.data_id)
-        
+
+    MDBoxLayout:
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint_x: .7
+            
+            DataloaderLabel:
+                text:  root.dataID
+                font_size: root.width * .04
+            MDSeparator:
+            
+            DataloaderLabel:
+                text:  root.dataCC
+                
+            MDSeparator:
+            
+            DataloaderLabel:
+                text:  root.dataET
+            MDSeparator:
+            
+            DataloaderLabel:
+                text:  root.dataUB
+            MDSeparator:
+            
+        MDBoxLayout:
+            size_hint_x: .3
+            orientation:"vertical"
+            MDLabel:
+                text: ""
+            DataloaderLabel:
+                text:  root.dataIM
+                halign: "center"
+                valign: "center"
+            MDLabel:
+                text: ""
+                
 <DataWid_import_deporte>:
+    padding: "8dp"
     name:"DataWid_import"
-    data: ''
+    size_hint: .9, .2
+    #size: dp(320), dp(140)
+    radius: [dp(10),]
+    pos_hint: {"center_x": .5, "center_y": .5}
+    dataID: ""
+    dataCO: ""
+    dataTM: ""
     data_id: ''
-    canvas:
-        Color:
-            rgb: 0.2,0.2,0.2
-        Rectangle:
-            size: self.size
-            pos: self.pos
-    Label:
-        size_hint_x: 0.9
-        size_font: self.width*0.4
-        text: root.data
-    Button:
-        size_hint_x: 0.1
-        text: 'Edit'
-        on_press: root.update_data(root.data_id)
+
+    MDBoxLayout:
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint_x: .7
+            MDLabel:
+                text: ""
+            DataloaderLabel:
+                text:  root.dataID
+                font_size: root.width * .04
+            MDSeparator:
+            
+            DataloaderLabel:
+                text:  root.dataCO
+            MDLabel:
+                text: ""
+                
+        MDBoxLayout:
+            size_hint_x: .3
+            orientation:"vertical"
+            MDLabel:
+                text: ""
+            DataloaderLabel:
+                text:  root.dataTM
+                halign: "center"
+                valign: "center"
+            MDLabel:
+                text: ""
+
         
 <MessagePopup_import>:
     BoxLayout:
