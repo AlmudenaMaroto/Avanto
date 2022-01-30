@@ -9,7 +9,7 @@ import time
 from calendar import timegm
 import charts_almu
 import chart_progress
-from tasa_ahorro import Tabla_tasa_ahorro
+from tools.tasa_ahorro import Tabla_tasa_ahorro
 from date_pick_esp import AKDatePicker_ini, AKDatePicker_fin
 import datetime
 from itertools import groupby
