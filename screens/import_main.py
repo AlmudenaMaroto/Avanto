@@ -56,9 +56,11 @@ class Import_main(MDScreen):
     def __init__(self, **kwargs):
         super(Import_main, self).__init__()
         self.name_db = ''
+        self.orden_cards = 1
+        self.tabla_seleccionada = 'Movimientos bancarios'
 
     def export_db(self):
-        bbdd = self.ids.click_label.text
+        bbdd = self.tabla_seleccionada
         self.name_db = bbdd  # Variable usable a nivel general
         if bbdd == 'Movimientos bancarios':
             bbdd = 'movimientos'
@@ -80,7 +82,7 @@ class Import_main(MDScreen):
             self.add_widget(Export_data(full_path, bbdd))
 
     def import_db(self):
-        bbdd = self.ids.click_label.text
+        bbdd = self.tabla_seleccionada
         self.name_db = bbdd  # Variable usable a nivel general
         if bbdd == 'Movimientos bancarios':
             bbdd = 'movimientos'
@@ -97,8 +99,25 @@ class Import_main(MDScreen):
         elif bbdd == 'Variables globales':
             bbdd = 'globales'
 
-    def spinner_clicked(self, value):
-        self.ids.click_label.text = value
+    # def spinner_clicked(self, value):
+    #     self.ids.click_label.text = value
+
+    def change(self):
+        self.ids.cardstack.change()
+        if self.orden_cards < 3:
+            self.orden_cards = self.orden_cards + 1
+        else:
+            self.orden_cards = 1
+
+        #Dependiendo de la carta se corresponde a una tabla:
+        if self.orden_cards == 1:
+            self.tabla_seleccionada = 'Movimientos bancarios'
+        elif self.orden_cards == 2:
+            self.tabla_seleccionada = 'Registro deporte'
+        elif self.orden_cards == 3:
+            self.tabla_seleccionada = 'Variables globales'
+
+
 
 
 class Export_data(BoxLayout):
@@ -448,7 +467,7 @@ WindowManager_select:
     orientation: 'vertical'
     canvas:
         Color:
-            rgb: .254,.556,.627
+            rgb: 1,1,1,1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -457,6 +476,8 @@ WindowManager_select:
 
         MyToolbar:
             id: _toolbar
+            title: "Importar / Exportar"
+            
         MDBoxLayout:
             orientation: "horizontal"
             size_hint_y: .1
@@ -466,18 +487,22 @@ WindowManager_select:
             Button:
                 text: 'Importar'
                 on_press: root.import_db()
+        
+        AKCardStack:
+            id: cardstack
+            size_hint_y: .8
+            
+            pos_hint: {"center_x": .5, "center_y": .5}
+            size: dp(400), dp(400)
+            transition: "in_out_circ"
+            card_out_direction: "left"
+            card_in_direction: "bottom"
     
-        Label:
-            id: click_label
-            text: 'Elige BBDD'
-    
-        Spinner:
-            id: spinner_id
-            text: 'Elige la base de datos'
-            values: ["Movimientos bancarios", "Registro deporte", "Variables globales"]
+        MDRaisedButton:
             size_hint_y: .1
-    
-            on_text: root.spinner_clicked(spinner_id.text)
+            text: "Siguiente"
+            on_press: root.change()
+            pos_hint: {"center_x": .5, "y": .05}
 
 <Export_data>:
     name: "export_data"
@@ -494,6 +519,7 @@ WindowManager_select:
 
         MyToolbar:
             id: _toolbar
+            title: "Importar / Exportar"
         BoxLayout:
             size_hint_y: 0.1
             Button: # -----------Go back
