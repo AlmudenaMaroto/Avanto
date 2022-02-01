@@ -37,6 +37,7 @@ Builder.load_string(
             radius: root.radius
             MDLabel:
                 id:label_card3
+                color: 1,1,1,1
                 text:'Variables globales'
                 halign:'center'
     RelativeLayout:
@@ -58,6 +59,7 @@ Builder.load_string(
             radius: root.radius
             MDLabel:
                 id:label_card2
+                color: 1,1,1,1
                 text:'Registro deporte'
                 halign:'center'
     RelativeLayout:
@@ -79,6 +81,7 @@ Builder.load_string(
             radius: root.radius
             MDLabel:
                 id:label_card1
+                color: 1,1,1,1
                 text:'Movimientos bancarios'
                 halign:'center'
 """

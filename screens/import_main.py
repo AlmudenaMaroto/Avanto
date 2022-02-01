@@ -478,15 +478,6 @@ WindowManager_select:
             id: _toolbar
             title: "Importar / Exportar"
             
-        MDBoxLayout:
-            orientation: "horizontal"
-            size_hint_y: .1
-            Button:
-                text: 'Exportar'
-                on_press: root.export_db()
-            Button:
-                text: 'Importar'
-                on_press: root.import_db()
         
         AKCardStack:
             id: cardstack
@@ -497,12 +488,25 @@ WindowManager_select:
             transition: "in_out_circ"
             card_out_direction: "left"
             card_in_direction: "bottom"
+        
+        AKFloatingRoundedAppbar:
+
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "database-export"
+                text: "Exportar"
+                on_release: root.export_db()
     
-        MDRaisedButton:
-            size_hint_y: .1
-            text: "Siguiente"
-            on_press: root.change()
-            pos_hint: {"center_x": .5, "y": .05}
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "refresh"
+                text: "Siguiente"
+                on_release: root.change()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "database-import"
+                text: "Importar"
+                on_release: root.import_db()
+        
+
 
 <Export_data>:
     name: "export_data"
