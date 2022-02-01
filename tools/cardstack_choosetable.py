@@ -35,6 +35,10 @@ Builder.load_string(
             pos_hint: {"center_x": .42, "center_y": .5}
             elevation: 0
             radius: root.radius
+            MDLabel:
+                id:label_card3
+                text:'Variables globales'
+                halign:'center'
     RelativeLayout:
         id: card2
         pos_hint: {"center_x":.5, "center_y":.5}
@@ -52,6 +56,10 @@ Builder.load_string(
             pos_hint: {"center_x": .45, "center_y": .5}
             elevation: 0
             radius: root.radius
+            MDLabel:
+                id:label_card2
+                text:'Registro deporte'
+                halign:'center'
     RelativeLayout:
         id:card1
         pos_hint: {"center_x": .5, "center_y": .5}
@@ -69,6 +77,10 @@ Builder.load_string(
             pos_hint: {"center_x": .5, "center_y": .5}
             elevation: root.elevation
             radius: root.radius
+            MDLabel:
+                id:label_card1
+                text:'Movimientos bancarios'
+                halign:'center'
 """
 )
 
@@ -188,7 +200,7 @@ class AKCardStack(ThemableBehavior, RelativeLayout):
                 t=self.transition,
             ).start(self.ids[card_to_drop].children[0])
         # Update the var current_card to reflect the new card brought to front
-        if self.counter + 1 == 4:
+        if self.counter + 1 > 3:
             self.current_card = self.ids["card1"].children[0]
         else:
             self.current_card = self.ids[
@@ -201,7 +213,7 @@ class AKCardStack(ThemableBehavior, RelativeLayout):
         Internal function. Do not call this function use `change()` instead
         """
         # Rotate second card into palce
-        if self.counter + 1 == 4:
+        if self.counter + 1 > 3:
             card2 = "card1"
         else:
             card2 = "card" + str(self.counter + 1)
@@ -216,9 +228,9 @@ class AKCardStack(ThemableBehavior, RelativeLayout):
         )
 
         # Rotate last card into place
-        if self.counter + 2 == 4:
+        if self.counter + 2 > 3:
             card3 = "card1"
-        elif self.counter + 2 == 5:
+        elif self.counter + 2 > 4:
             card3 = "card2"
         else:
             card3 = "card3"
@@ -235,7 +247,7 @@ class AKCardStack(ThemableBehavior, RelativeLayout):
         # Remove the first card and add it back at the back of the stack as a new_card
         new_card = self.ids["card" + str(self.counter)]
         # Clear this card of its widgets
-        new_card.children[0].clear_widgets()
+        # new_card.children[0].clear_widgets()
         self.remove_widget(new_card)
         if self.card_in_direction == "side":
             new_card.children[0].pos_hint = {"center_x": 0.35, "center_y": 0.55}

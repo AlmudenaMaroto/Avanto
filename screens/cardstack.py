@@ -11,14 +11,15 @@ Builder.load_string(
 
     AKCardStack:
         id: cardstack
+        
         pos_hint: {"center_x": .5, "center_y": .5}
-        size: dp(800), dp(800)
+        size: dp(400), dp(400)
         transition: "in_out_circ"
         card_out_direction: "left"
         card_in_direction: "bottom"
 
     MDRaisedButton:
-        text: "change cards"
+        text: "Siguiente"
         on_press: root.change()
         pos_hint: {"center_x": .5, "y": .05}
 """

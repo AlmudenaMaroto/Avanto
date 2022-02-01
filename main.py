@@ -28,7 +28,7 @@ from kivymd.app import MDApp  # noqa
 from kivymd.uix.list import OneLineAvatarListItem  # noqa
 from kivymd.uix.toolbar import MDToolbar  # noqa
 from kivy.uix.screenmanager import ScreenManager, Screen
-from tools.cardstack import AKCardStack
+from tools.cardstack_choosetable import AKCardStack
 
 from kivymd_extensions.akivymd.uix.statusbarcolor import (  # noqa
     change_statusbar_color,
