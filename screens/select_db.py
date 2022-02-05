@@ -17,7 +17,6 @@ from datetime import date
 from datetime import datetime
 from kivy.uix.popup import Popup
 from kivymd.uix.card import MDCard
-from kivymd.uix.list import OneLineListItem
 
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
@@ -197,6 +196,8 @@ class DataBaseWid_inventario(MDScreen):
 
         # Lista en la base de datos:
         self.lista_alimentos = []
+        self.lista_cantidad = []
+        self.lista_lista = []
         con = sqlite3.connect(self.ruta_DB_PATH_inventario)
         cursor = con.cursor()
         orden_execute = 'select * from inventario'
@@ -206,6 +207,8 @@ class DataBaseWid_inventario(MDScreen):
             r1 = str(i[2])  # Cantidad
             r2 = str(i[3])  # Lista
             self.lista_alimentos.append(r0)
+            self.lista_cantidad.append(r1)
+            self.lista_lista.append(r2)
         con.close()
 
     def goto_main(self):
@@ -261,6 +264,8 @@ class DataBaseWid_inventario(MDScreen):
             else:
                 add_icon_item(name_icon)
 
+    def selected_categoria(self, texto):
+        self.ids.search_field.text = texto
 
 class Vbles_globalesWid(BoxLayout):
     def __init__(self, **kwargs):
@@ -626,6 +631,11 @@ WindowManager_select:
     height: dp(20)
     theme_text_color: "Primary"
     halign: "left"
+    
+<InventarioOneLineIconListItem>
+    on_release:root.parent.parent.parent.parent.selected_categoria(self.text)
+    IconLeftWidget:
+        icon: root.icon
        
 <Selectdb>:
     name:"selectdb"
