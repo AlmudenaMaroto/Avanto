@@ -17,7 +17,7 @@ from datetime import date
 from datetime import datetime
 from kivy.uix.popup import Popup
 from kivymd.uix.card import MDCard
-
+from kivymd.uix.list import OneLineListItem
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
@@ -548,7 +548,7 @@ WindowManager_select:
     name:"selectdb"
     canvas:
         Color:
-            rgb: 4/255,150/255,163/255,1
+            rgb: 1,1,1,1
         Rectangle:
             pos: self.pos
             size: self.size
@@ -559,39 +559,49 @@ WindowManager_select:
             id: _toolbar
 
         ScrollView:
-            BoxLayout:
+            MDBoxLayout:
                 orientation: "vertical"
-                Label:
-                    size_hint_y: 0.1
-                    text:' Seleccione la tabla:'
-                Button:
-                    size_hint_y: 0.1
-                    text:'Movimientos bancarios'
-                    on_release:root.goto_movimientos()
-                Button:
-                    size_hint_y: 0.1
-                    text:'Registro deporte'
-                    on_release:root.goto_deporte()
-                Button:
-                    size_hint_y: 0.1
-                    text:'Tablas Ejercicio'
-                    on_release:pass
-                Button:
-                    size_hint_y: 0.1
-                    text:'Registro Alimentación'
-                    on_release:pass
-                Button:
-                    size_hint_y: 0.1
-                    text:'Registro Compras'
-                    on_release:pass
-                Button:
-                    size_hint_y: 0.1
-                    text:'Tablas Alimentos'
-                    on_release:pass
-                Button:
-                    size_hint_y: 0.1
-                    text:'Variables Globales'
-                    on_release:root.goto_vblesglobales()
+                    
+                MDList:
+                    size_hint_y:.9
+                    OneLineAvatarIconListItem:
+                        text:'Movimientos bancarios'
+                        on_release:root.goto_movimientos()
+                        IconLeftWidget:
+                            icon: "bank"
+                    OneLineAvatarIconListItem:
+                        text:'Registro deporte'
+                        on_release:root.goto_deporte()
+                        IconLeftWidget:
+                            icon: "weight-lifter"
+                    OneLineAvatarIconListItem:
+                        text:'Tablas Ejercicio'
+                        on_release:pass
+                        IconLeftWidget:
+                            icon: "head-heart-outline"
+                    OneLineAvatarIconListItem:
+                        text:'Registro Alimentación'
+                        on_release:pass
+                        IconLeftWidget:
+                            icon: "food-fork-drink"
+                    OneLineAvatarIconListItem:
+                        text:'Registro Compras'
+                        on_release:pass
+                        IconLeftWidget:
+                            icon: "shopping-outline"
+                    OneLineAvatarIconListItem:
+                        text:'Tablas Alimentos'
+                        on_release:pass
+                        IconLeftWidget:
+                            icon: "table-search"
+                    OneLineAvatarIconListItem:
+                        text:'Variables Globales'
+                        on_release:root.goto_vblesglobales()
+                        IconLeftWidget:
+                            icon: "globe-model"
+                MDLabel:
+                    size_hint_y:.1
+                    text:''
                 
 <DataBaseWid_movimientos>:
     name:"db_movimientos"

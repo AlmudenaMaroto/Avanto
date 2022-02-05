@@ -32,7 +32,7 @@ __all__ = (
     "AKBarChart_horizontal",
     "AKBarChart_ano"
 )
-
+## size: Para que no se corte el label del grafico de tarta/pie
 Builder.load_string(
     """
 <PieChartNumberLabel>
@@ -579,7 +579,7 @@ class AKChartBase_horizontal(DrawTools, ThemableBehavior, RelativeLayout):
                 center=center_pos_y,
                 _owner=self,
                 height=self.label_size * 2,  # AQUI PARA RETOCAR EL TAMAÑO DE LOS LABEL Y QUE NO LO PONGA EN DOS LINEAS
-                width=self.label_size * 10
+                width=self.label_size * 20 # Previamente era 10--> Este es el eje de conceptos en los rankings
             )
             label_y.font_size = self.label_size
             label_x = AKChartLabel(

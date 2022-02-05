@@ -609,7 +609,8 @@ WindowManager_select:
         MDBoxLayout:
             orientation: "vertical"
             size_hint_x: .7
-            
+            MDLabel:
+                text: ""
             DataloaderLabel:
                 text:  root.dataID
                 font_size: root.width * .04
@@ -626,7 +627,8 @@ WindowManager_select:
             
             DataloaderLabel:
                 text:  root.dataUB
-            MDSeparator:
+            MDLabel:
+                text: ""
             
         MDBoxLayout:
             size_hint_x: .3
