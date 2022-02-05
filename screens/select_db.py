@@ -19,6 +19,7 @@ from kivy.uix.popup import Popup
 from kivymd.uix.card import MDCard
 from kivymd.uix.list import OneLineListItem
 
+
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
 
@@ -63,6 +64,11 @@ class Selectdb(MDScreen):
         self.clear_widgets()
         self.current = 'db_deporte'
         self.add_widget(DataBaseWid_deporte())
+
+    def goto_inventario(self, *args):
+        self.clear_widgets()
+        self.current = 'db_inventario'
+        self.add_widget(DataBaseWid_inventario())
 
     def goto_vblesglobales(self, *args):
         self.clear_widgets()
@@ -178,6 +184,50 @@ class DataBaseWid_deporte(MDScreen):
         self.clear_widgets()
         self.current = 'insert_deporte'
         self.add_widget(InsertDataWid_deporte())
+
+
+class DataBaseWid_inventario(MDScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.Selectdb = Selectdb
+        self.num_rows = 10
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_inventario = self.ruta_APP_PATH + '/inventario.db'
+        self.check_memory()
+
+    def goto_main(self):
+        self.clear_widgets()
+        self.current = 'selectdb'
+        self.add_widget(Selectdb())
+
+    def check_memory(self):
+        self.ids.lista_alimentos.clear_widgets()
+
+        con = sqlite3.connect(self.ruta_DB_PATH_inventario)
+        cursor = con.cursor()
+        orden_execute = 'select * from inventario ORDER BY Concepto ASC '
+        cursor.execute(orden_execute)
+        for i in cursor:
+            r0 = i[1] # Alimento
+            r1 = str(i[2]) # Cantidad
+            r2 = str(i[3]) # Lista
+            texto_i = r0 + " " + r1
+            self.ids.lista_alimentos.add_widget(
+                OneLineListItem(
+                    text=texto_i,
+                )
+            )
+        con.close()
+
+    def add_10_more(self):
+        self.num_rows = self.num_rows + 10
+        self.check_memory()
+
+    def create_new_product(self):
+        self.num_rows = 10
+        self.clear_widgets()
+        self.current = 'insert_movimientos'
+        self.add_widget(InsertDataWid_movimientos())
 
 
 class Vbles_globalesWid(BoxLayout):
@@ -537,6 +587,7 @@ WindowManager_select:
     update_movimientos:
     eliminado:
     actualizado:
+    db_inventario:
     
 <DataloaderLabel@AKLabelLoader>
     size_hint_y: None
@@ -594,6 +645,11 @@ WindowManager_select:
                         on_release:pass
                         IconLeftWidget:
                             icon: "table-search"
+                    OneLineAvatarIconListItem:
+                        text:'Inventario'
+                        on_release:root.goto_inventario()
+                        IconLeftWidget:
+                            icon: "list-status"
                     OneLineAvatarIconListItem:
                         text:'Variables Globales'
                         on_release:root.goto_vblesglobales()
@@ -684,6 +740,39 @@ WindowManager_select:
                 text: "Añadir 10"
                 on_release: root.add_10_more()
                 
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "plus-circle-outline"
+                text: "Añadir"
+                on_release: root.create_new_product()
+
+<DataBaseWid_inventario>:
+    name:"db_inventario"
+    canvas:
+        Color:
+            rgb: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDBoxLayout:
+        orientation: "vertical"
+        MyToolbar:
+            id: _toolbar
+            title: "Inventario"
+        ScrollView:
+            size: self.size
+            MDBoxLayout:
+                id: lista_alimentos
+                adaptive_height: True
+                orientation: "vertical"
+        AKFloatingRoundedAppbar:
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "keyboard-return"
+                text: "Atrás"
+                on_release: root.goto_main()
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "card-plus-outline"
+                text: "Añadir 10"
+                on_release: root.add_10_more()
             AKFloatingRoundedAppbarButtonItem:
                 icon: "plus-circle-outline"
                 text: "Añadir"

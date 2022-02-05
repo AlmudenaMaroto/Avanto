@@ -9,13 +9,13 @@ from kivy.utils import platform
 # Rojo para deporte:#d40700
 
 
-
 # Esto cuando se me jodio la grafica, ya funciona
 if platform != 'android':
     pass
     # os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 
 from kivy.config import Config
+
 # Pantalla:
 Config.set("graphics", "width", "340")
 Config.set("graphics", "hight", "640")
@@ -33,6 +33,7 @@ from tools.cardstack_choosetable import AKCardStack
 from kivymd_extensions.akivymd.uix.statusbarcolor import (  # noqa
     change_statusbar_color,
 )
+
 
 # Funciones de creacion de tablas. Si ya estan creadas, no se vuelven a crear.
 def create_table_movimientos(cursor):
@@ -62,6 +63,39 @@ def create_table_deporte(cursor):
     )
 
 
+def create_table_inventario(cursor):
+    cursor.execute(
+        '''
+        CREATE TABLE inventario(
+        ID        INT   PRIMARY KEY NOT NULL,
+        Concepto     TEXT               NOT NULL,
+        Cantidad     FLOAT              NOT NULL,
+        Lista       FLOAT               NOT NULL
+        )'''
+    )
+    # Generamos unos registros iniciales:
+    lista_inventario_inicial = ['Aceite', 'Aceitunas', 'Arroz redondo', 'Arroz largo', 'Atún', 'Azúcar', 'Berberechos',
+                                'Café', 'Calamares', 'Champiñones', 'Espárragos', 'Fabada', 'Garbanzos bote',
+                                'Garbanzos secos', 'Galletas', 'Guisantes', 'Harina Normal', 'Harina Bizcochona',
+                                'Harina Pizza', 'Harina Fuerza', 'Harina Rebozar', 'Judías Verdes',
+                                'Judías Blancas Bote', 'Judías Blancas Secas', 'Judías Pintas Bote',
+                                'Judías Pintas Secas', 'Leche Desnatada', 'Leche Sin Lactosa', 'Leche Condensada',
+                                'Lentejas Bote', 'Lentejas Secas', 'Maíz', 'Mayonesa', 'Melocotón', 'Mejillones',
+                                'Mermelada', 'Macarrones', 'Fideos', 'Espaguetis', 'Lasaña', 'Lluvia', 'Colores',
+                                'Pimientos Piquillo', 'Pimientos Morrón', 'Pisto', 'Piña', 'Tomate Crudo',
+                                'Tomate Frito', 'Latas Variadas', 'Remolacha', 'Sardinillas', 'Sal']
+    id = 1
+    for alimento in lista_inventario_inicial:
+        a1 = (id, alimento, 0, 1)
+        s1 = 'INSERT INTO inventario(ID,	Concepto,	Cantidad, Lista)'
+        s2 = 'VALUES(%s,"%s","%s","%s")' % a1
+        id = id + 1
+        try:
+            cursor.execute(s1 + ' ' + s2)
+        except Exception as e:
+            pass
+
+
 def create_table_vbles_globales(cursor):
     cursor.execute(
         '''
@@ -84,6 +118,7 @@ def create_table_vbles_globales(cursor):
 ruta_APP_PATH = os.getcwd()
 ruta_DB_PATH_movimientos = ruta_APP_PATH + '/movimientos.db'
 ruta_DB_PATH_deporte = ruta_APP_PATH + '/deporte.db'
+ruta_DB_PATH_inventario = ruta_APP_PATH + '/inventario.db'
 ruta_DB_PATH_vblesglobales = ruta_APP_PATH + '/globales.db'
 
 try:
@@ -102,6 +137,15 @@ try:
     con.close()
 except Exception as e:
     print(e)
+try:
+    con = sqlite3.connect(ruta_DB_PATH_inventario)
+    cursor = con.cursor()
+    create_table_inventario(cursor)
+    con.commit()
+    con.close()
+except Exception as e:
+    print(e)
+
 try:
     con = sqlite3.connect(ruta_DB_PATH_vblesglobales)
     cursor = con.cursor()
