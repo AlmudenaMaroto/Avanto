@@ -195,6 +195,19 @@ class DataBaseWid_inventario(MDScreen):
         self.ruta_DB_PATH_inventario = self.ruta_APP_PATH + '/inventario.db'
         self.check_memory()
 
+        # Lista en la base de datos:
+        self.lista_alimentos = []
+        con = sqlite3.connect(self.ruta_DB_PATH_inventario)
+        cursor = con.cursor()
+        orden_execute = 'select * from inventario'
+        cursor.execute(orden_execute)
+        for i in cursor:
+            r0 = i[1]  # Alimento
+            r1 = str(i[2])  # Cantidad
+            r2 = str(i[3])  # Lista
+            self.lista_alimentos.append(r0)
+        con.close()
+
     def goto_main(self):
         self.clear_widgets()
         self.current = 'selectdb'
@@ -208,9 +221,9 @@ class DataBaseWid_inventario(MDScreen):
         orden_execute = 'select * from inventario ORDER BY Concepto ASC '
         cursor.execute(orden_execute)
         for i in cursor:
-            r0 = i[1] # Alimento
-            r1 = str(i[2]) # Cantidad
-            r2 = str(i[3]) # Lista
+            r0 = i[1]  # Alimento
+            r1 = str(i[2])  # Cantidad
+            r2 = str(i[3])  # Lista
             texto_i = r0 + " " + r1
             self.ids.lista_alimentos.add_widget(
                 OneLineListItem(
@@ -228,6 +241,25 @@ class DataBaseWid_inventario(MDScreen):
         self.clear_widgets()
         self.current = 'insert_movimientos'
         self.add_widget(InsertDataWid_movimientos())
+
+    def set_list_md_icons(self, text="", search=False):
+        '''Builds a list of icons for the screen MDIcons.'''
+
+        def add_icon_item(name_icon):
+            self.ids.lista_alimentos.add_widget(
+                OneLineListItem(
+                    text=name_icon,
+                )
+            )
+        # Nos traemos la lista de la db
+        self.ids.lista_alimentos.clear_widgets()
+        # self.ids.lista_alimentos.data = []
+        for name_icon in self.lista_alimentos:
+            if search:
+                if text.lower() in name_icon.lower():
+                    add_icon_item(name_icon)
+            else:
+                add_icon_item(name_icon)
 
 
 class Vbles_globalesWid(BoxLayout):
@@ -758,6 +790,14 @@ WindowManager_select:
         MyToolbar:
             id: _toolbar
             title: "Inventario"
+        MDBoxLayout:
+            adaptive_height: True
+            MDIconButton:
+                icon: 'magnify'
+            MDTextField:
+                id: search_field
+                hint_text: 'Search icon'
+                on_text: root.set_list_md_icons(self.text, True)
         ScrollView:
             size: self.size
             MDBoxLayout:
