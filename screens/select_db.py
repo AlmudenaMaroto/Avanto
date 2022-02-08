@@ -222,7 +222,6 @@ class DataBaseWid_inventario(MDScreen):
 
     def check_memory(self):
         self.ids.lista_alimentos.clear_widgets()
-
         con = sqlite3.connect(self.ruta_DB_PATH_inventario)
         cursor = con.cursor()
         orden_execute = 'select * from inventario ORDER BY Concepto ASC LIMIT ' + str(
@@ -254,8 +253,8 @@ class DataBaseWid_inventario(MDScreen):
     def create_new_product(self):
         self.num_rows = 10
         self.clear_widgets()
-        self.current = 'insert_movimientos'
-        self.add_widget(InsertDataWid_movimientos())
+        self.current = 'insert_inventario'
+        self.add_widget(InsertDataWid_inventario())
 
     def set_list_md_icons(self, text="", search=False):
         '''Builds a list of icons for the screen MDIcons.'''
@@ -288,6 +287,33 @@ class DataBaseWid_inventario(MDScreen):
 
     def selected_categoria(self, texto):
         self.ids.search_field.text = texto
+
+    def lista_compra(self):
+        self.ids.lista_alimentos.clear_widgets()
+
+        con = sqlite3.connect(self.ruta_DB_PATH_inventario)
+        cursor = con.cursor()
+        orden_execute = 'select * from inventario WHERE Cantidad < Lista ORDER BY Concepto ASC LIMIT ' + str(
+            self.num_rows)
+        cursor.execute(orden_execute)
+        for i in cursor:
+            wid = DataWid_inventario(size_hint=(.5, .2))
+            ID = str(i[0])
+            r0 = i[1]  # Alimento
+            r1 = str(i[2])  # Cantidad
+            r2 = str(i[3])  # Lista
+            texto_i = r0 + " " + r1
+            wid.dataID = ID
+            wid.dataCO = r0
+            wid.dataCA = r1
+            wid.dataLI = r2
+            # self.ids.lista_alimentos.add_widget(
+            #     OneLineListItem(
+            #         text=texto_i,
+            #     )
+            # )
+            self.ids.lista_alimentos.add_widget(wid)
+        con.close()
 
 
 class Vbles_globalesWid(BoxLayout):
@@ -378,7 +404,7 @@ class DataWid_inventario(MDCard):  # Usado en el check_memory para visualizar lo
         self.ruta_DB_PATH_inventario = self.ruta_APP_PATH + '/inventario.db'
 
     def add_one(self):
-        self.dataCA = str(float(self.dataCA) + 1)
+        self.dataCA = str(int(self.dataCA) + 1)
         con = sqlite3.connect(self.ruta_DB_PATH_inventario)
         cursor = con.cursor()
         a1 = (self.dataCO, self.dataCA, self.dataLI)
@@ -391,7 +417,7 @@ class DataWid_inventario(MDCard):  # Usado en el check_memory para visualizar lo
         con.close()
 
     def rest_one(self):
-        self.dataCA = str(float(self.dataCA) - 1)
+        self.dataCA = str(int(self.dataCA) - 1)
         con = sqlite3.connect(self.ruta_DB_PATH_inventario)
         cursor = con.cursor()
         a1 = (self.dataCO, self.dataCA, self.dataLI)
@@ -532,6 +558,53 @@ class InsertDataWid_deporte(BoxLayout):
         self.clear_widgets()
         self.current = 'db_deporte'
         self.add_widget(DataBaseWid_deporte())
+
+
+class InsertDataWid_inventario(BoxLayout):
+    def __init__(self, **kwargs):
+        super(InsertDataWid_inventario, self).__init__()
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_inventario = self.ruta_APP_PATH + '/inventario.db'
+        self.Popup = MessagePopup()
+
+    def insert_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_inventario)
+        cursor = con.cursor()
+        cursor.execute('select ID from inventario ORDER BY ID DESC LIMIT 1')
+        con.commit()
+        #
+        d1 = 1
+        for i in cursor:
+            d1 = i[0] + 1
+        con.close()
+        con = sqlite3.connect(self.ruta_DB_PATH_inventario)
+        cursor = con.cursor()
+
+        d2 = self.ids.ti_Concepto.text
+        d3 = self.ids.ti_Cantidad.text
+        d4 = self.ids.ti_Lista.text
+        a1 = (d1, d2, d3, d4)
+        s1 = 'INSERT INTO inventario(ID, Concepto,	Cantidad, Lista)'
+        s2 = 'VALUES(%s,"%s","%s","%s")' % a1
+        try:
+            cursor.execute(s1 + ' ' + s2)
+            con.commit()
+            con.close()
+            self.back_to_dbw()
+        except Exception as e:
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Data base error"
+            if '' in a1:
+                message.text = 'Uno o más campos están vacíos'
+            else:
+                message.text = str(e)
+            con.close()
+
+    def back_to_dbw(self):
+        self.clear_widgets()
+        self.current = 'db_inventario'
+        self.add_widget(DataBaseWid_inventario())
 
 
 class UpdateDataWid_movimientos(BoxLayout):
@@ -677,6 +750,7 @@ WindowManager_select:
     db_deporte:
     selectdb:
     insert_movimientos:
+    insert_inventario:
     datawid:
     update_movimientos:
     eliminado:
@@ -863,7 +937,7 @@ WindowManager_select:
                 icon: 'magnify'
             MDTextField:
                 id: search_field
-                hint_text: 'Search icon'
+                hint_text: 'Buscar'
                 on_text: root.set_list_md_icons(self.text, True)
         ScrollView:
             size: self.size
@@ -888,6 +962,11 @@ WindowManager_select:
                 icon: "plus-circle-outline"
                 text: "Añadir"
                 on_release: root.create_new_product()
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "clipboard-list-outline"
+                text:"Lista"
+                on_release: root.lista_compra()
+            
 
 <DataWid>:
     padding: "8dp"
@@ -1121,7 +1200,47 @@ WindowManager_select:
         Button:
             text: 'Salir'
             on_press: root.back_to_dbw()
-            
+
+<InsertDataWid_inventario>:
+    name:"insert_movimientos"
+    orientation: 'vertical'
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Label: # ---------- Concepto
+        text: ' Concepto:'
+    TextInput:
+        id: ti_Concepto
+        multiline: False
+        hint_text: 'Concepto:'
+    Label: # ---------- Cantidad
+        text: ' Cantidad:'
+    TextInput:
+        id: ti_Cantidad
+        multiline: False
+        hint_text: 'Cantidad'
+    Label: # ---------- Lista
+        text: ' Comprar cuando llegue a:'
+    TextInput:
+        id: ti_Lista
+        multiline: False
+        hint_text: 'Lista'
+    
+    BoxLayout:
+        size_hint_y: 5
+    BoxLayout: # ---------- Crear Salir
+        Button:
+            text: 'Crear'
+            on_press: root.insert_data()
+        Button:
+            text: 'Salir'
+            on_press: root.back_to_dbw()
+
+        
 <MessagePopup>:
     BoxLayout:
         orientation: 'vertical'

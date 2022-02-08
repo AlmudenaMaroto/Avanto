@@ -69,8 +69,8 @@ def create_table_inventario(cursor):
         CREATE TABLE inventario(
         ID        INT   PRIMARY KEY NOT NULL,
         Concepto     TEXT               NOT NULL,
-        Cantidad     FLOAT              NOT NULL,
-        Lista       FLOAT               NOT NULL
+        Cantidad     INT              NOT NULL,
+        Lista       INT               NOT NULL
         )'''
     )
     # Generamos unos registros iniciales:
