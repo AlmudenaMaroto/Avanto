@@ -210,6 +210,7 @@ class DataBaseWid_inventario(MDScreen):
             self.lista_cantidad.append(r1)
             self.lista_lista.append(r2)
         con.close()
+        self.dict_inventario = dict(zip(self.lista_alimentos, self.lista_cantidad))
 
     def goto_main(self):
         self.clear_widgets()
@@ -225,13 +226,14 @@ class DataBaseWid_inventario(MDScreen):
             self.num_rows)
         cursor.execute(orden_execute)
         for i in cursor:
-            wid = DataWid_inventario()
+            wid = DataWid_inventario(size_hint=(.5, .2))
             r0 = i[1]  # Alimento
             r1 = str(i[2])  # Cantidad
             r2 = str(i[3])  # Lista
             texto_i = r0 + " " + r1
 
-            wid.dataID = texto_i
+            wid.dataID = r0
+            wid.dataCA = r1
             # self.ids.lista_alimentos.add_widget(
             #     OneLineListItem(
             #         text=texto_i,
@@ -261,6 +263,7 @@ class DataBaseWid_inventario(MDScreen):
                     if text.lower() in name_icon.lower():
                         wid = DataWid_inventario()
                         wid.dataID = name_icon
+                        wid.dataCA = self.dict_inventario.get(name_icon)
                         self.ids.lista_alimentos.add_widget(wid)
                 else:
                     pass
@@ -268,6 +271,7 @@ class DataBaseWid_inventario(MDScreen):
 
     def selected_categoria(self, texto):
         self.ids.search_field.text = texto
+
 
 
 class Vbles_globalesWid(BoxLayout):
@@ -354,6 +358,12 @@ class DataWid_inventario(MDCard):  # Usado en el check_memory para visualizar lo
     def __init__(self, **kwargs):
         super(DataWid_inventario, self).__init__()
         self.Selectdb = Selectdb
+
+    def add_one(self):
+        pass
+
+    def rest_one(self):
+        pass
 
 
 class InsertDataWid_movimientos(BoxLayout):
@@ -943,17 +953,41 @@ WindowManager_select:
     radius: [dp(10),]
     pos_hint: {"center_x": .5, "center_y": .5}
     dataID: ""
+    dataCA: ""
     on_release: pass
-
+    
     MDBoxLayout:
-        orientation: "vertical"
-        size_hint_x: .7
-        MDLabel:
-            text: ""
-        DataloaderLabel:
-            text:  root.dataID
-            font_size: root.width * .04
-        MDSeparator:
+        orientation: "horizontal"
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint_x: .5
+            MDLabel:
+                text: ""
+            DataloaderLabel:
+                text:  root.dataID
+                font_size: root.width * .04
+            MDLabel:
+                text: ""
+        MDBoxLayout:
+            size_hint_x: .2
+            MDLabel:
+                text: ""
+            DataloaderLabel:
+                text:  root.dataCA
+                font_size: root.width * .04
+            MDLabel:
+                text: ""
+        MDBoxLayout:
+            size_hint_x: .3
+            MDBoxLayout:
+                orientation: "vertical"
+                Button:
+                    text: '+'
+                    on_release:root.add_one()
+                Button:
+                    text: '-'
+                    on_release:root.rest_one()
+        
 
 
 <InsertDataWid_movimientos>:
