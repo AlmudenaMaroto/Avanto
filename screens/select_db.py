@@ -195,6 +195,7 @@ class DataBaseWid_inventario(MDScreen):
         self.check_memory()
 
         # Lista en la base de datos:
+        self.lista_ID = []
         self.lista_alimentos = []
         self.lista_cantidad = []
         self.lista_lista = []
@@ -203,14 +204,16 @@ class DataBaseWid_inventario(MDScreen):
         orden_execute = 'select * from inventario'
         cursor.execute(orden_execute)
         for i in cursor:
+            ID = i[0]
             r0 = i[1]  # Alimento
             r1 = str(i[2])  # Cantidad
             r2 = str(i[3])  # Lista
+            self.lista_ID.append(ID)
             self.lista_alimentos.append(r0)
             self.lista_cantidad.append(r1)
             self.lista_lista.append(r2)
         con.close()
-        self.dict_inventario = dict(zip(self.lista_alimentos, self.lista_cantidad))
+        self.dict_inventario = dict(zip(self.lista_alimentos, self.lista_ID))
 
     def goto_main(self):
         self.clear_widgets()
@@ -264,8 +267,20 @@ class DataBaseWid_inventario(MDScreen):
                 if search:
                     if text.lower() in name_icon.lower():
                         wid = DataWid_inventario()
-                        wid.dataID = name_icon
-                        wid.dataCA = self.dict_inventario.get(name_icon)
+                        wid.dataCO = name_icon
+
+                        ID = self.dict_inventario.get(name_icon)
+                        con = sqlite3.connect(self.ruta_DB_PATH_inventario)
+                        cursor = con.cursor()
+                        orden_execute = 'SELECT * FROM inventario WHERE ID = %s' % ID
+                        cursor.execute(orden_execute)
+                        for i in cursor:
+                            wid.dataCA = str(i[2])
+                            wid.dataID = str(ID)
+                            wid.dataLI = str(i[3])
+                        con.close()
+
+
                         self.ids.lista_alimentos.add_widget(wid)
                 else:
                     pass
@@ -273,7 +288,6 @@ class DataBaseWid_inventario(MDScreen):
 
     def selected_categoria(self, texto):
         self.ids.search_field.text = texto
-
 
 
 class Vbles_globalesWid(BoxLayout):
