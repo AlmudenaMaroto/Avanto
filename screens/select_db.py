@@ -221,18 +221,23 @@ class DataBaseWid_inventario(MDScreen):
 
         con = sqlite3.connect(self.ruta_DB_PATH_inventario)
         cursor = con.cursor()
-        orden_execute = 'select * from inventario ORDER BY Concepto ASC '
+        orden_execute = 'select * from inventario ORDER BY Concepto ASC LIMIT ' + str(
+            self.num_rows)
         cursor.execute(orden_execute)
         for i in cursor:
+            wid = DataWid_inventario()
             r0 = i[1]  # Alimento
             r1 = str(i[2])  # Cantidad
             r2 = str(i[3])  # Lista
             texto_i = r0 + " " + r1
-            self.ids.lista_alimentos.add_widget(
-                OneLineListItem(
-                    text=texto_i,
-                )
-            )
+
+            wid.dataID = texto_i
+            # self.ids.lista_alimentos.add_widget(
+            #     OneLineListItem(
+            #         text=texto_i,
+            #     )
+            # )
+            self.ids.lista_alimentos.add_widget(wid)
         con.close()
 
     def add_10_more(self):
@@ -248,24 +253,22 @@ class DataBaseWid_inventario(MDScreen):
     def set_list_md_icons(self, text="", search=False):
         '''Builds a list of icons for the screen MDIcons.'''
 
-        def add_icon_item(name_icon):
-            self.ids.lista_alimentos.add_widget(
-                OneLineListItem(
-                    text=name_icon,
-                )
-            )
         # Nos traemos la lista de la db
-        self.ids.lista_alimentos.clear_widgets()
-        # self.ids.lista_alimentos.data = []
-        for name_icon in self.lista_alimentos:
-            if search:
-                if text.lower() in name_icon.lower():
-                    add_icon_item(name_icon)
-            else:
-                add_icon_item(name_icon)
+        if len(text) > 1:  # Para evitar listas largas que carguen el sistema
+            self.ids.lista_alimentos.clear_widgets()
+            for name_icon in self.lista_alimentos:
+                if search:
+                    if text.lower() in name_icon.lower():
+                        wid = DataWid_inventario()
+                        wid.dataID = name_icon
+                        self.ids.lista_alimentos.add_widget(wid)
+                else:
+                    pass
+                    # TODO: Sugerir añadir a la lista del inventario.
 
     def selected_categoria(self, texto):
         self.ids.search_field.text = texto
+
 
 class Vbles_globalesWid(BoxLayout):
     def __init__(self, **kwargs):
@@ -345,6 +348,12 @@ class DataWid_deporte(MDCard):  # Usado en el check_memory para visualizar los r
         self.clear_widgets()
         self.current = 'update_deporte'
         self.add_widget(UpdateDataWid_deporte(data_id))
+
+
+class DataWid_inventario(MDCard):  # Usado en el check_memory para visualizar los registros en cada widget mini
+    def __init__(self, **kwargs):
+        super(DataWid_inventario, self).__init__()
+        self.Selectdb = Selectdb
 
 
 class InsertDataWid_movimientos(BoxLayout):
@@ -810,10 +819,14 @@ WindowManager_select:
                 on_text: root.set_list_md_icons(self.text, True)
         ScrollView:
             size: self.size
-            MDBoxLayout:
+            GridLayout:
                 id: lista_alimentos
-                adaptive_height: True
-                orientation: "vertical"
+                padding: [10,10,10,10]
+                spacing: 5
+                size_hint_y: None
+                cols: 1
+                row_default_height: root.height*0.2
+                height: self.minimum_height
         AKFloatingRoundedAppbar:
             AKFloatingRoundedAppbarButtonItem:
                 icon: "keyboard-return"
@@ -921,6 +934,27 @@ WindowManager_select:
                 valign: "center"
             MDLabel:
                 text: ""
+
+<DataWid_inventario>:
+    padding: "8dp"
+    name:"datawid_inventario"
+    size_hint: .9, .1
+    #size: dp(320), dp(140)
+    radius: [dp(10),]
+    pos_hint: {"center_x": .5, "center_y": .5}
+    dataID: ""
+    on_release: pass
+
+    MDBoxLayout:
+        orientation: "vertical"
+        size_hint_x: .7
+        MDLabel:
+            text: ""
+        DataloaderLabel:
+            text:  root.dataID
+            font_size: root.width * .04
+        MDSeparator:
+
 
 <InsertDataWid_movimientos>:
     name:"insert_movimientos"
