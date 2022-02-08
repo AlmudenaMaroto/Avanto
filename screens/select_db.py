@@ -227,13 +227,15 @@ class DataBaseWid_inventario(MDScreen):
         cursor.execute(orden_execute)
         for i in cursor:
             wid = DataWid_inventario(size_hint=(.5, .2))
+            ID = str(i[0])
             r0 = i[1]  # Alimento
             r1 = str(i[2])  # Cantidad
             r2 = str(i[3])  # Lista
             texto_i = r0 + " " + r1
-
-            wid.dataID = r0
+            wid.dataID = ID
+            wid.dataCO = r0
             wid.dataCA = r1
+            wid.dataLI = r2
             # self.ids.lista_alimentos.add_widget(
             #     OneLineListItem(
             #         text=texto_i,
@@ -358,12 +360,34 @@ class DataWid_inventario(MDCard):  # Usado en el check_memory para visualizar lo
     def __init__(self, **kwargs):
         super(DataWid_inventario, self).__init__()
         self.Selectdb = Selectdb
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_inventario = self.ruta_APP_PATH + '/inventario.db'
 
     def add_one(self):
-        pass
+        self.dataCA = str(float(self.dataCA) + 1)
+        con = sqlite3.connect(self.ruta_DB_PATH_inventario)
+        cursor = con.cursor()
+        a1 = (self.dataCO, self.dataCA, self.dataLI)
+        s1 = 'UPDATE inventario SET '
+        s2 = 'Concepto="%s",Cantidad="%s",Lista=%s ' % a1
+        s3 = 'WHERE ID=%s' % self.dataID
+        orden_execute = s1 + s2 + s3
+        cursor.execute(orden_execute)
+        con.commit()
+        con.close()
 
     def rest_one(self):
-        pass
+        self.dataCA = str(float(self.dataCA) - 1)
+        con = sqlite3.connect(self.ruta_DB_PATH_inventario)
+        cursor = con.cursor()
+        a1 = (self.dataCO, self.dataCA, self.dataLI)
+        s1 = 'UPDATE inventario SET '
+        s2 = 'Concepto="%s",Cantidad="%s",Lista=%s ' % a1
+        s3 = 'WHERE ID=%s' % self.dataID
+        orden_execute = s1 + s2 + s3
+        cursor.execute(orden_execute)
+        con.commit()
+        con.close()
 
 
 class InsertDataWid_movimientos(BoxLayout):
@@ -953,7 +977,9 @@ WindowManager_select:
     radius: [dp(10),]
     pos_hint: {"center_x": .5, "center_y": .5}
     dataID: ""
+    dataCO: ""
     dataCA: ""
+    dataLI: ""
     on_release: pass
     
     MDBoxLayout:
@@ -964,7 +990,7 @@ WindowManager_select:
             MDLabel:
                 text: ""
             DataloaderLabel:
-                text:  root.dataID
+                text:  root.dataCO
                 font_size: root.width * .04
             MDLabel:
                 text: ""
