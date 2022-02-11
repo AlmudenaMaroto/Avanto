@@ -34,6 +34,13 @@
     	"icon": "view-carousel-outline",
 		"menu": "si"
     },
+	"5. Drop list Icons": {
+    	"import": "droplist_icons",
+    	"factory": "Droplista",
+    	"screen_name": "droplist_icons",
+    	"icon": "view-carousel-outline",
+		"menu": "si"
+    },
     "Bottom Navigation": {
     	"import": "bottomnavigation",
     	"factory": "BottomNavigation",

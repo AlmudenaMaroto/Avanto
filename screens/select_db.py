@@ -17,7 +17,7 @@ from datetime import date
 from datetime import datetime
 from kivy.uix.popup import Popup
 from kivymd.uix.card import MDCard
-
+from tools.swipe_widget import SwipeBehavior
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
@@ -186,6 +186,7 @@ class DataBaseWid_deporte(MDScreen):
 
 
 class DataBaseWid_inventario(MDScreen):
+    # row_default_height define la altura de los widget integrados. Cambiar en la parte kv
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.Selectdb = Selectdb
@@ -314,6 +315,7 @@ class DataBaseWid_inventario(MDScreen):
             # )
             self.ids.lista_alimentos.add_widget(wid)
         con.close()
+
 
 
 class Vbles_globalesWid(BoxLayout):
@@ -978,6 +980,10 @@ WindowManager_select:
                 icon: "clipboard-list-outline"
                 text:"Lista"
                 on_release: root.lista_compra()
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "refresh"
+                text:"Refrescar"
+                on_release: root.check_memory()
             
 
 <DataWid>:
@@ -1087,6 +1093,7 @@ WindowManager_select:
     dataCA: ""
     dataLI: ""
     on_release: pass
+
     
     MDBoxLayout:
         orientation: "horizontal"
