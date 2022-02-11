@@ -922,10 +922,12 @@ WindowManager_select:
     name:"db_inventario"
     canvas:
         Color:
-            rgb: 1, 1, 1, 1
+            rgb: 4/255,150/255,163/255,1
         Rectangle:
             pos: self.pos
             size: self.size
+    padding: '1dp', '1dp'
+    spacing: '1dp', '1dp'
     MDBoxLayout:
         orientation: "vertical"
         MyToolbar:
@@ -933,21 +935,31 @@ WindowManager_select:
             title: "Inventario"
         MDBoxLayout:
             adaptive_height: True
+            canvas:
+                Color:
+                    rgb: 4/255,150/255,163/255,1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
             MDIconButton:
                 icon: 'magnify'
+                icon_color: 1,1,1,1
             MDTextField:
+                text_color: 1,1,1,1
+                line_color_normal: 1,1,1,1
                 id: search_field
                 hint_text: 'Buscar'
+                hint_text_color: 1,1,1,1
                 on_text: root.set_list_md_icons(self.text, True)
         ScrollView:
             size: self.size
             GridLayout:
                 id: lista_alimentos
                 padding: [10,10,10,10]
-                spacing: 5
+                spacing: 1
                 size_hint_y: None
                 cols: 1
-                row_default_height: root.height*0.2
+                row_default_height: root.height*0.09
                 height: self.minimum_height
         AKFloatingRoundedAppbar:
             AKFloatingRoundedAppbarButtonItem:
@@ -1065,8 +1077,9 @@ WindowManager_select:
 <DataWid_inventario>:
     padding: "8dp"
     name:"datawid_inventario"
-    size_hint: .9, .1
-    #size: dp(320), dp(140)
+    size_hint: 1, None
+    height: 50
+    spacing: dp(5), dp(5)
     radius: [dp(10),]
     pos_hint: {"center_x": .5, "center_y": .5}
     dataID: ""
@@ -1089,23 +1102,24 @@ WindowManager_select:
                 text: ""
         MDBoxLayout:
             size_hint_x: .2
+            orientation: "vertical"
             MDLabel:
-                text: ""
+                text: " "
             DataloaderLabel:
                 text:  root.dataCA
                 font_size: root.width * .04
             MDLabel:
-                text: ""
+                text: " "
         MDBoxLayout:
             size_hint_x: .3
             MDBoxLayout:
-                orientation: "vertical"
-                Button:
-                    text: '+'
-                    on_release:root.add_one()
+                orientation: "horizontal"
                 Button:
                     text: '-'
                     on_release:root.rest_one()
+                Button:
+                    text: '+'
+                    on_release:root.add_one()
         
 
 
