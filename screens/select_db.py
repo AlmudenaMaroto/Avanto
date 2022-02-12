@@ -298,7 +298,7 @@ class DataBaseWid_inventario(MDScreen):
 
         con = sqlite3.connect(self.ruta_DB_PATH_inventario)
         cursor = con.cursor()
-        orden_execute = 'select * from inventario WHERE Cantidad < Lista ORDER BY Concepto ASC LIMIT ' + str(
+        orden_execute = 'select * from inventario WHERE Cantidad <= Lista ORDER BY Concepto ASC LIMIT ' + str(
             self.num_rows)
         cursor.execute(orden_execute)
         for i in cursor:
