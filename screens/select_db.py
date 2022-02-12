@@ -190,7 +190,7 @@ class DataBaseWid_inventario(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.Selectdb = Selectdb
-        self.num_rows = 10
+        self.num_rows = 20
         self.ruta_APP_PATH = os.getcwd()
         self.ruta_DB_PATH_inventario = self.ruta_APP_PATH + '/inventario.db'
         self.check_memory()
@@ -248,7 +248,7 @@ class DataBaseWid_inventario(MDScreen):
         con.close()
 
     def add_10_more(self):
-        self.num_rows = self.num_rows + 10
+        self.num_rows = self.num_rows + 20
         self.check_memory()
 
     def create_new_product(self):
@@ -769,7 +769,18 @@ WindowManager_select:
     on_release:root.parent.parent.parent.parent.selected_categoria(self.text)
     IconLeftWidget:
         icon: root.icon
-       
+
+<RoundedButtonInventario@Button>:
+    background_color: 0,0,0,0  # the last zero is the critical on, make invisible
+    canvas.before:
+        Color:
+            rgba: (.4,.4,.4,1) if self.state=='normal' else (0,.7,.7,1)  # visual feedback of press
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [50,]
+
+
 <Selectdb>:
     name:"selectdb"
     canvas:
@@ -970,7 +981,7 @@ WindowManager_select:
                 on_release: root.goto_main()
             AKFloatingRoundedAppbarButtonItem:
                 icon: "card-plus-outline"
-                text: "Añadir 10"
+                text: "Añadir 20"
                 on_release: root.add_10_more()
             AKFloatingRoundedAppbarButtonItem:
                 icon: "plus-circle-outline"
@@ -1123,9 +1134,12 @@ WindowManager_select:
                 orientation: "horizontal"
                 Button:
                     text: '-'
+                    border: 5, 5, 5, 5
+                    background_color: 14/255, 180/255, 195/255 , .7
                     on_release:root.rest_one()
                 Button:
                     text: '+'
+                    background_color: 14/255, 180/255, 195/255 , .7
                     on_release:root.add_one()
         
 
