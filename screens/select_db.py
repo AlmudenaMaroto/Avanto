@@ -776,7 +776,7 @@ WindowManager_select:
     actualizado:
     db_inventario:
     
-<DataloaderLabel@AKLabelLoader>
+<DataloaderLabel_select@AKLabelLoader>
     size_hint_y: None
     height: dp(20)
     theme_text_color: "Primary"
@@ -1036,21 +1036,21 @@ WindowManager_select:
             
             MDLabel:
                 text: ""
-            DataloaderLabel:
+            DataloaderLabel_select:
                 text:  root.dataID
                 font_size: root.width * .04
             MDSeparator:
             
-            DataloaderLabel:
+            DataloaderLabel_select:
                 text:  root.dataCC
                 
             MDSeparator:
             
-            DataloaderLabel:
+            DataloaderLabel_select:
                 text:  root.dataET
             MDSeparator:
             
-            DataloaderLabel:
+            DataloaderLabel_select:
                 text:  root.dataUB
             MDLabel:
                 text: ""
@@ -1060,7 +1060,7 @@ WindowManager_select:
             orientation:"vertical"
             MDLabel:
                 text: ""
-            DataloaderLabel:
+            DataloaderLabel_select:
                 text:  root.dataIM
                 halign: "center"
                 valign: "center"
@@ -1086,12 +1086,12 @@ WindowManager_select:
             size_hint_x: .7
             MDLabel:
                 text: ""
-            DataloaderLabel:
+            DataloaderLabel_select:
                 text:  root.dataID
                 font_size: root.width * .04
             MDSeparator:
             
-            DataloaderLabel:
+            DataloaderLabel_select:
                 text:  root.dataCO
             MDLabel:
                 text: ""
@@ -1101,7 +1101,7 @@ WindowManager_select:
             orientation:"vertical"
             MDLabel:
                 text: ""
-            DataloaderLabel:
+            DataloaderLabel_select:
                 text:  root.dataTM
                 halign: "center"
                 valign: "center"
@@ -1111,8 +1111,7 @@ WindowManager_select:
 <DataWid_inventario>:
     padding: "8dp"
     name:"datawid_inventario"
-    size_hint: 1, None
-    height: 50
+    size_hint: .9, .2
     spacing: dp(5), dp(5)
     radius: [dp(10),]
     pos_hint: {"center_x": .5, "center_y": .5}
@@ -1148,7 +1147,7 @@ WindowManager_select:
                 size_hint_x: .5
                 MDLabel:
                     text: ""
-                DataloaderLabel:
+                DataloaderLabel_select:
                     text:  root.dataCO
                     font_size: root.width * .04
                 MDLabel:
@@ -1158,7 +1157,7 @@ WindowManager_select:
                 orientation: "vertical"
                 MDLabel:
                     text: " "
-                DataloaderLabel:
+                DataloaderLabel_select:
                     text:  root.dataCA
                     font_size: root.width * .04
                 MDLabel:
