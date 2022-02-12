@@ -20,7 +20,14 @@
     	"icon": "chart-bell-curve-cumulative",
 		"menu": "si"
     },
-	"4. Bendiciones": {
+	"4. Ejercicio": {
+    	"import": "ejercicio",
+    	"factory": "Ejercicio",
+    	"screen_name": "ejercicio",
+    	"icon": "weight-lifter",
+		"menu": "si"
+    },
+	"5. Bendiciones": {
     	"import": "laso",
     	"factory": "ImageViewer",
     	"screen_name": "laso",
@@ -32,14 +39,14 @@
     	"factory": "Droplista",
     	"screen_name": "droplist",
     	"icon": "view-carousel-outline",
-		"menu": "si"
+		"menu": "no"
     },
 	"5. Drop list Icons": {
     	"import": "droplist_icons",
     	"factory": "Droplista",
     	"screen_name": "droplist_icons",
     	"icon": "view-carousel-outline",
-		"menu": "si"
+		"menu": "no"
     },
     "Bottom Navigation": {
     	"import": "bottomnavigation",

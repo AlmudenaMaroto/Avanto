@@ -128,7 +128,8 @@ try:
     con.commit()
     con.close()
 except Exception as e:
-    print(e)
+    pass
+    # print(e)
 try:
     con = sqlite3.connect(ruta_DB_PATH_deporte)
     cursor = con.cursor()
@@ -136,7 +137,8 @@ try:
     con.commit()
     con.close()
 except Exception as e:
-    print(e)
+    pass
+    # print(e)
 try:
     con = sqlite3.connect(ruta_DB_PATH_inventario)
     cursor = con.cursor()
@@ -144,7 +146,8 @@ try:
     con.commit()
     con.close()
 except Exception as e:
-    print(e)
+    pass
+    # print(e)
 
 try:
     con = sqlite3.connect(ruta_DB_PATH_vblesglobales)
@@ -153,7 +156,8 @@ try:
     con.commit()
     con.close()
 except Exception as e:
-    print(e)
+    pass
+    # print(e)
 
 
 class IconListItem(OneLineAvatarListItem):

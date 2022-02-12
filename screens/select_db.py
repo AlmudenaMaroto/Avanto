@@ -19,6 +19,7 @@ from kivy.uix.popup import Popup
 from kivymd.uix.card import MDCard
 from tools.swipe_widget import SwipeBehavior
 
+
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
 
@@ -29,6 +30,7 @@ class MessagePopup(Popup):
 
 class Eliminado(MDScreen):
     pass
+
 
 class Eliminado_inventario(MDScreen):
     pass
@@ -193,7 +195,7 @@ class DataBaseWid_inventario(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.Selectdb = Selectdb
-        self.num_rows = 20
+        self.num_rows = 10
         self.ruta_APP_PATH = os.getcwd()
         self.ruta_DB_PATH_inventario = self.ruta_APP_PATH + '/inventario.db'
         self.check_memory()
@@ -251,7 +253,7 @@ class DataBaseWid_inventario(MDScreen):
         con.close()
 
     def add_10_more(self):
-        self.num_rows = self.num_rows + 20
+        self.num_rows = self.num_rows + 10
         self.check_memory()
 
     def create_new_product(self):
@@ -282,7 +284,6 @@ class DataBaseWid_inventario(MDScreen):
                             wid.dataID = str(ID)
                             wid.dataLI = str(i[3])
                         con.close()
-
 
                         self.ids.lista_alimentos.add_widget(wid)
                 else:
@@ -318,7 +319,6 @@ class DataBaseWid_inventario(MDScreen):
             # )
             self.ids.lista_alimentos.add_widget(wid)
         con.close()
-
 
 
 class Vbles_globalesWid(BoxLayout):
@@ -998,7 +998,7 @@ WindowManager_select:
                 on_release: root.goto_main()
             AKFloatingRoundedAppbarButtonItem:
                 icon: "card-plus-outline"
-                text: "Añadir 20"
+                text: "Añadir 10"
                 on_release: root.add_10_more()
             AKFloatingRoundedAppbarButtonItem:
                 icon: "plus-circle-outline"
@@ -1134,7 +1134,7 @@ WindowManager_select:
                 background_color: 1,1,1,0
                 text:"x"
                 color: 251/255,58/255,58/255,1
-                size: dp(5), dp(5)
+                size: dp(15), dp(10)
                 on_release: root.delete_data()
             MDLabel:
                 size_hint_x:.8
