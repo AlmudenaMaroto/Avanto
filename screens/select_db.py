@@ -30,6 +30,9 @@ class MessagePopup(Popup):
 class Eliminado(MDScreen):
     pass
 
+class Eliminado_inventario(MDScreen):
+    pass
+
 
 class Actualizado(MDScreen):
     pass
@@ -431,6 +434,19 @@ class DataWid_inventario(MDCard):  # Usado en el check_memory para visualizar lo
         con.commit()
         con.close()
 
+    def delete_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_inventario)
+        cursor = con.cursor()
+        s = 'delete from inventario where ID=' + self.dataID
+        cursor.execute(s)
+        con.commit()
+        con.close()
+        self.back_to_dbw()
+
+    def back_to_dbw(self):
+        self.clear_widgets()
+        self.add_widget(Eliminado_inventario())
+
 
 class InsertDataWid_movimientos(BoxLayout):
     def __init__(self, **kwargs):
@@ -756,6 +772,7 @@ WindowManager_select:
     datawid:
     update_movimientos:
     eliminado:
+    eliminado_inventario:
     actualizado:
     db_inventario:
     
@@ -1104,43 +1121,61 @@ WindowManager_select:
     dataCA: ""
     dataLI: ""
     on_release: pass
-
     
     MDBoxLayout:
-        orientation: "horizontal"
+        orientation: "vertical"
         MDBoxLayout:
-            orientation: "vertical"
-            size_hint_x: .5
+            orientation: "horizontal"
+            size_hint_y: .01
             MDLabel:
-                text: ""
-            DataloaderLabel:
-                text:  root.dataCO
-                font_size: root.width * .04
+                size_hint_x:.01
+                text:""
+            Button:
+                size_hint: None, None
+                background_color: 1,1,1,0
+                text:"x"
+                color: 251/255,58/255,58/255,1
+                size: dp(5), dp(5)
+                on_release: root.delete_data()
             MDLabel:
-                text: ""
+                size_hint_x:.8
+                text:""
         MDBoxLayout:
-            size_hint_x: .2
-            orientation: "vertical"
-            MDLabel:
-                text: " "
-            DataloaderLabel:
-                text:  root.dataCA
-                font_size: root.width * .04
-            MDLabel:
-                text: " "
-        MDBoxLayout:
-            size_hint_x: .3
+            orientation: "horizontal"
+            size_hint_y: .99
             MDBoxLayout:
-                orientation: "horizontal"
-                Button:
-                    text: '-'
-                    border: 5, 5, 5, 5
-                    background_color: 14/255, 180/255, 195/255 , .7
-                    on_release:root.rest_one()
-                Button:
-                    text: '+'
-                    background_color: 14/255, 180/255, 195/255 , .7
-                    on_release:root.add_one()
+                orientation: "vertical"
+                size_hint_x: .5
+                MDLabel:
+                    text: ""
+                DataloaderLabel:
+                    text:  root.dataCO
+                    font_size: root.width * .04
+                MDLabel:
+                    text: ""
+            MDBoxLayout:
+                size_hint_x: .2
+                orientation: "vertical"
+                MDLabel:
+                    text: " "
+                DataloaderLabel:
+                    text:  root.dataCA
+                    font_size: root.width * .04
+                MDLabel:
+                    text: " "
+            MDBoxLayout:
+                size_hint_x: .3
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    Button:
+                        text: '-'
+                        border: 5, 5, 5, 5
+                        background_color: 14/255, 180/255, 195/255 , .7
+                        on_release:root.rest_one()
+                    Button:
+                        text: '+'
+                        background_color: 14/255, 180/255, 195/255 , .7
+                        on_release:root.add_one()
         
 
 
@@ -1377,6 +1412,14 @@ WindowManager_select:
         orientation: 'vertical'
         Label:
             text: 'Registro actualizado'
+            
+<Eliminado_inventario>:
+    name: "eliminado_inventario"
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            color: 0,0,0,1
+            text: 'Registro eliminado'
             
 <Vbles_globalesWid>:
     name:"db_vblesglob"
