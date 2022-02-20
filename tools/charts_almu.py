@@ -379,7 +379,9 @@ class AKChartBase(DrawTools, ThemableBehavior, RelativeLayout):
             self._labels_x_box.clear_widgets()
 
         if not x_values or not y_values:
-            raise Exception("x_values and y_values cannot be empty")
+            x_values = [0]
+            y_values = [0]
+            # raise Exception("x_values and y_values cannot be empty")
 
         if len(x_values) != len(y_values):
             raise Exception("x_values and y_values must have equal length")
