@@ -1,28 +1,8 @@
 from kivy.lang.builder import Builder
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.datatables import MDDataTable
-from kivy.metrics import dp
-import sqlite3
-import os
-from datetime import datetime
-import time
-from calendar import timegm
-import charts_almu
-import chart_progress
-from tools.tasa_ahorro import Tabla_tasa_ahorro
-from date_pick_esp import AKDatePicker_ini, AKDatePicker_fin
-import datetime
-from itertools import groupby
-from kivy.uix.popup import Popup
-from kivymd.uix.dialog import BaseDialog
-from kivymd.theming import ThemableBehavior
+
+
 # from kivymd_extensions.akivymd.uix.selectionlist import AKSelectListAvatarItem
-from listas_config import AKSelectListAvatarItem_etapa
-from charts_almu import AKPieChart_etapas
-from datetime import date
-from kivy.utils import platform
-import csv
-import collections
 
 
 class Ejercicio(MDScreen):

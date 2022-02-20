@@ -1,16 +1,13 @@
 from kivy.lang.builder import Builder
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.datatables import MDDataTable
 from kivy.metrics import dp
 import sqlite3
 import os
 from datetime import datetime
 import time
 from calendar import timegm
-import charts_almu
-import chart_progress
 from tools.tasa_ahorro import Tabla_tasa_ahorro
-from date_pick_esp import AKDatePicker_ini, AKDatePicker_fin
+from tools.date_pick_esp import AKDatePicker_ini, AKDatePicker_fin
 import datetime
 from itertools import groupby
 from kivy.uix.popup import Popup
@@ -18,7 +15,8 @@ from kivymd.uix.dialog import BaseDialog
 from kivymd.theming import ThemableBehavior
 # from kivymd_extensions.akivymd.uix.selectionlist import AKSelectListAvatarItem
 from listas_config import AKSelectListAvatarItem_etapa
-from charts_almu import AKPieChart_etapas
+from tools.charts_almu import AKPieChart_etapas
+import tools.chart_progress
 from datetime import date
 from kivy.utils import platform
 import csv
@@ -580,6 +578,7 @@ class Economia(MDScreen):
         dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1]))
         dict_ranking_gastos = {key: round(-dict_ranking_gastos[key], 2) for key in dict_ranking_gastos}
         dict_ranking_gastos = {k: dict_ranking_gastos[k] for k in list(dict_ranking_gastos)[:10]}
+        dict_ranking_gastos[' '] = 0.0
         dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1]))
 
         # Labels y values para el grafico
@@ -606,6 +605,7 @@ class Economia(MDScreen):
         dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1], reverse=True))
         dict_ranking_gastos = {key: round(dict_ranking_gastos[key], 2) for key in dict_ranking_gastos}
         dict_ranking_gastos = {k: dict_ranking_gastos[k] for k in list(dict_ranking_gastos)[:10]}
+        dict_ranking_gastos[' '] = 0.0
         dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1]))
 
         # Labels y values para el grafico
