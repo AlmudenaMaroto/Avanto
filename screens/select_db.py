@@ -18,7 +18,9 @@ from datetime import datetime
 from kivy.uix.popup import Popup
 from kivymd.uix.card import MDCard
 from tools.swipe_widget import SwipeBehavior
-
+# Para la tabla de ejercicios:
+from kivymd.uix.datatables import MDDataTable
+from kivy.metrics import dp
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
@@ -68,6 +70,11 @@ class Selectdb(MDScreen):
         self.clear_widgets()
         self.current = 'db_deporte'
         self.add_widget(DataBaseWid_deporte())
+
+    def goto_tabladeporte(self, *args):
+        self.clear_widgets()
+        self.current = 'db_tabladeporte'
+        self.add_widget(DB_tabladeporte())
 
     def goto_inventario(self, *args):
         self.clear_widgets()
@@ -178,6 +185,61 @@ class DataBaseWid_deporte(MDScreen):
             wid.dataTM = r3
             self.ids.container.add_widget(wid)
         con.close()
+
+    def add_10_more(self):
+        self.num_rows = self.num_rows + 10
+        self.check_memory()
+
+    def create_new_product(self):
+        self.num_rows = 10
+        self.clear_widgets()
+        self.current = 'insert_deporte'
+        self.add_widget(InsertDataWid_deporte())
+
+
+class DB_tabladeporte(MDScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.Selectdb = Selectdb
+        self.num_rows = 10
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_tabladeporte = self.ruta_APP_PATH + '/tabladeporte.db'
+        self.check_memory()
+
+    def goto_main(self):
+        self.clear_widgets()
+        self.current = 'selectdb'
+        self.add_widget(Selectdb())
+
+    def check_memory(self):
+        self.ids.container.clear_widgets()
+
+        self.ids.container.add_widget(MDDataTable(pos_hint={'center_x': 0.5, 'center_y': 0.5},
+                                                  size_hint=(0.9, 0.6),
+                                                  rows_num=10,
+                                                  column_data=[
+                                                      ("Ejercicio", dp(18)),
+                                                      ("kcal/h", dp(20)),
+                                                      ("Cardio", dp(20))
+                                                  ],
+                                                  row_data=[
+                                                      ("1", "Burger", "300"),
+                                                      ("2", "Oats", "200"),
+                                                      ("3", "Oats", "200"),
+                                                      ("4", "Oats", "200"),
+                                                      ("5", "Oats", "200"),
+                                                      ("3", "Oats", "200"),
+                                                      ("4", "Oats", "200"),
+                                                      ("5", "Oats", "200"),
+                                                      ("3", "Oats", "200"),
+                                                      ("4", "Oats", "200"),
+                                                      ("5", "Oats", "200"),
+                                                      ("6", "Oats", "200"),
+                                                      ("7", "Oats", "200"),
+                                                      ("8", "Oats", "200")
+
+                                                  ]
+                                                  ))
 
     def add_10_more(self):
         self.num_rows = self.num_rows + 10
@@ -766,6 +828,7 @@ Builder.load_string(
 WindowManager_select:
     db_movimientos:
     db_deporte:
+    db_tabladeporte:
     selectdb:
     insert_movimientos:
     insert_inventario:
@@ -830,7 +893,7 @@ WindowManager_select:
                             icon: "weight-lifter"
                     OneLineAvatarIconListItem:
                         text:'Tablas Ejercicio'
-                        on_release:pass
+                        on_release:root.goto_tabladeporte()
                         IconLeftWidget:
                             icon: "head-heart-outline"
                     OneLineAvatarIconListItem:
@@ -930,6 +993,48 @@ WindowManager_select:
                 cols: 1
                 row_default_height: root.height*0.2
                 height: self.minimum_height
+                
+        AKFloatingRoundedAppbar:
+
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "keyboard-return"
+                text: "Atrás"
+                on_release: root.goto_main()
+    
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "card-plus-outline"
+                text: "Añadir 10"
+                on_release: root.add_10_more()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "plus-circle-outline"
+                text: "Añadir"
+                on_release: root.create_new_product()
+                
+                
+<DB_tabladeporte>:
+    name:"db_tabladeporte"
+    canvas:
+        Color:
+            rgb: 4/255,150/255,163/255,1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MyToolbar:
+            id: _toolbar
+            title: "Tablas Ejercicio"
+        GridLayout:
+            id: container
+            padding: [10,10,10,10]
+            spacing: 5
+            size_hint_y: None
+            cols: 1
+            row_default_height: root.height*0.8
+            height: self.minimum_height
+            
                 
         AKFloatingRoundedAppbar:
 

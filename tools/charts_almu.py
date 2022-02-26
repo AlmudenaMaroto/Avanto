@@ -837,8 +837,8 @@ class AKBarChart_ano(AKChartBase):
             shape_name="line",
             canvas=canvas,
             points=[
-                [self._bottom_line_y(), dis],
-                [self.width - self._bottom_line_y(), dis],
+                [self._bottom_line_y(), dis + 25],
+                [self.width - self._bottom_line_y(), dis + 25],
             ],
             line_width=self.line_width,
             color=self.lines_color,
