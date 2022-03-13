@@ -1511,7 +1511,7 @@ class MDDataTable(ThemableBehavior, AnchorLayout):
         pagination_menu = MDDropdownMenu(
             caller=self.pagination.ids.drop_item,
             items=menu_items,
-            position=self.pagination_menu_pos,
+            position='auto',
             max_height=self.pagination_menu_height,
             width_mult=2,
         )

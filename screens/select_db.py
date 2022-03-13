@@ -205,8 +205,10 @@ class DB_tabladeporte(MDScreen):
         self.num_rows = 10
         self.ruta_APP_PATH = os.getcwd()
         self.ruta_DB_PATH_tabladeporte = self.ruta_APP_PATH + '/tabladeporte.db'
-        self.check_memory()
         self.tabla_ejercicio = ''
+        self.objeto_seleccionado = []
+        self.check_memory()
+
 
     def goto_main(self):
         self.clear_widgets()
@@ -222,7 +224,7 @@ class DB_tabladeporte(MDScreen):
         orden_execute = 'select * from tabladeporte ORDER BY ID ASC'
         cursor.execute(orden_execute)
         for i in cursor:
-            fila_i = [i[1], i[2], i[3], i[4], i[5], i[6], i[7]]
+            fila_i = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7]]
             datos_filas.append(tuple(fila_i))
         con.close()
         # datos_filas = [('Tenis', 10), ('Tenis', 10)]
@@ -231,8 +233,10 @@ class DB_tabladeporte(MDScreen):
         self.tabla_ejercicio = MDDataTable(pos_hint={'center_x': 0.5, 'center_y': 0.5},
                                            size_hint=(0.9, 0.6),
                                            check = True,
-                                           rows_num=10,
+                                           rows_num=7,
+                                           use_pagination = True,
                                            column_data=[
+                                               ("ID", dp(20)),
                                                ("Ejercicio", dp(30)),
                                                ("kcal/h", dp(12)),
                                                ("Cardio", dp(12)),
@@ -241,9 +245,9 @@ class DB_tabladeporte(MDScreen):
                                                ("Espalda", dp(13)),
                                                ("Pierna", dp(12)),
                                            ],
-                                           row_data=datos_filas
+                                           row_data=datos_filas,
                                            )
-        self.tabla_ejercicio.bind(on_row_press=self.on_row_press)
+        # self.tabla_ejercicio.bind(on_row_press=self.on_row_press)
         self.tabla_ejercicio.bind(on_check_press=self.on_check_press)
 
         self.ids.container.add_widget(self.tabla_ejercicio)
@@ -262,16 +266,28 @@ class DB_tabladeporte(MDScreen):
 
     def on_row_press(self, instance_table, instance_row):
         '''Called when a table row is clicked.'''
-
-        print(instance_table, instance_row)
+        pass
+        # print(instance_table, instance_row)
 
     def on_check_press(self, instance_table, current_row):
         '''Called when the check box in the table row is checked.'''
-
+        if current_row[0] not in self.objeto_seleccionado:
+            self.objeto_seleccionado.append(current_row[0])
+        else :
+            self.objeto_seleccionado.remove(current_row[0])
         print(instance_table, current_row)
+        a = 0
 
     def delete_ejercicio(self):
-        pass
+
+        con = sqlite3.connect(self.ruta_DB_PATH_tabladeporte)
+        cursor = con.cursor()
+        for elemento_i in self.objeto_seleccionado:
+            s = 'delete from tabladeporte where ID=' + elemento_i
+            cursor.execute(s)
+            con.commit()
+        con.close()
+        self.check_memory()
 
     def edit_ejercicio(self):
         pass
