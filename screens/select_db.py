@@ -258,11 +258,9 @@ class DB_tabladeporte(MDScreen):
         pass
 
     def create_new_product(self):
-        pass
-        # self.num_rows = 10
-        # self.clear_widgets()
-        # self.current = 'insert_deporte'
-        # self.add_widget(InsertDataWid_deporte())
+        self.clear_widgets()
+        self.current = 'insert_tabladeporte'
+        self.add_widget(InsertDataWid_tabladeporte())
 
     def on_row_press(self, instance_table, instance_row):
         '''Called when a table row is clicked.'''
@@ -679,6 +677,59 @@ class InsertDataWid_deporte(BoxLayout):
         self.clear_widgets()
         self.current = 'db_deporte'
         self.add_widget(DataBaseWid_deporte())
+
+
+
+class InsertDataWid_tabladeporte(BoxLayout):
+    def __init__(self, **kwargs):
+        super(InsertDataWid_tabladeporte, self).__init__()
+        today = date.today()
+        # d1 = today.strftime("%d/%m/%Y")
+        # self.ids.ti_fechao.text = d1
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_tabladeporte = self.ruta_APP_PATH + '/tabladeporte.db'
+        self.Popup = MessagePopup()
+
+    def insert_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_tabladeporte)
+        cursor = con.cursor()
+        cursor.execute('select ID from tabladeporte ORDER BY ID DESC LIMIT 1')
+        con.commit()
+        d1 = 1
+        for i in cursor:
+            d1 = i[0] + 1
+        con.close()
+        con = sqlite3.connect(self.ruta_DB_PATH_tabladeporte)
+        cursor = con.cursor()
+        d2 = self.ids.tb_Concepto.text
+        d3 = self.ids.tb_kcal.text
+        d4 = self.ids.tb_Cardio.text
+        d5 = self.ids.tb_Brazo.text
+        d6 = self.ids.tb_Pecho.text
+        d7 = self.ids.tb_Espalda.text
+        d8 = self.ids.tb_Pierna.text
+        a1 = (d1, d2, d3, d4, d5, d6, d7, d8)
+        s1 = 'INSERT INTO tabladeporte(ID, Concepto, kcal, Cardio, Brazo, Pecho, Espalda, Pierna)'
+        s2 = 'VALUES(%s,"%s",%s,%s,%s,%s,%s,%s)' % a1
+        try:
+            cursor.execute(s1 + ' ' + s2)
+            con.commit()
+            con.close()
+            self.back_to_dbw()
+        except Exception as e:
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Data base error"
+            if '' in a1:
+                message.text = 'Uno o más campos están vacíos'
+            else:
+                message.text = str(e)
+            con.close()
+
+    def back_to_dbw(self):
+        self.clear_widgets()
+        self.current = 'db_tabladeporte'
+        self.add_widget(DB_tabladeporte())
 
 
 class InsertDataWid_inventario(BoxLayout):
@@ -1411,6 +1462,67 @@ WindowManager_select:
         id: ti_Tiempo
         multiline: False
         hint_text: 'Tiempo'
+    BoxLayout:
+        size_hint_y: 5
+    BoxLayout: # ---------- Crear Salir
+        Button:
+            text: 'Crear'
+            on_press: root.insert_data()
+        Button:
+            text: 'Salir'
+            on_press: root.back_to_dbw()
+            
+<InsertDataWid_tabladeporte>:
+    name:"insert_tabladeporte"
+    orientation: 'vertical'
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Label: # ---------- Concepto
+        text: ' Concepto:'
+    TextInput:
+        id: tb_Concepto
+        multiline: False
+    Label: # ---------- kcal
+        text: ' kcal:'
+    TextInput:
+        id: tb_kcal
+        multiline: False
+        hint_text: 'kcal:'
+    Label: # ---------- Cardio
+        text: ' Cardio:'
+    TextInput:
+        id: tb_Cardio
+        multiline: False
+        hint_text: 'Cardio'
+    Label: # ---------- Brazo
+        text: ' Brazo:'
+    TextInput:
+        id: tb_Brazo
+        multiline: False
+        hint_text: 'Brazo'
+    Label: # ---------- Pecho
+        text: ' Pecho:'
+    TextInput:
+        id: tb_Pecho
+        multiline: False
+        hint_text: 'Pecho'
+    Label: # ---------- Espalda
+        text: ' Espalda:'
+    TextInput:
+        id: tb_Espalda
+        multiline: False
+        hint_text: 'Espalda'
+    Label: # ---------- Pierna
+        text: ' Pierna:'
+    TextInput:
+        id: tb_Pierna
+        multiline: False
+        hint_text: 'Pierna'
     BoxLayout:
         size_hint_y: 5
     BoxLayout: # ---------- Crear Salir
