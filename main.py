@@ -33,7 +33,7 @@ from tools.cardstack_choosetable import AKCardStack
 from kivymd_extensions.akivymd.uix.statusbarcolor import (  # noqa
     change_statusbar_color,
 )
-
+import csv
 
 # Funciones de creacion de tablas. Si ya estan creadas, no se vuelven a crear.
 def create_table_movimientos(cursor):
@@ -61,6 +61,39 @@ def create_table_deporte(cursor):
         Tiempo     FLOAT              NOT NULL
         )'''
     )
+
+
+def create_table_tabladeporte(cursor):
+    cursor.execute(
+        '''
+        CREATE TABLE tabladeporte(
+        ID        INT   PRIMARY KEY NOT NULL,
+        Concepto     TEXT               NOT NULL,
+        kcal     INT              NOT NULL,
+        Cardio     INT              NOT NULL,
+        Brazo     INT              NOT NULL,
+        Pecho     INT              NOT NULL,
+        Espalda     INT              NOT NULL,
+        Pierna       INT               NOT NULL
+        )'''
+    )
+    # Generamos unos registros iniciales:
+    ruta_excel = os.getcwd() + "/files/tabladeporte.csv"
+    with open(ruta_excel, 'r', newline='', encoding='latin') as f:
+        reader = csv.reader(f, delimiter=';')
+        lineas = list(reader)
+    salto_primera = 0
+    for linea_i in lineas:
+        if salto_primera:
+            a1 = (linea_i[0], linea_i[1], linea_i[2], linea_i[3], linea_i[4], linea_i[5], linea_i[6], linea_i[7] )
+            s1 = 'INSERT INTO tabladeporte(ID, Concepto, kcal, Cardio, Brazo, Pecho, Espalda, Pierna)'
+            s2 = 'VALUES(%s,"%s",%s,%s,%s,%s,%s,%s )' % a1
+            try:
+                cursor.execute(s1 + ' ' + s2)
+            except Exception as e:
+                pass
+        salto_primera = 1
+
 
 
 def create_table_inventario(cursor):
@@ -118,6 +151,7 @@ def create_table_vbles_globales(cursor):
 ruta_APP_PATH = os.getcwd()
 ruta_DB_PATH_movimientos = ruta_APP_PATH + '/movimientos.db'
 ruta_DB_PATH_deporte = ruta_APP_PATH + '/deporte.db'
+ruta_DB_PATH_tabladeporte = ruta_APP_PATH + '/tabladeporte.db'
 ruta_DB_PATH_inventario = ruta_APP_PATH + '/inventario.db'
 ruta_DB_PATH_vblesglobales = ruta_APP_PATH + '/globales.db'
 
@@ -134,6 +168,15 @@ try:
     con = sqlite3.connect(ruta_DB_PATH_deporte)
     cursor = con.cursor()
     create_table_deporte(cursor)
+    con.commit()
+    con.close()
+except Exception as e:
+    pass
+    # print(e)
+try:
+    con = sqlite3.connect(ruta_DB_PATH_tabladeporte)
+    cursor = con.cursor()
+    create_table_tabladeporte(cursor)
     con.commit()
     con.close()
 except Exception as e:

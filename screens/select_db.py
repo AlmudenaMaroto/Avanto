@@ -19,7 +19,7 @@ from kivy.uix.popup import Popup
 from kivymd.uix.card import MDCard
 from tools.swipe_widget import SwipeBehavior
 # Para la tabla de ejercicios:
-from kivymd.uix.datatables import MDDataTable
+from tools.MDDataTable_avanto import MDDataTable
 from kivy.metrics import dp
 
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
@@ -212,6 +212,18 @@ class DB_tabladeporte(MDScreen):
         self.add_widget(Selectdb())
 
     def check_memory(self):
+        datos_filas = []
+        fila_i = []
+        # Cargamos datos
+        con = sqlite3.connect(self.ruta_DB_PATH_tabladeporte)
+        cursor = con.cursor()
+        orden_execute = 'select * from tabladeporte ORDER BY ID ASC'
+        cursor.execute(orden_execute)
+        for i in cursor:
+            fila_i = [i[1], i[2], i[3], i[4], i[5], i[6], i[7]]
+            datos_filas.append(tuple(fila_i))
+        con.close()
+        # datos_filas = [('Tenis', 10), ('Tenis', 10)]
         self.ids.container.clear_widgets()
 
         self.ids.container.add_widget(MDDataTable(pos_hint={'center_x': 0.5, 'center_y': 0.5},
@@ -219,26 +231,14 @@ class DB_tabladeporte(MDScreen):
                                                   rows_num=10,
                                                   column_data=[
                                                       ("Ejercicio", dp(18)),
-                                                      ("kcal/h", dp(20)),
-                                                      ("Cardio", dp(20))
+                                                      ("kcal/h", dp(12)),
+                                                      ("Cardio", dp(12)),
+                                                      ("Brazo", dp(12)),
+                                                      ("Pecho", dp(12)),
+                                                      ("Espalda", dp(12)),
+                                                      ("Pierna", dp(12)),
                                                   ],
-                                                  row_data=[
-                                                      ("1", "Burger", "300"),
-                                                      ("2", "Oats", "200"),
-                                                      ("3", "Oats", "200"),
-                                                      ("4", "Oats", "200"),
-                                                      ("5", "Oats", "200"),
-                                                      ("3", "Oats", "200"),
-                                                      ("4", "Oats", "200"),
-                                                      ("5", "Oats", "200"),
-                                                      ("3", "Oats", "200"),
-                                                      ("4", "Oats", "200"),
-                                                      ("5", "Oats", "200"),
-                                                      ("6", "Oats", "200"),
-                                                      ("7", "Oats", "200"),
-                                                      ("8", "Oats", "200")
-
-                                                  ]
+                                                  row_data=datos_filas
                                                   ))
 
     def add_10_more(self):
