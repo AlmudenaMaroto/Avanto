@@ -22,6 +22,7 @@ from tools.swipe_widget import SwipeBehavior
 from tools.MDDataTable_avanto import MDDataTable
 from kivy.metrics import dp
 
+
 class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
     pass
 
@@ -205,6 +206,7 @@ class DB_tabladeporte(MDScreen):
         self.ruta_APP_PATH = os.getcwd()
         self.ruta_DB_PATH_tabladeporte = self.ruta_APP_PATH + '/tabladeporte.db'
         self.check_memory()
+        self.tabla_ejercicio = ''
 
     def goto_main(self):
         self.clear_widgets()
@@ -226,30 +228,53 @@ class DB_tabladeporte(MDScreen):
         # datos_filas = [('Tenis', 10), ('Tenis', 10)]
         self.ids.container.clear_widgets()
 
-        self.ids.container.add_widget(MDDataTable(pos_hint={'center_x': 0.5, 'center_y': 0.5},
-                                                  size_hint=(0.9, 0.6),
-                                                  rows_num=10,
-                                                  column_data=[
-                                                      ("Ejercicio", dp(18)),
-                                                      ("kcal/h", dp(12)),
-                                                      ("Cardio", dp(12)),
-                                                      ("Brazo", dp(12)),
-                                                      ("Pecho", dp(12)),
-                                                      ("Espalda", dp(12)),
-                                                      ("Pierna", dp(12)),
-                                                  ],
-                                                  row_data=datos_filas
-                                                  ))
+        self.tabla_ejercicio = MDDataTable(pos_hint={'center_x': 0.5, 'center_y': 0.5},
+                                           size_hint=(0.9, 0.6),
+                                           check = True,
+                                           rows_num=10,
+                                           column_data=[
+                                               ("Ejercicio", dp(30)),
+                                               ("kcal/h", dp(12)),
+                                               ("Cardio", dp(12)),
+                                               ("Brazo", dp(12)),
+                                               ("Pecho", dp(12)),
+                                               ("Espalda", dp(13)),
+                                               ("Pierna", dp(12)),
+                                           ],
+                                           row_data=datos_filas
+                                           )
+        self.tabla_ejercicio.bind(on_row_press=self.on_row_press)
+        self.tabla_ejercicio.bind(on_check_press=self.on_check_press)
+
+        self.ids.container.add_widget(self.tabla_ejercicio)
 
     def add_10_more(self):
-        self.num_rows = self.num_rows + 10
-        self.check_memory()
+        # self.num_rows = self.num_rows + 10
+        # self.check_memory()
+        pass
 
     def create_new_product(self):
-        self.num_rows = 10
-        self.clear_widgets()
-        self.current = 'insert_deporte'
-        self.add_widget(InsertDataWid_deporte())
+        pass
+        # self.num_rows = 10
+        # self.clear_widgets()
+        # self.current = 'insert_deporte'
+        # self.add_widget(InsertDataWid_deporte())
+
+    def on_row_press(self, instance_table, instance_row):
+        '''Called when a table row is clicked.'''
+
+        print(instance_table, instance_row)
+
+    def on_check_press(self, instance_table, current_row):
+        '''Called when the check box in the table row is checked.'''
+
+        print(instance_table, current_row)
+
+    def delete_ejercicio(self):
+        pass
+
+    def edit_ejercicio(self):
+        pass
 
 
 class DataBaseWid_inventario(MDScreen):
@@ -1044,9 +1069,14 @@ WindowManager_select:
                 on_release: root.goto_main()
     
             AKFloatingRoundedAppbarButtonItem:
-                icon: "card-plus-outline"
-                text: "Añadir 10"
-                on_release: root.add_10_more()
+                icon: "delete-outline"
+                text: "Eliminar"
+                on_release: root.delete_ejercicio()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "square-edit-outline"
+                text: "Editar"
+                on_release: root.edit_ejercicio()
                 
             AKFloatingRoundedAppbarButtonItem:
                 icon: "plus-circle-outline"
