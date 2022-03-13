@@ -209,7 +209,6 @@ class DB_tabladeporte(MDScreen):
         self.objeto_seleccionado = []
         self.check_memory()
 
-
     def goto_main(self):
         self.clear_widgets()
         self.current = 'selectdb'
@@ -232,9 +231,9 @@ class DB_tabladeporte(MDScreen):
 
         self.tabla_ejercicio = MDDataTable(pos_hint={'center_x': 0.5, 'center_y': 0.5},
                                            size_hint=(0.9, 0.6),
-                                           check = True,
+                                           check=True,
                                            rows_num=7,
-                                           use_pagination = True,
+                                           use_pagination=True,
                                            column_data=[
                                                ("ID", dp(20)),
                                                ("Ejercicio", dp(30)),
@@ -271,7 +270,7 @@ class DB_tabladeporte(MDScreen):
         '''Called when the check box in the table row is checked.'''
         if current_row[0] not in self.objeto_seleccionado:
             self.objeto_seleccionado.append(current_row[0])
-        else :
+        else:
             self.objeto_seleccionado.remove(current_row[0])
         print(instance_table, current_row)
         a = 0
@@ -679,7 +678,6 @@ class InsertDataWid_deporte(BoxLayout):
         self.add_widget(DataBaseWid_deporte())
 
 
-
 class InsertDataWid_tabladeporte(BoxLayout):
     def __init__(self, **kwargs):
         super(InsertDataWid_tabladeporte, self).__init__()
@@ -708,23 +706,30 @@ class InsertDataWid_tabladeporte(BoxLayout):
         d6 = self.ids.tb_Pecho.text
         d7 = self.ids.tb_Espalda.text
         d8 = self.ids.tb_Pierna.text
-        a1 = (d1, d2, d3, d4, d5, d6, d7, d8)
-        s1 = 'INSERT INTO tabladeporte(ID, Concepto, kcal, Cardio, Brazo, Pecho, Espalda, Pierna)'
-        s2 = 'VALUES(%s,"%s",%s,%s,%s,%s,%s,%s)' % a1
-        try:
-            cursor.execute(s1 + ' ' + s2)
-            con.commit()
-            con.close()
-            self.back_to_dbw()
-        except Exception as e:
+        # La suma de los componentes debe ser 100:
+        if float(d4) + float(d5) + float(d6) + float(d7) + float(d8) == 100:
+            a1 = (d1, d2, d3, d4, d5, d6, d7, d8)
+            s1 = 'INSERT INTO tabladeporte(ID, Concepto, kcal, Cardio, Brazo, Pecho, Espalda, Pierna)'
+            s2 = 'VALUES(%s,"%s",%s,%s,%s,%s,%s,%s)' % a1
+            try:
+                cursor.execute(s1 + ' ' + s2)
+                con.commit()
+                con.close()
+                self.back_to_dbw()
+            except Exception as e:
+                message = self.Popup.ids.message
+                self.Popup.open()
+                self.Popup.title = "Data base error"
+                if '' in a1:
+                    message.text = 'Uno o más campos están vacíos'
+                else:
+                    message.text = str(e)
+                con.close()
+        else:
             message = self.Popup.ids.message
             self.Popup.open()
-            self.Popup.title = "Data base error"
-            if '' in a1:
-                message.text = 'Uno o más campos están vacíos'
-            else:
-                message.text = str(e)
-            con.close()
+            self.Popup.title = "Error de formato"
+            message.text = 'La suma de los porcentajes debe ser 100'
 
     def back_to_dbw(self):
         self.clear_widgets()
