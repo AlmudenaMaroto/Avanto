@@ -207,6 +207,7 @@ class DB_tabladeporte(MDScreen):
         self.ruta_DB_PATH_tabladeporte = self.ruta_APP_PATH + '/tabladeporte.db'
         self.tabla_ejercicio = ''
         self.objeto_seleccionado = []
+        self.Popup = MessagePopup()
         self.check_memory()
 
     def goto_main(self):
@@ -272,7 +273,7 @@ class DB_tabladeporte(MDScreen):
             self.objeto_seleccionado.append(current_row[0])
         else:
             self.objeto_seleccionado.remove(current_row[0])
-        print(instance_table, current_row)
+        # print(instance_table, current_row)
         a = 0
 
     def delete_ejercicio(self):
@@ -287,7 +288,17 @@ class DB_tabladeporte(MDScreen):
         self.check_memory()
 
     def edit_ejercicio(self):
-        pass
+        if len(self.objeto_seleccionado) != 1:
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Selección Múltiple"
+            message.text = 'Solo es posible editar un registro'
+        else:
+            pass
+            # self.clear_widgets()
+            # self.current = 'edit_tabladeporte'
+            # self.add_widget(EditDataWid_tabladeporte())
+
 
 
 class DataBaseWid_inventario(MDScreen):
@@ -1503,31 +1514,31 @@ WindowManager_select:
     TextInput:
         id: tb_Cardio
         multiline: False
-        hint_text: 'Cardio'
+        hint_text: '%'
     Label: # ---------- Brazo
         text: ' Brazo:'
     TextInput:
         id: tb_Brazo
         multiline: False
-        hint_text: 'Brazo'
+        hint_text: '%'
     Label: # ---------- Pecho
         text: ' Pecho:'
     TextInput:
         id: tb_Pecho
         multiline: False
-        hint_text: 'Pecho'
+        hint_text: '%'
     Label: # ---------- Espalda
         text: ' Espalda:'
     TextInput:
         id: tb_Espalda
         multiline: False
-        hint_text: 'Espalda'
+        hint_text: '%'
     Label: # ---------- Pierna
         text: ' Pierna:'
     TextInput:
         id: tb_Pierna
         multiline: False
-        hint_text: 'Pierna'
+        hint_text: '%'
     BoxLayout:
         size_hint_y: 5
     BoxLayout: # ---------- Crear Salir
