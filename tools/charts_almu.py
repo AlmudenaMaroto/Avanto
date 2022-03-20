@@ -112,6 +112,13 @@ Builder.load_string(
 )
 
 
+def numero_string(y_label):
+    if abs(y_label) > 1000:
+        return str(int(y_label / 1000)) + 'k'
+    else:
+        return str(int(y_label / 10) * 10)
+
+
 class PieChartNumberLabel(MDLabel):
     percent = NumericProperty(0)
     title = StringProperty("")
@@ -581,7 +588,7 @@ class AKChartBase_horizontal(DrawTools, ThemableBehavior, RelativeLayout):
                 center=center_pos_y,
                 _owner=self,
                 height=self.label_size * 2,  # AQUI PARA RETOCAR EL TAMAÑO DE LOS LABEL Y QUE NO LO PONGA EN DOS LINEAS
-                width=self.label_size * 20 # Previamente era 10--> Este es el eje de conceptos en los rankings
+                width=self.label_size * 20  # Previamente era 10--> Este es el eje de conceptos en los rankings
             )
             label_y.font_size = self.label_size
             label_x = AKChartLabel(
@@ -670,7 +677,7 @@ class AKLineChart_Almu(AKChartBase):
                 x_pos = [new_x, 0]
                 self.draw_label(
                     text_x=x_label if type(x_label) == str else '',
-                    text_y=str(int(y_label / 1000)) + 'k' if type(str(y_label)) == str else '',
+                    text_y=numero_string(y_label) if type(str(y_label)) == str else '',
                     center_pos_x=x_pos,
                     center_pos_y=y_pos,
                     idx=len(self.x_labels) - i - 1,
@@ -725,7 +732,7 @@ class AKBarChart_anomes(AKChartBase):
                 x_pos = [new_x, 0 + 10]
                 self.draw_label(
                     text_x=x_label if x_label else str(x),
-                    text_y=str(int(y_label / 1000)) + 'k' if type(str(y_label)) == str else '',
+                    text_y=numero_string(y_label) if type(str(y_label)) == str else '',
                     center_pos_x=x_pos,
                     center_pos_y=y_pos,
                     idx=len(self.x_labels) - i - 1,
@@ -826,7 +833,7 @@ class AKBarChart_ano(AKChartBase):
                 x_pos = posicion_barras_save[i]
                 self.draw_label(
                     text_x=x_label if x_label else str(x),
-                    text_y=str(int(y_label / 1000)) + 'k' if type(str(y_label)) == str else '',
+                    text_y=numero_string(y_label) if type(str(y_label)) == str else '',
                     center_pos_x=x_pos,
                     center_pos_y=y_pos,
                     idx=len(self.x_labels) - i - 1,
@@ -926,22 +933,22 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
                 x_pos = posicion_barras_save[i]
                 x_pos[0] = self.width * 0.25
                 # Para evitar que no pinte nada cuando hay pocas barras:
-                if max(self.y_labels)>2000:
+                if max(self.y_labels) > 2000:
                     if len(self.y_labels) > 4:
                         if num % 3 == 0:
-                            label_y_text = str(int(y_label / 1000)) + 'k'
+                            label_y_text = numero_string(y_label)
                         else:
                             label_y_text = ""
                     else:
-                        label_y_text = str(int(y_label / 1000)) + 'k'
+                        label_y_text = numero_string(y_label)
                 else:
                     if len(self.y_labels) > 4:
                         if num % 3 == 0:
-                            label_y_text = str(int(y_label/ 10)*10)
+                            label_y_text = str(int(y_label / 10) * 10)
                         else:
                             label_y_text = ""
                     else:
-                        label_y_text = str(int(y_label/ 10)*10)
+                        label_y_text = str(int(y_label / 10) * 10)
                 num = num + 1
                 self.draw_label(
                     text_x=label_y_text,
