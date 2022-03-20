@@ -137,6 +137,9 @@ class Economia(MDScreen):
         self.ini_categorias = 1
         self.ini_categoria_filtro = True
         self.hay_eleccion = 1
+        self.ids.obj.ids.boton_concepto.md_bg_color = [4 / 255, 186 / 255, 202 / 255, 1]
+        self.ids.obj.ids.boton_categoria.md_bg_color = [0 / 255, 131 / 255, 143 / 255, 1]
+        self.ranking_seleccion = 'concepto'
         self.update()
 
     def update(self):
@@ -567,13 +570,19 @@ class Economia(MDScreen):
         self.ids.chart_box_etapatiempo.add_widget(self.piechart)
 
     def ranking_gastos(self):
+        # Categoria o concepto:
+        if self.ranking_seleccion == 'concepto':
+            string_agrup = 'concepto'
+        elif self.ranking_seleccion == 'categoria':
+            string_agrup = 'categoria'
+
         # Filtramos por gastos (<0)
         # Con counter agrupamos los importes del mismo concepto.
         # ordenamos por max valor sorted_x.reverse() para inverso y redondeamos. Cogemos 10 primeros
         list_of_dict_gastos = [d for d in self.dict_eco_sorted if d['importe'] < 0]
         dict_ranking_gastos = collections.Counter()
         for d in list_of_dict_gastos:
-            dict_ranking_gastos[d['concepto']] += (d['importe'])
+            dict_ranking_gastos[d[string_agrup]] += (d['importe'])
         dict_ranking_gastos = dict(dict_ranking_gastos)
         dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1]))
         dict_ranking_gastos = {key: round(-dict_ranking_gastos[key], 2) for key in dict_ranking_gastos}
@@ -597,10 +606,15 @@ class Economia(MDScreen):
         self.ids.id_ranking_gastos.y_labels = label_y_paso
 
     def ranking_ingresos(self):
+        if self.ranking_seleccion == 'concepto':
+            string_agrup = 'concepto'
+        elif self.ranking_seleccion == 'categoria':
+            string_agrup = 'categoria'
+
         list_of_dict_gastos = [d for d in self.dict_eco_sorted if d['importe'] > 0]
         dict_ranking_gastos = collections.Counter()
         for d in list_of_dict_gastos:
-            dict_ranking_gastos[d['concepto']] += (d['importe'])
+            dict_ranking_gastos[d[string_agrup]] += (d['importe'])
         dict_ranking_gastos = dict(dict_ranking_gastos)
         dict_ranking_gastos = dict(sorted(dict_ranking_gastos.items(), key=lambda item: item[1], reverse=True))
         dict_ranking_gastos = {key: round(dict_ranking_gastos[key], 2) for key in dict_ranking_gastos}
@@ -662,6 +676,30 @@ class Economia(MDScreen):
 
         self.date = Tabla_tasa_ahorro(tabla_dict=tabla_dict_tasas, callback=self.callback_ini)
         self.date.open()
+
+    def boton_concepto_press(self):
+        self.ids.obj.ids.boton_concepto.md_bg_color = [4 / 255, 186 / 255, 202 / 255, 1]
+        self.ids.obj.ids.boton_categoria.md_bg_color = [0 / 255, 131 / 255, 143 / 255, 1]
+        self.ranking_seleccion = 'concepto'
+        # self.update()
+        self.ranking_gastos()
+        self.ranking_ingresos()
+        id_ranking_gastos = self.ids.id_ranking_gastos
+        id_ranking_ingresos = self.ids.id_ranking_ingresos
+        id_ranking_gastos.update()
+        id_ranking_ingresos.update()
+
+    def boton_categoria_press(self):
+        self.ids.obj.ids.boton_categoria.md_bg_color = [4 / 255, 186 / 255, 202 / 255, 1]
+        self.ids.obj.ids.boton_concepto.md_bg_color = [0 / 255, 131 / 255, 143 / 255, 1]
+        self.ranking_seleccion = 'categoria'
+        # self.update()
+        self.ranking_gastos()
+        self.ranking_ingresos()
+        id_ranking_gastos = self.ids.id_ranking_gastos
+        id_ranking_ingresos = self.ids.id_ranking_ingresos
+        id_ranking_gastos.update()
+        id_ranking_ingresos.update()
 
 
 class Selectionlist_etapa(BaseDialog, ThemableBehavior):
@@ -978,6 +1016,17 @@ Builder.load_string(
                     adaptive_height: True
                     padding:dp(24)
                     orientation: "vertical"
+                MDBoxLayout:
+                    orientation:"horizontal"
+                    MDRaisedButton:
+                        id:boton_concepto
+                        text:"Concepto"
+                        on_release: root.boton_concepto_press()
+                    MDRaisedButton:
+                        id:boton_categoria
+                        text:"Categoría"
+                        on_release:root.boton_categoria_press()
+                
                 MDLabel:
                     text: 'Ranking Gastos:'
                     halign: "center"
@@ -985,7 +1034,7 @@ Builder.load_string(
                 Barras_horizontal:
                     id: id_ranking_gastos
                     labels: True
-                    anim: False
+                    anim: True
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
@@ -1000,7 +1049,7 @@ Builder.load_string(
                 Barras_horizontal:
                     id: id_ranking_ingresos
                     labels: True
-                    anim: False
+                    anim: True
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
