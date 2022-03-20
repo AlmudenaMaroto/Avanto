@@ -1034,7 +1034,7 @@ Builder.load_string(
                 Barras_horizontal:
                     id: id_ranking_gastos
                     labels: True
-                    anim: True
+                    anim: False
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
@@ -1049,7 +1049,7 @@ Builder.load_string(
                 Barras_horizontal:
                     id: id_ranking_ingresos
                     labels: True
-                    anim: True
+                    anim: False
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)

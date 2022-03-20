@@ -926,13 +926,22 @@ class AKBarChart_horizontal(AKChartBase_horizontal):
                 x_pos = posicion_barras_save[i]
                 x_pos[0] = self.width * 0.25
                 # Para evitar que no pinte nada cuando hay pocas barras:
-                if len(self.y_labels) > 4:
-                    if num % 3 == 0:
-                        label_y_text = str(int(y_label / 1000)) + 'k'
+                if max(self.y_labels)>2000:
+                    if len(self.y_labels) > 4:
+                        if num % 3 == 0:
+                            label_y_text = str(int(y_label / 1000)) + 'k'
+                        else:
+                            label_y_text = ""
                     else:
-                        label_y_text = ""
+                        label_y_text = str(int(y_label / 1000)) + 'k'
                 else:
-                    label_y_text = str(int(y_label / 1000)) + 'k'
+                    if len(self.y_labels) > 4:
+                        if num % 3 == 0:
+                            label_y_text = str(int(y_label/ 10)*10)
+                        else:
+                            label_y_text = ""
+                    else:
+                        label_y_text = str(int(y_label/ 10)*10)
                 num = num + 1
                 self.draw_label(
                     text_x=label_y_text,
