@@ -1058,7 +1058,7 @@ Builder.load_string(
                     trim: True
                     #on_select: root.set_text(args)
                 MDRaisedButton:
-                    md_bg_color: 143/255, 219/255, 236/255, 1
+                    md_bg_color: [0 / 255, 131 / 255, 143 / 255, 1]
                     text: "Tabla Tasa de ahorro"
                     on_release: root.tabla_tasa_ahorro() 
                 
@@ -1067,21 +1067,21 @@ Builder.load_string(
             size_hint_y: 0.05
             MDRaisedButton:
                 
-                md_bg_color: 143/255, 219/255, 236/255, 1
+                md_bg_color: [0 / 255, 131 / 255, 143 / 255, 1]
                 text: "Etapa"
                 on_release: root.choose_etapa()
                 
             MDRaisedButton:
-                md_bg_color: 143/255, 219/255, 236/255, 1
+                md_bg_color: [0 / 255, 131 / 255, 143 / 255, 1]
                 text: "Categoría"
                 on_release: root.choose_categoria()
                 
             MDRaisedButton:
-                md_bg_color: 143/255, 219/255, 236/255, 1
+                md_bg_color: [0 / 255, 131 / 255, 143 / 255, 1]
                 text: "Fecha"
                 on_release: root.choose_fecha()
             MDRaisedButton:
-                md_bg_color: 143/255, 219/255, 236/255, 1
+                md_bg_color: [0 / 255, 131 / 255, 143 / 255, 1]
                 text: "Actualizar"
                 on_release: root.update()
 
