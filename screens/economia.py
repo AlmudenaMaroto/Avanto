@@ -173,9 +173,10 @@ class Economia(MDScreen):
             self.error = 0
             return
         # Relanzamos todos los graficos
+        self.calc_ahorros()
         self.barchart_datos()
         self.barchart_ano()
-        self.calc_ahorros()
+
         # self.tabla_tasa_ahorro() # no hace falta, es un boton interno
         self.pie_etapa_importe()
         self.pie_etapa_tiempo()
@@ -381,6 +382,9 @@ class Economia(MDScreen):
 
         self.ids.id_barmes.x_labels = label_x_paso
         self.ids.id_barmes.y_labels = label_y_paso
+
+        #Añadimos la barra objetivo como una horizontal
+        self.ids.id_barmes.objetivo = int(self.ids.ahorro_mensual_obj.text.replace('€', ''))
 
     def barchart_ano(self):
         # Gráfico de barras de cada año
@@ -1034,7 +1038,7 @@ Builder.load_string(
                 Barras_horizontal:
                     id: id_ranking_gastos
                     labels: True
-                    anim: False
+                    anim: True
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
@@ -1049,7 +1053,7 @@ Builder.load_string(
                 Barras_horizontal:
                     id: id_ranking_ingresos
                     labels: True
-                    anim: False
+                    anim: True
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)

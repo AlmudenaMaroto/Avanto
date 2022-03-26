@@ -698,6 +698,8 @@ class AKBarChart_anomes(AKChartBase):
         y_values = self.y_values
         canvas = self._canvas.canvas
         drawer = self.draw_shape
+        objetivo = int(self.objetivo)
+
         # bottom line
         bottom_line_y = self._bottom_line_y()
         count = len(self.y_values)
@@ -721,6 +723,9 @@ class AKBarChart_anomes(AKChartBase):
                 size=[bar_width, new_y - bottom_line_y],
                 pos=[new_x, bottom_line_y + 25],
             )
+
+        objetivo_cor = self._get_normalized_cor(objetivo, "y", f_update) + 25
+
         for i in range(0, len(self.x_labels)):
             if self.labels:
                 x_label = self.x_labels[i] if self.x_labels else False
@@ -748,6 +753,20 @@ class AKBarChart_anomes(AKChartBase):
             ],
             line_width=self.line_width,
             color=self.lines_color,
+        )
+
+        # Dibujamos la linea objetivo
+
+        self.draw_shape(
+            "line",
+            shape_name="line",
+            canvas=canvas,
+            points=[
+                [self._bottom_line_y(), objetivo_cor],
+                [self.width - self._bottom_line_y(), objetivo_cor],  # bottom_line_y+25 es el 0
+            ],
+            line_width=self.line_width * 1.05,
+            color=[1, .5, .5, 1],
         )
         self._myinit = False
 
