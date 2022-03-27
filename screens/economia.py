@@ -383,7 +383,7 @@ class Economia(MDScreen):
         self.ids.id_barmes.x_labels = label_x_paso
         self.ids.id_barmes.y_labels = label_y_paso
 
-        #Añadimos la barra objetivo como una horizontal
+        # Añadimos la barra objetivo como una horizontal
         self.ids.id_barmes.objetivo = int(self.ids.ahorro_mensual_obj.text.replace('€', ''))
 
     def barchart_ano(self):

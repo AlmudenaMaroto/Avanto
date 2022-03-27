@@ -234,7 +234,7 @@ class DB_tabladeporte(MDScreen):
                                            size_hint=(0.9, 0.6),
                                            check=True,
                                            rows_num=7,
-                                           use_pagination=True,
+                                           use_pagination=False,
                                            column_data=[
                                                ("ID", dp(20)),
                                                ("Ejercicio", dp(30)),

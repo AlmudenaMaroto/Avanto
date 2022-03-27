@@ -766,7 +766,7 @@ class AKBarChart_anomes(AKChartBase):
                 [self.width - self._bottom_line_y(), objetivo_cor],  # bottom_line_y+25 es el 0
             ],
             line_width=self.line_width * 1.05,
-            color=[1, .5, .5, 1],
+            color=[31/255, 97/255, 141/255 , 1],
         )
         self._myinit = False
 
@@ -840,7 +840,7 @@ class AKBarChart_ano(AKChartBase):
                 size=[bar_width, new_y - bottom_line_y],
                 pos=[new_x, bottom_line_y + 25],
             )
-            posicion_barras_save.append([new_x + bar_width * 0.5, bottom_line_y - 20])
+            posicion_barras_save.append([new_x + bar_width * 0.5, bottom_line_y])
         for i in range(0, len(self.x_labels)):
             if self.labels:
                 x_label = self.x_labels[i] if self.x_labels else False

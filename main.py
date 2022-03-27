@@ -10,9 +10,8 @@ from kivy.utils import platform
 
 
 # Esto cuando se me jodio la grafica, ya funciona
-if platform != 'android':
-    pass
-    # os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
+# if platform != 'android':
+#     os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 
 from kivy.config import Config
 
@@ -34,6 +33,7 @@ from kivymd_extensions.akivymd.uix.statusbarcolor import (  # noqa
     change_statusbar_color,
 )
 import csv
+
 
 # Funciones de creacion de tablas. Si ya estan creadas, no se vuelven a crear.
 def create_table_movimientos(cursor):
@@ -85,7 +85,7 @@ def create_table_tabladeporte(cursor):
     salto_primera = 0
     for linea_i in lineas:
         if salto_primera:
-            a1 = (linea_i[0], linea_i[1], linea_i[2], linea_i[3], linea_i[4], linea_i[5], linea_i[6], linea_i[7] )
+            a1 = (linea_i[0], linea_i[1], linea_i[2], linea_i[3], linea_i[4], linea_i[5], linea_i[6], linea_i[7])
             s1 = 'INSERT INTO tabladeporte(ID, Concepto, kcal, Cardio, Brazo, Pecho, Espalda, Pierna)'
             s2 = 'VALUES(%s,"%s",%s,%s,%s,%s,%s,%s )' % a1
             try:
@@ -93,7 +93,6 @@ def create_table_tabladeporte(cursor):
             except Exception as e:
                 pass
         salto_primera = 1
-
 
 
 def create_table_inventario(cursor):
