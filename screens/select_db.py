@@ -300,7 +300,6 @@ class DB_tabladeporte(MDScreen):
             # self.add_widget(EditDataWid_tabladeporte())
 
 
-
 class DataBaseWid_inventario(MDScreen):
     # row_default_height define la altura de los widget integrados. Cambiar en la parte kv
     def __init__(self, **kwargs):

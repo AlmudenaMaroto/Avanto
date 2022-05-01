@@ -1,10 +1,7 @@
 from kivy.lang.builder import Builder
-from kivy.uix.screenmanager import Screen
+
 from kivymd.uix.list import MDList, OneLineListItem
 
-from kivymd_extensions.akivymd.uix.behaviors.addwidget import (
-    AKAddWidgetAnimationBehavior,
-)
 from main import DemoApp
 from kivymd.uix.screen import MDScreen
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -18,18 +15,13 @@ from datetime import datetime
 from kivy.uix.popup import Popup
 from kivy.utils import platform
 import csv
-from kivy.uix.label import Label
-from kivymd.uix.card import MDCard
+from kivy.properties import StringProperty
 
 # Permisos de acceso a las carpetas del movil para poder importar y exportar
 if platform == 'android':
     from android.permissions import request_permissions, Permission
 
     request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
-
-
-class AnimatedBox(MDList, AKAddWidgetAnimationBehavior):
-    pass
 
 
 class MessagePopup_import(Popup):
@@ -53,182 +45,45 @@ class WindowManager_select(ScreenManager):
 
 
 class Import_main(MDScreen):
+
     def __init__(self, **kwargs):
         super(Import_main, self).__init__()
         self.name_db = ''
-        self.orden_cards = 1
-        self.tabla_seleccionada = 'Movimientos bancarios'
+        self.tabla_seleccionada = 'empty'
 
-    def export_db(self):
-        bbdd = self.tabla_seleccionada
-        self.name_db = bbdd  # Variable usable a nivel general
-        if bbdd == 'Movimientos bancarios':
-            bbdd = 'movimientos'
-            full_path = os.getcwd() + '/movimientos.db'
-            self.clear_widgets()
-            self.current = 'export_data'
-            self.add_widget(Export_data(full_path, bbdd))
-        elif bbdd == 'Registro deporte':
-            bbdd = 'deporte'
-            full_path = os.getcwd() + '/deporte.db'
-            self.clear_widgets()
-            self.current = 'export_data'
-            self.add_widget(Export_data(full_path, bbdd))
-        elif bbdd == 'Variables globales':
-            bbdd = 'globales'
-            full_path = os.getcwd() + '/globales.db'
-            self.clear_widgets()
-            self.current = 'export_data'
-            self.add_widget(Export_data(full_path, bbdd))
+    def on_enter(self):
+        pass
 
-    def import_db(self):
-        bbdd = self.tabla_seleccionada
-        self.name_db = bbdd  # Variable usable a nivel general
-        if bbdd == 'Movimientos bancarios':
-            bbdd = 'movimientos'
-            full_path = os.getcwd() + '/movimientos.db'
-            self.clear_widgets()
-            self.current = 'import_data'
-            self.add_widget(Import_data(full_path, bbdd))
-        elif bbdd == 'Registro deporte':
-            bbdd = 'deporte'
-            full_path = os.getcwd() + '/deporte.db'
-            self.clear_widgets()
-            self.current = 'import_data'
-            self.add_widget(Import_data(full_path, bbdd))
-        elif bbdd == 'Variables globales':
-            bbdd = 'globales'
+    def on_leave(self):
+        try:
+            self.ids.list.clear_widgets()
+        except:
+            pass
 
-    # def spinner_clicked(self, value):
-    #     self.ids.click_label.text = value
-
-    def change(self):
-        self.ids.cardstack.change()
-        if self.orden_cards < 3:
-            self.orden_cards = self.orden_cards + 1
-        else:
-            self.orden_cards = 1
-
-        #Dependiendo de la carta se corresponde a una tabla:
-        if self.orden_cards == 1:
-            self.tabla_seleccionada = 'Movimientos bancarios'
-        elif self.orden_cards == 2:
-            self.tabla_seleccionada = 'Registro deporte'
-        elif self.orden_cards == 3:
-            self.tabla_seleccionada = 'Variables globales'
-
-
-
-
-class Export_data(BoxLayout):
-    def __init__(self, full_path, bbdd, **kwargs):
-        super(Export_data, self).__init__()
-        self.num_rows = 10
-        self.full_path = full_path
-        self.bbdd = bbdd
-        self.Popup = MessagePopup_import()
-        self.check_memory(full_path, bbdd)
-
-    def check_memory(self, full_path, bbdd):
-        self.ids.container.clear_widgets()
-
-        con = sqlite3.connect(full_path)
-        cursor = con.cursor()
-        orden_execute = 'select * from ' + bbdd + ' ORDER BY ID DESC LIMIT ' + str(
-            self.num_rows)
-        cursor.execute(orden_execute)
-        if bbdd == 'movimientos':
-            for i in cursor:
-                wid = DataWid_import()
-                r0 = ' ID: ' + str(i[0]) + '                       '
-                r1 = i[1] + '  '
-                r2 = i[2] + ', '
-                r3 = str(i[3]) + ' '
-                r23 = r2 + r3
-                r4 = i[5] + ' '
-                r5 = str(i[4]) + ' € '
-                r6 = i[6][0:25] + '... '
-                if r6 == '... ':
-                    r6 = ' '
-                if i[6][0:25] == i[6]:
-                    r6 = i[6][0:25] + ' '
-                if r23[0:23] != r23:
-                    r23 = r23[0:23] + '... '
-                wid.data_id = str(i[0])
-                wid.data_id = str(i[0])
-                wid.dataID = r0 + r1  # ID + fecha
-                wid.dataCC = r23  # Concepto, categoria
-                wid.dataIM = r5  # Importe
-                wid.dataET = r4  # Etapa
-                wid.dataUB = r6  # Ubicacion
-                self.ids.container.add_widget(wid)
-        elif bbdd == 'deporte':
-            for i in cursor:
-                wid = DataWid_import_deporte()
-                r0 = 'ID: ' + str(i[0]) + '                 '
-                r1 = i[1] + ' '
-                r2 = i[2] + ''
-                r3 = str(i[3]) + ' h'
-                wid.data_id = str(i[0])
-                # wid.data = r0 + r1 + r2 + r3
-                wid.dataID = r0 + r1
-                wid.dataCO = r2
-                wid.dataTM = r3
-                self.ids.container.add_widget(wid)
-        elif bbdd == 'globales':
-            self.ids.container.add_widget(Label(text="¿Desea guardar en un csv las variables globales?"), index=0)
-        con.close()
-
-    def return_button(self):
+    def goto_movimientos(self, *args):
         self.clear_widgets()
-        self.current = 'import_main'
-        self.add_widget(Import_main())
+        self.current = 'impexpelm'
+        self.add_widget(Impexpelm('Movimientos bancarios'))
 
-    def delete_all(self):
-        if self.bbdd == 'movimientos':
-            con = sqlite3.connect(self.full_path)
-            cursor = con.cursor()
-            s1 = 'DELETE FROM movimientos'
-            cursor.execute(s1)
-        elif self.bbdd == 'deporte':
-            con = sqlite3.connect(self.full_path)
-            cursor = con.cursor()
-            s1 = 'DELETE FROM deporte'
-            cursor.execute(s1)
-        con.commit()
-        con.close()
-
+    def goto_deporte(self, *args):
         self.clear_widgets()
-        self.current = 'export_data'
-        self.add_widget(Export_data(self.full_path, self.bbdd))
+        self.current = 'impexpelm'
+        self.add_widget(Impexpelm('Registro Deporte'))
 
-    def save_csv(self):
-        con = sqlite3.connect(self.full_path)
-        cur = con.cursor()
-        if platform == 'android':
-            os.chdir('/storage/emulated/0/')
-        if self.bbdd == 'movimientos':
-            data = cur.execute("SELECT * FROM movimientos")
-            with open('movimientos.csv', 'w', newline='', encoding='latin') as f:
-                writer = csv.writer(f, delimiter=';')
-                writer.writerows(data)
+    def goto_tabladeporte(self, *args):
+        self.clear_widgets()
+        self.current = 'impexpelm'
+        self.add_widget(Impexpelm('Tabla Deporte'))
 
-        elif self.bbdd == 'deporte':
-            data = cur.execute("SELECT * FROM deporte")
-            with open('deporte.csv', 'w', newline='', encoding='latin') as f:
-                writer = csv.writer(f, delimiter=';')
-                writer.writerows(data)
-        elif self.bbdd == 'globales':
-            data = cur.execute("SELECT * FROM globales")
-            with open('globales.csv', 'w', newline='', encoding='latin') as f:
-                writer = csv.writer(f, delimiter=';')
-                writer.writerows(data)
-        con.commit()
-        con.close()
-        message = self.Popup.ids.message
-        self.Popup.open()
-        self.Popup.title = "Csv guardado"
-        message.text = "Se ha guardado el csv en \n" + str(os.getcwd())
+    def goto_inventario(self, *args):
+        self.clear_widgets()
+        self.current = 'impexpelm'
+        self.add_widget(Impexpelm('Inventario'))
+
+    def goto_vblesglobales(self, *args):
+        self.clear_widgets()
+        self.current = 'impexpelm'
+        self.add_widget(Impexpelm('Variables globales'))
 
 
 class Import_data(BoxLayout):
@@ -286,6 +141,104 @@ class Import_data(BoxLayout):
         self.file_name = filename
 
     def return_button(self):
+        self.clear_widgets()
+        self.current = 'import_main'
+        self.add_widget(Import_main())
+
+
+class Impexpelm(MDScreen):
+    tabla_seleccionada = StringProperty()
+
+    def __init__(self, tabla_i, **kwargs):
+        super(Impexpelm, self).__init__()
+        self.tabla_seleccionada = tabla_i
+        self.Popup = MessagePopup_import()
+        self.full_path = os.getcwd()
+
+    def importar_tabla(self):
+        bbdd = self.tabla_seleccionada
+        self.name_db = bbdd  # Variable usable a nivel general
+        if bbdd == 'Movimientos bancarios':
+            bbdd = 'movimientos'
+            full_path = os.getcwd() + '/movimientos.db'
+            self.clear_widgets()
+            self.current = 'import_data'
+            self.add_widget(Import_data(full_path, bbdd))
+        elif bbdd == 'Registro Deporte':
+            bbdd = 'deporte'
+            full_path = os.getcwd() + '/deporte.db'
+            self.clear_widgets()
+            self.current = 'import_data'
+            self.add_widget(Import_data(full_path, bbdd))
+        elif bbdd == 'Variables globales':
+            bbdd = 'globales'
+
+    def exportar_tabla(self):
+        bbdd = self.tabla_seleccionada
+
+        if platform == 'android':
+            os.chdir('/storage/emulated/0/')
+
+        if bbdd == 'Movimientos bancarios':
+            bbdd = 'movimientos'
+            con = sqlite3.connect(self.full_path + '/movimientos.db')
+            cur = con.cursor()
+            data = cur.execute("SELECT * FROM movimientos")
+            with open('movimientos.csv', 'w', newline='', encoding='latin') as f:
+                writer = csv.writer(f, delimiter=';')
+                writer.writerows(data)
+            con.commit()
+            con.close()
+        elif bbdd == 'Registro Deporte':
+            bbdd = 'deporte'
+            con = sqlite3.connect(self.full_path + '/deporte.db')
+            cur = con.cursor()
+            data = cur.execute("SELECT * FROM deporte")
+            with open('deporte.csv', 'w', newline='', encoding='latin') as f:
+                writer = csv.writer(f, delimiter=';')
+                writer.writerows(data)
+            con.commit()
+            con.close()
+        elif bbdd == 'Variables globales':
+            bbdd = 'globales'
+            con = sqlite3.connect(self.full_path + '/globales.db')
+            cur = con.cursor()
+            data = cur.execute("SELECT * FROM globales")
+            with open('globales.csv', 'w', newline='', encoding='latin') as f:
+                writer = csv.writer(f, delimiter=';')
+                writer.writerows(data)
+            con.commit()
+            con.close()
+
+
+        message = self.Popup.ids.message
+        self.Popup.open()
+        self.Popup.title = "Csv guardado"
+        message.text = "Se ha guardado el csv en \n" + str(os.getcwd())
+
+    def eliminar_tabla(self):
+        bbdd = self.tabla_seleccionada
+        if bbdd == 'Movimientos bancarios':
+            con = sqlite3.connect(self.full_path + '/movimientos.db')
+            cursor = con.cursor()
+            s1 = 'DELETE FROM movimientos'
+            cursor.execute(s1)
+            con.commit()
+            con.close()
+        elif bbdd == 'Registro Deporte':
+            con = sqlite3.connect(self.full_path + '/deporte.db')
+            cursor = con.cursor()
+            s1 = 'DELETE FROM deporte'
+            cursor.execute(s1)
+            con.commit()
+            con.close()
+
+        message = self.Popup.ids.message
+        self.Popup.open()
+        self.Popup.title = "Tabla eliminada"
+        message.text = "Se ha eliminado la tabla " + bbdd
+
+    def return_tabla(self):
         self.clear_widgets()
         self.current = 'import_main'
         self.add_widget(Import_main())
@@ -427,26 +380,6 @@ class UpdateDataWid_import_deporte_import(BoxLayout):
         self.add_widget(Eliminado())
 
 
-class DataWid_import(MDCard):  # Usado en el check_memory para visualizar los registros en cada widget mini
-    def __init__(self, **kwargs):
-        super(DataWid_import, self).__init__()
-
-    def update_data(self, data_id):
-        self.clear_widgets()
-        self.current = 'update_movimientos'
-        self.add_widget(UpdateDataWid_import_movimientos_import(data_id))
-
-
-class DataWid_import_deporte(MDCard):  # Usado en el check_memory para visualizar los registros en cada widget mini
-    def __init__(self, **kwargs):
-        super(DataWid_import_deporte, self).__init__()
-
-    def update_data(self, data_id):
-        self.clear_widgets()
-        self.current = 'update_deporte'
-        self.add_widget(UpdateDataWid_import_deporte_import(data_id))
-
-
 Builder.load_string(
     """
 #:import platform kivy.utils.platform
@@ -462,7 +395,7 @@ WindowManager_select:
     theme_text_color: "Primary"
     halign: "left"
     
-<Import_main>:
+<Import_main_old>:
     name:"import_main"
     orientation: 'vertical'
     canvas:
@@ -506,6 +439,70 @@ WindowManager_select:
                 text: "Importar"
                 on_release: root.import_db()
         
+<Import_main>:
+    name:"import_main"
+    canvas:
+        Color:
+            rgb: 1,1,1,1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MyToolbar:
+            id: _toolbar
+
+        ScrollView:
+            MDBoxLayout:
+                orientation: "vertical"
+                    
+                MDList:
+                    size_hint_y:.9
+                    OneLineAvatarIconListItem:
+                        text:'Movimientos bancarios'
+                        on_release:root.goto_movimientos()
+                        IconLeftWidget:
+                            icon: "bank"
+                    OneLineAvatarIconListItem:
+                        text:'Registro Deporte'
+                        on_release:root.goto_deporte()
+                        IconLeftWidget:
+                            icon: "weight-lifter"
+                    OneLineAvatarIconListItem:
+                        text:'Tablas Ejercicio'
+                        on_release:root.goto_tabladeporte()
+                        IconLeftWidget:
+                            icon: "head-heart-outline"
+                    OneLineAvatarIconListItem:
+                        text:'Registro Alimentación'
+                        on_release:pass
+                        IconLeftWidget:
+                            icon: "food-fork-drink"
+                    OneLineAvatarIconListItem:
+                        text:'Registro Compras'
+                        on_release:pass
+                        IconLeftWidget:
+                            icon: "shopping-outline"
+                    OneLineAvatarIconListItem:
+                        text:'Tablas Alimentos'
+                        on_release:pass
+                        IconLeftWidget:
+                            icon: "table-search"
+                    OneLineAvatarIconListItem:
+                        text:'Inventario'
+                        on_release:root.goto_inventario()
+                        IconLeftWidget:
+                            icon: "list-status"
+                    OneLineAvatarIconListItem:
+                        text:'Variables Globales'
+                        on_release:root.goto_vblesglobales()
+                        IconLeftWidget:
+                            icon: "globe-model"
+                MDLabel:
+                    size_hint_y:.1
+                    text:''
+
 
 
 <Export_data>:
@@ -562,34 +559,32 @@ WindowManager_select:
     orientation: 'vertical'
     canvas:
         Color:
-            rgb: .254,.556,.627
+            rgb: 1/255, 104/255, 113/255
         Rectangle:
             pos: self.pos
             size: self.size
-    BoxLayout:
-        size_hint_y: 0.1
-        orientation: 'vertical'
-        BoxLayout:
-            size_hint_y: 0.1
-            orientation: 'horizontal'
-            Button: # ---------Return
-                font_size: self.height*0.25
-                text:"Salir"
-                pos: 1, 1
-                size: 1, 5
-                #size_hint_y: 0.1
-                on_press: root.return_button()
-            Button: # ---------Add
-                font_size: self.height*0.25
-                text:"Abrir"
-                pos: 1, 1
-                size: 1, 5
-                #size_hint_y: 0.1
-                on_press: root.open_file(filechooser.path, filechooser.selection)
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MyToolbar:
+            id: _toolbar
+            title: "Importar/Exportar"
         FileChooserListView:
             rootpath: '/storage/emulated/0/' if platform == 'android' else '/'
             id:filechooser
             on_selection: my_widget.selectfile(filechooser.selection)
+        
+        AKFloatingRoundedAppbar:
+
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "keyboard-return"
+                text: "Atrás"
+                on_release: root.return_button()
+    
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "card-plus-outline"
+                text: "Importar"
+                on_release: root.open_file(filechooser.path, filechooser.selection)
 
 <DataWid_import>:
     padding: "8dp"
@@ -695,5 +690,52 @@ WindowManager_select:
             text: 'Regresar'
             on_press: root.dismiss()
       
+<ImpExpElm>:
+    name:"impexpelm"
+    id:impexpelm_id
+    orientation: 'vertical'
+    canvas:
+        Color:
+            rgb: 1,1,1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MyToolbar:
+            id: _toolbar
+            title: "Importar/Exportar"
+            
+        MDLabel:
+            halign:'center'
+            text: 'Seleccione acción a realizar con la tabla:'
+            
+        MDLabel:
+            halign:'center'
+            text: root.tabla_seleccionada
+            
+        AKFloatingRoundedAppbar:
+
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "keyboard-return"
+                text: "Atrás"
+                on_release: root.return_tabla()
+    
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "card-plus-outline"
+                text: "Importar"
+                on_release: root.importar_tabla()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "plus-circle-outline"
+                text: "Exportar"
+                on_release: root.exportar_tabla()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "plus-circle-outline"
+                text: "Eliminar"
+                on_release: root.eliminar_tabla()
 """
 )
