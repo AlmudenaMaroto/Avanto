@@ -12,7 +12,7 @@ package.domain = com.awesome
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py, png, jpg, jpeg, ttf, kv, json
+source.include_exts = py, png, jpg, jpeg, ttf, kv, json, csv
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
