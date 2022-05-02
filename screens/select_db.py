@@ -1679,10 +1679,10 @@ WindowManager_select:
         orientation: 'vertical'
         Label:
             id: message
-            size_hint: 1, 0.8
+            size_hint: .75, 0.8
             text: ''
         Button:
-            size_hint: 1,0.2
+            size_hint: .75,0.2
             background_color: 0/255, 128/255, 141/255, .5
             text: 'Regresar'
             on_press: root.dismiss()

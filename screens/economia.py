@@ -906,16 +906,21 @@ Builder.load_string(
     label_size: dp(12)
 
 <MessagePopup_eco>:
+    size_hint: .75,.75
+    background: 'assets/texture_popup_blurred.png'
+    separator_color: 0/255, 73/255, 80/255
     BoxLayout:
         orientation: 'vertical'
         Label:
             id: message
-            size_hint: 1,0.8
+            size_hint: 1, 0.8
             text: ''
         Button:
             size_hint: 1,0.2
+            background_color: 0/255, 128/255, 141/255, .5
             text: 'Regresar'
             on_press: root.dismiss()
+            on_press: self.background_color = (14/255, 177/255, 192/255, .5)
 
 <Economia>
     on_leave: pass
