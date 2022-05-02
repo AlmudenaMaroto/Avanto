@@ -1444,200 +1444,222 @@ WindowManager_select:
     orientation: 'vertical'
     canvas:
         Color:
-            rgb: .254,.556,.627
+            rgb: 1/255, 104/255, 113/255
         Rectangle:
             pos: self.pos
             size: self.size
-
-    Label: # ---------- Fecha
-        text: ' Fecha Operación:'
-    TextInput:
-        id: ti_fechao
-        multiline: False
-        # hint_text: 'Fecha Operación:'
-        # text: 'ids.ti_fechao'
-    Label: # ---------- Concepto
-        text: ' Concepto:'
-    TextInput:
-        id: ti_Concepto
-        multiline: False
-        hint_text: 'Concepto:'
-    Label: # ---------- Categoría
-        text: ' Categoría:'
-    TextInput:
-        id: ti_Categoria
-        multiline: False
-        hint_text: 'Categoría'
-    Label: # ---------- Importe
-        text: ' Importe:'
-    TextInput:
-        id: ti_Importe
-        multiline: False
-        hint_text: 'Importe'
-    Label:  # ---------- Etapa
-        text: ' Etapa:'
-    TextInput:
-        id: ti_Etapa
-        multiline: False
-    Label:  # ---------- Ubicación
-        text: ' Ubicación:'
-    TextInput:
-        id: ti_Ubi
-        multiline: False
-    BoxLayout:
-        size_hint_y: 5
-    BoxLayout: # ---------- Crear Salir
-        Button:
-            text: 'Crear'
-            on_press: root.insert_data()
-        Button:
-            text: 'Salir'
-            on_press: root.back_to_dbw()
+    MDBoxLayout:
+        orientation: "vertical"
+        MyToolbar:
+            id: _toolbar
+            title: "Inventario"
+        Label: # ---------- Fecha
+            text: ' Fecha Operación:'
+        TextInput:
+            id: ti_fechao
+            multiline: False
+            # hint_text: 'Fecha Operación:'
+            # text: 'ids.ti_fechao'
+        Label: # ---------- Concepto
+            text: ' Concepto:'
+        TextInput:
+            id: ti_Concepto
+            multiline: False
+            hint_text: 'Concepto:'
+        Label: # ---------- Categoría
+            text: ' Categoría:'
+        TextInput:
+            id: ti_Categoria
+            multiline: False
+            hint_text: 'Categoría'
+        Label: # ---------- Importe
+            text: ' Importe:'
+        TextInput:
+            id: ti_Importe
+            multiline: False
+            hint_text: 'Importe'
+        Label:  # ---------- Etapa
+            text: ' Etapa:'
+        TextInput:
+            id: ti_Etapa
+            multiline: False
+        Label:  # ---------- Ubicación
+            text: ' Ubicación:'
+        TextInput:
+            id: ti_Ubi
+            multiline: False
+        BoxLayout:
+            size_hint_y: 5
+        BoxLayout: # ---------- Crear Salir
+            Button:
+                text: 'Salir'
+                on_press: root.back_to_dbw()
+            Button:
+                text: 'Crear'
+                on_press: root.insert_data()
+            
 
 <InsertDataWid_deporte>:
     name:"insert_movimientos"
     orientation: 'vertical'
     canvas:
         Color:
-            rgb: .254,.556,.627
+            rgb: 1/255, 104/255, 113/255
         Rectangle:
             pos: self.pos
             size: self.size
-
-    Label: # ---------- Fecha
-        text: ' Fecha Operación:'
-    TextInput:
-        id: ti_fechao
-        multiline: False
-    Label: # ---------- Concepto
-        text: ' Concepto:'
-    TextInput:
-        id: ti_Concepto
-        multiline: False
-        hint_text: 'Concepto:'
-    Label: # ---------- Importe
-        text: ' Tiempo:'
-    TextInput:
-        id: ti_Tiempo
-        multiline: False
-        hint_text: 'Tiempo'
-    BoxLayout:
-        size_hint_y: 5
-    BoxLayout: # ---------- Crear Salir
-        Button:
-            text: 'Crear'
-            on_press: root.insert_data()
-        Button:
-            text: 'Salir'
-            on_press: root.back_to_dbw()
+    MDBoxLayout:
+        orientation: "vertical"
+        MyToolbar:
+            id: _toolbar
+            title: "Inventario"
+        Label: # ---------- Fecha
+            text: ' Fecha Operación:'
+        TextInput:
+            id: ti_fechao
+            multiline: False
+        Label: # ---------- Concepto
+            text: ' Concepto:'
+        TextInput:
+            id: ti_Concepto
+            multiline: False
+            hint_text: 'Concepto:'
+        Label: # ---------- Importe
+            text: ' Tiempo:'
+        TextInput:
+            id: ti_Tiempo
+            multiline: False
+            hint_text: 'Tiempo'
+        BoxLayout:
+            size_hint_y: 5
+        BoxLayout: # ---------- Crear Salir
+            Button:
+                text: 'Salir'
+                on_press: root.back_to_dbw()
+            Button:
+                text: 'Crear'
+                on_press: root.insert_data()
+            
             
 <InsertDataWid_tabladeporte>:
     name:"insert_tabladeporte"
     orientation: 'vertical'
     canvas:
         Color:
-            rgb: .254,.556,.627
+            rgb: 1/255, 104/255, 113/255
         Rectangle:
             pos: self.pos
             size: self.size
-
-    Label: # ---------- Concepto
-        text: ' Concepto:'
-    TextInput:
-        id: tb_Concepto
-        multiline: False
-    Label: # ---------- kcal
-        text: ' kcal:'
-    TextInput:
-        id: tb_kcal
-        multiline: False
-        hint_text: 'kcal:'
-    Label: # ---------- Cardio
-        text: ' Cardio:'
-    TextInput:
-        id: tb_Cardio
-        multiline: False
-        hint_text: '%'
-    Label: # ---------- Brazo
-        text: ' Brazo:'
-    TextInput:
-        id: tb_Brazo
-        multiline: False
-        hint_text: '%'
-    Label: # ---------- Pecho
-        text: ' Pecho:'
-    TextInput:
-        id: tb_Pecho
-        multiline: False
-        hint_text: '%'
-    Label: # ---------- Espalda
-        text: ' Espalda:'
-    TextInput:
-        id: tb_Espalda
-        multiline: False
-        hint_text: '%'
-    Label: # ---------- Pierna
-        text: ' Pierna:'
-    TextInput:
-        id: tb_Pierna
-        multiline: False
-        hint_text: '%'
-    BoxLayout:
-        size_hint_y: 5
-    BoxLayout: # ---------- Crear Salir
-        Button:
-            text: 'Crear'
-            on_press: root.insert_data()
-        Button:
-            text: 'Salir'
-            on_press: root.back_to_dbw()
+    MDBoxLayout:
+        orientation: "vertical"
+        MyToolbar:
+            id: _toolbar
+            title: "Inventario"
+        Label: # ---------- Concepto
+            text: ' Concepto:'
+        TextInput:
+            id: tb_Concepto
+            multiline: False
+        Label: # ---------- kcal
+            text: ' kcal:'
+        TextInput:
+            id: tb_kcal
+            multiline: False
+            hint_text: 'kcal:'
+        Label: # ---------- Cardio
+            text: ' Cardio:'
+        TextInput:
+            id: tb_Cardio
+            multiline: False
+            hint_text: '%'
+        Label: # ---------- Brazo
+            text: ' Brazo:'
+        TextInput:
+            id: tb_Brazo
+            multiline: False
+            hint_text: '%'
+        Label: # ---------- Pecho
+            text: ' Pecho:'
+        TextInput:
+            id: tb_Pecho
+            multiline: False
+            hint_text: '%'
+        Label: # ---------- Espalda
+            text: ' Espalda:'
+        TextInput:
+            id: tb_Espalda
+            multiline: False
+            hint_text: '%'
+        Label: # ---------- Pierna
+            text: ' Pierna:'
+        TextInput:
+            id: tb_Pierna
+            multiline: False
+            hint_text: '%'
+        BoxLayout:
+            size_hint_y: 5
+        BoxLayout: # ---------- Crear Salir
+            Button:
+                text: 'Salir'
+                on_press: root.back_to_dbw()
+            Button:
+                text: 'Crear'
+                on_press: root.insert_data()
+            
 
 <InsertDataWid_inventario>:
     name:"insert_movimientos"
     orientation: 'vertical'
     canvas:
         Color:
-            rgb: .254,.556,.627
+            rgb: 1/255, 104/255, 113/255
         Rectangle:
             pos: self.pos
             size: self.size
-
-    Label: # ---------- Concepto
-        text: ' Concepto:'
-    TextInput:
-        id: ti_Concepto
-        multiline: False
-        hint_text: 'Concepto:'
-    Label: # ---------- Cantidad
-        text: ' Cantidad:'
-    TextInput:
-        id: ti_Cantidad
-        multiline: False
-        hint_text: 'Cantidad'
-    Label: # ---------- Lista
-        text: ' Comprar cuando llegue a:'
-    TextInput:
-        id: ti_Lista
-        multiline: False
-        hint_text: 'Lista'
-    
-    BoxLayout:
-        size_hint_y: 5
-    BoxLayout: # ---------- Crear Salir
-        Button:
-            text: 'Crear'
-            on_press: root.insert_data()
-        Button:
-            text: 'Salir'
-            on_press: root.back_to_dbw()
+    MDBoxLayout:
+        orientation: "vertical"
+        MyToolbar:
+            id: _toolbar
+            title: "Inventario"
+        Label: # ---------- Concepto
+            text: ' Concepto:'
+        TextInput:
+            id: ti_Concepto
+            multiline: False
+            hint_text: 'Concepto:'
+        Label: # ---------- Cantidad
+            text: ' Cantidad:'
+        TextInput:
+            id: ti_Cantidad
+            multiline: False
+            hint_text: 'Cantidad'
+        Label: # ---------- Lista
+            text: ' Comprar cuando llegue a:'
+        TextInput:
+            id: ti_Lista
+            multiline: False
+            hint_text: 'Lista'
+        
+        BoxLayout:
+            size_hint_y: 5
+        BoxLayout: # ---------- Crear Salir
+            Button:
+                text: 'Salir'
+                on_press: root.back_to_dbw()
+            Button:
+                text: 'Crear'
+                on_press: root.insert_data()
+            
 
         
 <MessagePopup>:
     BoxLayout:
         orientation: 'vertical'
+        size_hint: .8,.8
+        
         Label:
             id: message
-            size_hint: 1,0.8
+            size_hint: 1, 0.8
             text: ''
         Button:
             size_hint: 1,0.2
