@@ -46,7 +46,7 @@
     	"factory": "Droplista",
     	"screen_name": "droplist_icons",
     	"icon": "view-carousel-outline",
-		"menu": "si"
+		"menu": "no"
     },
     "Bottom Navigation": {
     	"import": "bottomnavigation",
