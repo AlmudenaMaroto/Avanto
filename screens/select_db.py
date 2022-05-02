@@ -92,7 +92,7 @@ class DataBaseWid_movimientos(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.Selectdb = Selectdb
-        self.num_rows = 10
+        self.num_rows = 0
         self.ruta_APP_PATH = os.getcwd()
         self.ruta_DB_PATH_movimientos = self.ruta_APP_PATH + '/movimientos.db'
         self.ruta_DB_PATH_deporte = self.ruta_APP_PATH + '/deporte.db'
@@ -143,7 +143,7 @@ class DataBaseWid_movimientos(MDScreen):
         self.check_memory()
 
     def previous_10(self):
-        if self.num_rows > 10:
+        if self.num_rows >= 10:
             self.num_rows = self.num_rows - 10
         self.check_memory()
 
@@ -158,7 +158,7 @@ class DataBaseWid_deporte(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.Selectdb = Selectdb
-        self.num_rows = 10
+        self.num_rows = 0
         self.ruta_APP_PATH = os.getcwd()
         self.ruta_DB_PATH_movimientos = self.ruta_APP_PATH + '/movimientos.db'
         self.ruta_DB_PATH_deporte = self.ruta_APP_PATH + '/deporte.db'
@@ -197,7 +197,7 @@ class DataBaseWid_deporte(MDScreen):
         self.check_memory()
 
     def previous_10(self):
-        if self.num_rows > 10:
+        if self.num_rows >= 10:
             self.num_rows = self.num_rows - 10
         self.check_memory()
 
@@ -212,7 +212,7 @@ class DB_tabladeporte(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.Selectdb = Selectdb
-        self.num_rows = 10
+        self.num_rows = 0
         self.ruta_APP_PATH = os.getcwd()
         self.ruta_DB_PATH_tabladeporte = self.ruta_APP_PATH + '/tabladeporte.db'
         self.tabla_ejercicio = ''
@@ -231,13 +231,14 @@ class DB_tabladeporte(MDScreen):
         # Cargamos datos
         con = sqlite3.connect(self.ruta_DB_PATH_tabladeporte)
         cursor = con.cursor()
-        orden_execute = 'select * from tabladeporte ORDER BY ID ASC'
+        orden_execute = 'select * from tabladeporte ORDER BY ID ASC LIMIT ' + str(
+            self.num_rows) + ', 7'
         cursor.execute(orden_execute)
         for i in cursor:
             fila_i = [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7]]
             datos_filas.append(tuple(fila_i))
         con.close()
-        # datos_filas = [('Tenis', 10), ('Tenis', 10)]
+
         self.ids.container.clear_widgets()
 
         self.tabla_ejercicio = MDDataTable(pos_hint={'center_x': 0.5, 'center_y': 0.5},
@@ -262,10 +263,14 @@ class DB_tabladeporte(MDScreen):
 
         self.ids.container.add_widget(self.tabla_ejercicio)
 
-    def add_10_more(self):
-        # self.num_rows = self.num_rows + 10
-        # self.check_memory()
-        pass
+    def next_10(self):
+        self.num_rows = self.num_rows + 7
+        self.check_memory()
+
+    def previous_10(self):
+        if self.num_rows > 6:
+            self.num_rows = self.num_rows - 7
+        self.check_memory()
 
     def create_new_product(self):
         self.clear_widgets()
@@ -315,7 +320,7 @@ class DataBaseWid_inventario(MDScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.Selectdb = Selectdb
-        self.num_rows = 10
+        self.num_rows = 0
         self.ruta_APP_PATH = os.getcwd()
         self.ruta_DB_PATH_inventario = self.ruta_APP_PATH + '/inventario.db'
         self.check_memory()
@@ -377,7 +382,7 @@ class DataBaseWid_inventario(MDScreen):
         self.check_memory()
 
     def previous_10(self):
-        if self.num_rows > 10:
+        if self.num_rows >= 10:
             self.num_rows = self.num_rows - 10
         self.check_memory()
 
@@ -1174,7 +1179,17 @@ WindowManager_select:
                 icon: "keyboard-return"
                 text: "Atrás"
                 on_release: root.goto_main()
-    
+            
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "chevron-triple-left"
+                text: " "
+                on_release: root.previous_10()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "chevron-triple-right"
+                text: " "
+                on_release: root.next_10()
+            
             AKFloatingRoundedAppbarButtonItem:
                 icon: "delete-outline"
                 text: "Eliminar"
