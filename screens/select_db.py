@@ -110,7 +110,7 @@ class DataBaseWid_movimientos(MDScreen):
         con = sqlite3.connect(self.ruta_DB_PATH_movimientos)
         cursor = con.cursor()
         orden_execute = 'select * from movimientos ORDER BY ID DESC LIMIT ' + str(
-            self.num_rows)
+            self.num_rows) + ', 10'
         cursor.execute(orden_execute)
         for i in cursor:
             wid = DataWid()
@@ -138,8 +138,13 @@ class DataBaseWid_movimientos(MDScreen):
             self.ids.container.add_widget(wid)
         con.close()
 
-    def add_10_more(self):
+    def next_10(self):
         self.num_rows = self.num_rows + 10
+        self.check_memory()
+
+    def previous_10(self):
+        if self.num_rows > 10:
+            self.num_rows = self.num_rows - 10
         self.check_memory()
 
     def create_new_product(self):
@@ -171,7 +176,7 @@ class DataBaseWid_deporte(MDScreen):
         con = sqlite3.connect(self.ruta_DB_PATH_deporte)
         cursor = con.cursor()
         orden_execute = 'select * from deporte ORDER BY ID DESC LIMIT ' + str(
-            self.num_rows)
+            self.num_rows) + ', 10'
         cursor.execute(orden_execute)
         for i in cursor:
             wid = DataWid_deporte()
@@ -187,8 +192,13 @@ class DataBaseWid_deporte(MDScreen):
             self.ids.container.add_widget(wid)
         con.close()
 
-    def add_10_more(self):
+    def next_10(self):
         self.num_rows = self.num_rows + 10
+        self.check_memory()
+
+    def previous_10(self):
+        if self.num_rows > 10:
+            self.num_rows = self.num_rows - 10
         self.check_memory()
 
     def create_new_product(self):
@@ -341,7 +351,7 @@ class DataBaseWid_inventario(MDScreen):
         con = sqlite3.connect(self.ruta_DB_PATH_inventario)
         cursor = con.cursor()
         orden_execute = 'select * from inventario ORDER BY Concepto ASC LIMIT ' + str(
-            self.num_rows)
+            self.num_rows) + ', 10'
         cursor.execute(orden_execute)
         for i in cursor:
             wid = DataWid_inventario(size_hint=(.5, .2))
@@ -362,8 +372,13 @@ class DataBaseWid_inventario(MDScreen):
             self.ids.lista_alimentos.add_widget(wid)
         con.close()
 
-    def add_10_more(self):
+    def next_10(self):
         self.num_rows = self.num_rows + 10
+        self.check_memory()
+
+    def previous_10(self):
+        if self.num_rows > 10:
+            self.num_rows = self.num_rows - 10
         self.check_memory()
 
     def create_new_product(self):
@@ -1063,17 +1078,22 @@ WindowManager_select:
 
             AKFloatingRoundedAppbarButtonItem:
                 icon: "keyboard-return"
-                text: "Atrás"
+                text: " "
                 on_release: root.goto_main()
     
             AKFloatingRoundedAppbarButtonItem:
-                icon: "card-plus-outline"
-                text: "Añadir 10"
-                on_release: root.add_10_more()
+                icon: "chevron-triple-left"
+                text: " "
+                on_release: root.previous_10()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "chevron-triple-right"
+                text: " "
+                on_release: root.next_10()
                 
             AKFloatingRoundedAppbarButtonItem:
                 icon: "plus-circle-outline"
-                text: "Añadir"
+                text: " "
                 on_release: root.create_new_product()
                 
 <DataBaseWid_deporte>:
@@ -1105,17 +1125,22 @@ WindowManager_select:
 
             AKFloatingRoundedAppbarButtonItem:
                 icon: "keyboard-return"
-                text: "Atrás"
+                text: " "
                 on_release: root.goto_main()
     
             AKFloatingRoundedAppbarButtonItem:
-                icon: "card-plus-outline"
-                text: "Añadir 10"
-                on_release: root.add_10_more()
+                icon: "chevron-triple-left"
+                text: " "
+                on_release: root.previous_10()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "chevron-triple-right"
+                text: " "
+                on_release: root.next_10()
                 
             AKFloatingRoundedAppbarButtonItem:
                 icon: "plus-circle-outline"
-                text: "Añadir"
+                text: " "
                 on_release: root.create_new_product()
                 
                 
@@ -1214,9 +1239,13 @@ WindowManager_select:
                 text: "Atrás"
                 on_release: root.goto_main()
             AKFloatingRoundedAppbarButtonItem:
-                icon: "card-plus-outline"
-                text: "Añadir 10"
-                on_release: root.add_10_more()
+                icon: "chevron-triple-left"
+                text: " "
+                on_release: root.previous_10()
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "chevron-triple-right"
+                text: " "
+                on_release: root.next_10()
             AKFloatingRoundedAppbarButtonItem:
                 icon: "plus-circle-outline"
                 text: "Añadir"
