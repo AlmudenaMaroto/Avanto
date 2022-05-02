@@ -210,7 +210,6 @@ class Impexpelm(MDScreen):
             con.commit()
             con.close()
 
-
         message = self.Popup.ids.message
         self.Popup.open()
         self.Popup.title = "Csv guardado"
@@ -395,49 +394,6 @@ WindowManager_select:
     theme_text_color: "Primary"
     halign: "left"
     
-<Import_main_old>:
-    name:"import_main"
-    orientation: 'vertical'
-    canvas:
-        Color:
-            rgb: 1,1,1,1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    MDBoxLayout:
-        orientation: "vertical"
-
-        MyToolbar:
-            id: _toolbar
-            title: "Importar / Exportar"
-            
-        
-        AKCardStack:
-            id: cardstack
-            size_hint_y: .8
-            
-            pos_hint: {"center_x": .5, "center_y": .5}
-            size: dp(400), dp(400)
-            transition: "in_out_circ"
-            card_out_direction: "left"
-            card_in_direction: "bottom"
-        
-        AKFloatingRoundedAppbar:
-
-            AKFloatingRoundedAppbarButtonItem:
-                icon: "database-export"
-                text: "Exportar"
-                on_release: root.export_db()
-    
-            AKFloatingRoundedAppbarButtonItem:
-                icon: "refresh"
-                text: "Siguiente"
-                on_release: root.change()
-                
-            AKFloatingRoundedAppbarButtonItem:
-                icon: "database-import"
-                text: "Importar"
-                on_release: root.import_db()
         
 <Import_main>:
     name:"import_main"
@@ -503,55 +459,6 @@ WindowManager_select:
                     size_hint_y:.1
                     text:''
 
-
-
-<Export_data>:
-    name: "export_data"
-    orientation:'vertical'
-    canvas:
-        Color:
-            rgb: .254,.556,.627
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    
-    MDBoxLayout:
-        orientation: "vertical"
-
-        MyToolbar:
-            id: _toolbar
-            title: "Importar / Exportar"
-        BoxLayout:
-            size_hint_y: 0.1
-            Button: # -----------Go back
-                font_size: self.height*0.3
-                text: 'Atrás'
-                pos: 1, 1
-                size: 10, 50
-                on_press: root.return_button()
-            Button: #
-                font_size: self.height*0.3
-                text: 'Eliminar todo'
-                pos: 1, 1
-                size: 10, 50
-                on_press: root.delete_all()
-            Button: # ---------Save
-                font_size: self.height*0.3
-                text: 'Guardar csv'
-                pos: 1, 1
-                size: 10, 50
-                on_press: root.save_csv()
-        ScrollView:
-            size: self.size
-            GridLayout:
-                id: container
-                padding: [10,10,10,10]
-                spacing: 5
-                size_hint_y: None
-                cols: 1
-                row_default_height: root.height*0.2
-                height: self.minimum_height
-
 <Import_data>:
     name:"import_data"
     id:my_widget
@@ -586,98 +493,6 @@ WindowManager_select:
                 text: "Importar"
                 on_release: root.open_file(filechooser.path, filechooser.selection)
 
-<DataWid_import>:
-    padding: "8dp"
-    name:"DataWid_import"
-    size_hint: .9, .2
-    #size: dp(320), dp(140)
-    radius: [dp(10),]
-    pos_hint: {"center_x": .5, "center_y": .5}
-    dataID: ""
-    dataCC: ""
-    dataIM: ""
-    dataET: ""
-    dataUB: ""
-    data_id: ''
-
-    MDBoxLayout:
-        MDBoxLayout:
-            orientation: "vertical"
-            size_hint_x: .7
-            MDLabel:
-                text: ""
-            DataloaderLabel:
-                text:  root.dataID
-                font_size: root.width * .04
-            MDSeparator:
-            
-            DataloaderLabel:
-                text:  root.dataCC
-                
-            MDSeparator:
-            
-            DataloaderLabel:
-                text:  root.dataET
-            MDSeparator:
-            
-            DataloaderLabel:
-                text:  root.dataUB
-            MDLabel:
-                text: ""
-            
-        MDBoxLayout:
-            size_hint_x: .3
-            orientation:"vertical"
-            MDLabel:
-                text: ""
-            DataloaderLabel:
-                text:  root.dataIM
-                halign: "center"
-                valign: "center"
-            MDLabel:
-                text: ""
-                
-<DataWid_import_deporte>:
-    padding: "8dp"
-    name:"DataWid_import"
-    size_hint: .9, .2
-    #size: dp(320), dp(140)
-    radius: [dp(10),]
-    pos_hint: {"center_x": .5, "center_y": .5}
-    dataID: ""
-    dataCO: ""
-    dataTM: ""
-    data_id: ''
-
-    MDBoxLayout:
-        MDBoxLayout:
-            orientation: "vertical"
-            size_hint_x: .7
-            MDLabel:
-                text: ""
-            DataloaderLabel:
-                text:  root.dataID
-                font_size: root.width * .04
-            MDSeparator:
-            
-            DataloaderLabel:
-                text:  root.dataCO
-            MDLabel:
-                text: ""
-                
-        MDBoxLayout:
-            size_hint_x: .3
-            orientation:"vertical"
-            MDLabel:
-                text: ""
-            DataloaderLabel:
-                text:  root.dataTM
-                halign: "center"
-                valign: "center"
-            MDLabel:
-                text: ""
-
-        
 <MessagePopup_import>:
     BoxLayout:
         orientation: 'vertical'
@@ -724,17 +539,17 @@ WindowManager_select:
                 on_release: root.return_tabla()
     
             AKFloatingRoundedAppbarButtonItem:
-                icon: "card-plus-outline"
+                icon: "database-import-outline"
                 text: "Importar"
                 on_release: root.importar_tabla()
                 
             AKFloatingRoundedAppbarButtonItem:
-                icon: "plus-circle-outline"
+                icon: "database-export-outline"
                 text: "Exportar"
                 on_release: root.exportar_tabla()
                 
             AKFloatingRoundedAppbarButtonItem:
-                icon: "plus-circle-outline"
+                icon: "delete"
                 text: "Eliminar"
                 on_release: root.eliminar_tabla()
 """
