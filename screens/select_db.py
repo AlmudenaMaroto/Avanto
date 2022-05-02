@@ -1448,55 +1448,66 @@ WindowManager_select:
         Rectangle:
             pos: self.pos
             size: self.size
+    MyToolbar:
+        id: _toolbar
+        title: "Inventario"
     MDBoxLayout:
-        orientation: "vertical"
-        MyToolbar:
-            id: _toolbar
-            title: "Inventario"
-        Label: # ---------- Fecha
-            text: ' Fecha Operación:'
-        TextInput:
-            id: ti_fechao
-            multiline: False
-            # hint_text: 'Fecha Operación:'
-            # text: 'ids.ti_fechao'
-        Label: # ---------- Concepto
-            text: ' Concepto:'
-        TextInput:
-            id: ti_Concepto
-            multiline: False
-            hint_text: 'Concepto:'
-        Label: # ---------- Categoría
-            text: ' Categoría:'
-        TextInput:
-            id: ti_Categoria
-            multiline: False
-            hint_text: 'Categoría'
-        Label: # ---------- Importe
-            text: ' Importe:'
-        TextInput:
-            id: ti_Importe
-            multiline: False
-            hint_text: 'Importe'
-        Label:  # ---------- Etapa
-            text: ' Etapa:'
-        TextInput:
-            id: ti_Etapa
-            multiline: False
-        Label:  # ---------- Ubicación
-            text: ' Ubicación:'
-        TextInput:
-            id: ti_Ubi
-            multiline: False
-        BoxLayout:
-            size_hint_y: 5
-        BoxLayout: # ---------- Crear Salir
-            Button:
-                text: 'Salir'
-                on_press: root.back_to_dbw()
-            Button:
-                text: 'Crear'
-                on_press: root.insert_data()
+        orientation: "horizontal"
+        Label:
+            size_hint: .05,1
+        MDBoxLayout:
+            size_hint: .9,1
+            orientation: "vertical"
+            
+            Label: # ---------- Fecha
+                text: ' Fecha Operación:'
+            TextInput:
+                id: ti_fechao
+                multiline: False
+                # hint_text: 'Fecha Operación:'
+                # text: 'ids.ti_fechao'
+            Label: # ---------- Concepto
+                text: ' Concepto:'
+            TextInput:
+                id: ti_Concepto
+                multiline: False
+                hint_text: 'Concepto:'
+            Label: # ---------- Categoría
+                text: ' Categoría:'
+            TextInput:
+                id: ti_Categoria
+                multiline: False
+                hint_text: 'Categoría'
+            Label: # ---------- Importe
+                text: ' Importe:'
+            TextInput:
+                id: ti_Importe
+                multiline: False
+                hint_text: 'Importe'
+            Label:  # ---------- Etapa
+                text: ' Etapa:'
+            TextInput:
+                id: ti_Etapa
+                multiline: False
+            Label:  # ---------- Ubicación
+                text: ' Ubicación:'
+            TextInput:
+                id: ti_Ubi
+                multiline: False
+            BoxLayout:
+                size_hint_y: 5
+            AKFloatingRoundedAppbar:
+                AKFloatingRoundedAppbarButtonItem:
+                    icon: "keyboard-return"
+                    text: " "
+                    on_release: root.back_to_dbw()
+                AKFloatingRoundedAppbarButtonItem:
+                    icon: "plus-circle-outline"
+                    text: " "
+                    on_release: root.insert_data()
+            
+        Label:
+            size_hint: .05,1
             
 
 <InsertDataWid_deporte>:
@@ -1508,38 +1519,46 @@ WindowManager_select:
         Rectangle:
             pos: self.pos
             size: self.size
+    MyToolbar:
+        id: _toolbar
+        title: "Inventario"
     MDBoxLayout:
-        orientation: "vertical"
-        MyToolbar:
-            id: _toolbar
-            title: "Inventario"
-        Label: # ---------- Fecha
-            text: ' Fecha Operación:'
-        TextInput:
-            id: ti_fechao
-            multiline: False
-        Label: # ---------- Concepto
-            text: ' Concepto:'
-        TextInput:
-            id: ti_Concepto
-            multiline: False
-            hint_text: 'Concepto:'
-        Label: # ---------- Importe
-            text: ' Tiempo:'
-        TextInput:
-            id: ti_Tiempo
-            multiline: False
-            hint_text: 'Tiempo'
-        BoxLayout:
-            size_hint_y: 5
-        BoxLayout: # ---------- Crear Salir
-            Button:
-                text: 'Salir'
-                on_press: root.back_to_dbw()
-            Button:
-                text: 'Crear'
-                on_press: root.insert_data()
-            
+        orientation: "horizontal"
+        Label:
+            size_hint: .05,1
+        MDBoxLayout:
+            size_hint: .9,1
+            orientation: "vertical"
+            Label: # ---------- Fecha
+                text: ' Fecha Operación:'
+            TextInput:
+                id: ti_fechao
+                multiline: False
+            Label: # ---------- Concepto
+                text: ' Concepto:'
+            TextInput:
+                id: ti_Concepto
+                multiline: False
+                hint_text: 'Concepto:'
+            Label: # ---------- Importe
+                text: ' Tiempo:'
+            TextInput:
+                id: ti_Tiempo
+                multiline: False
+                hint_text: 'Tiempo'
+            BoxLayout:
+                size_hint_y: 5
+            AKFloatingRoundedAppbar:
+                AKFloatingRoundedAppbarButtonItem:
+                    icon: "keyboard-return"
+                    text: " "
+                    on_release: root.back_to_dbw()
+                AKFloatingRoundedAppbarButtonItem:
+                    icon: "plus-circle-outline"
+                    text: " "
+                    on_release: root.insert_data()
+        Label:
+            size_hint: .05,1    
             
 <InsertDataWid_tabladeporte>:
     name:"insert_tabladeporte"
@@ -1653,18 +1672,21 @@ WindowManager_select:
 
         
 <MessagePopup>:
+    size_hint: .75,.75
+    background: 'assets/texture_popup_blurred.png'
+    separator_color: 0/255, 73/255, 80/255
     BoxLayout:
         orientation: 'vertical'
-        size_hint: .8,.8
-        
         Label:
             id: message
             size_hint: 1, 0.8
             text: ''
         Button:
             size_hint: 1,0.2
+            background_color: 0/255, 128/255, 141/255, .5
             text: 'Regresar'
             on_press: root.dismiss()
+            on_press: self.background_color = (14/255, 177/255, 192/255, .5)
             
 <UpdateDataWid_movimientos>:
     name: "update_movimientos"
