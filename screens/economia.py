@@ -160,6 +160,7 @@ class Economia(MDScreen):
         # No se puede invertir el orden porque inicial_csv necesita de un dict_eco_sorted para funcionar,
         # que procede de "calculos"
         self.calculos()
+
         if self.hay_eleccion:
             self.inicial_csv()
         else:
@@ -670,11 +671,12 @@ class Economia(MDScreen):
             if dict_anomes['ingresos']:
                 dict_anomes['tasa'] = str(
                     round((dict_anomes['ingresos'] - dict_anomes['gastos']) * 100 / dict_anomes['ingresos'], 2)) + ' %'
-                dict_anomes['ingresos'] = str(round(dict_anomes['ingresos'], 2)) + ' €'
+                dict_anomes['ingresos'] = str(int(dict_anomes['ingresos'])) + ' €'
             else:
                 dict_anomes['tasa'] = '-'
                 dict_anomes['ingresos'] = '-'
-            dict_anomes['gastos'] = '-' + str(round(dict_anomes['gastos'], 2)) + ' €'
+
+            dict_anomes['gastos'] = '-' + str(int(dict_anomes['gastos'])) + ' €'
 
             tabla_dict_tasas.append(dict_anomes)
 
@@ -946,7 +948,7 @@ Builder.load_string(
                 Evolucion_temporal:
                     id: id_evtemp
                     labels: True
-                    anim: True
+                    anim: False
                     circles: False
                     bg_color: 106/255, 188/255, 206/255, 1
                     #on_select: root.set_text_evtemp(args)
@@ -954,7 +956,7 @@ Builder.load_string(
                 Barras_mes:
                     id: id_barmes
                     labels: True
-                    anim: True
+                    anim: False
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
@@ -966,7 +968,7 @@ Builder.load_string(
                 Barras_ano:
                     id: id_barano
                     labels: True
-                    anim: True
+                    anim: False
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
@@ -1043,7 +1045,7 @@ Builder.load_string(
                 Barras_horizontal:
                     id: id_ranking_gastos
                     labels: True
-                    anim: True
+                    anim: False
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
@@ -1058,7 +1060,7 @@ Builder.load_string(
                 Barras_horizontal:
                     id: id_ranking_ingresos
                     labels: True
-                    anim: True
+                    anim: False
                     bg_color: 106/255, 188/255, 206/255, 1
                     #lines_color: [40/255, 107/255, 122/255, 1]
                     line_width:dp(1)
