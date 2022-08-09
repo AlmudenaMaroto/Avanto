@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 import time
 from calendar import timegm
-from tools.tasa_ahorro import Tabla_tasa_ahorro
+from tools.tablas_economia import Tabla_tasa_ahorro, Tabla_presupuesto_mensual
 from tools.date_pick_esp import AKDatePicker_ini, AKDatePicker_fin
 import datetime
 from itertools import groupby
@@ -108,6 +108,7 @@ class Economia(MDScreen):
         self.path_app = os.getcwd()
         self.dict_eco_sorted = {}
         self.dict_eco_sorted_no_filt = {}
+        self.dict_presupuestos = {}
         self.dict_barmes = []
         self.dict_barano = []
         self.max_epoch_evtemp = 0
@@ -199,6 +200,7 @@ class Economia(MDScreen):
     def calculos(self):
         # Reseteo de nuevo
         self.dict_eco_sorted = {}
+        self.dict_presupuestos = {}
         self.dict_barmes = []
         self.dict_barano = []
         self.max_epoch_evtemp = 0
@@ -722,6 +724,73 @@ class Economia(MDScreen):
         self.date = Tabla_tasa_ahorro(tabla_dict=tabla_dict_tasas, callback=self.callback_ini)
         self.date.open()
 
+    def tabla_presupuesto_mensual(self):
+
+        # creacion self.dict_presupuestos
+        row_i = {}
+        dict_eco = []
+        con = sqlite3.connect(self.path_app + '/presupuestos.db')
+        cursor = con.cursor()
+        orden_execute = 'select * from presupuestos'
+        cursor.execute(orden_execute)
+        for i in cursor:
+            try:
+                row_i['categoria'] = str(i[1])
+                row_i['presupuesto'] = i[2]
+                dict_eco.append(row_i)
+                row_i = {}
+
+            except ValueError:
+                pass
+        con.close()
+        self.dict_presupuestos = sorted(dict_eco, key=lambda d: d['categoria'], reverse=False)
+        ###############################################
+
+        mes_en_curso = self.dict_eco_sorted[-1]["anomes"]
+        list_of_dict_gastos = [d for d in self.dict_eco_sorted if (d['categoria'] not in self.ingresos and d["anomes"] == mes_en_curso)][::-1]
+        dict_anomes_gastos = collections.Counter()
+
+
+        for d in list_of_dict_gastos:
+            dict_anomes_gastos[d['categoria']] -= (d['importe'])
+        dict_anomes_gastos = dict(dict_anomes_gastos)
+        list_anomes_gastos = list(map(list, dict_anomes_gastos.items()))
+
+        list_of_dict_presupuestos = [d for d in self.dict_presupuestos if d['categoria'] not in self.ingresos][::-1]
+        dict_presupuestos = collections.Counter()
+
+        for d in list_of_dict_presupuestos:
+            dict_presupuestos[d['categoria']] += (d['presupuesto'])
+        dict_presupuestos = dict(dict_presupuestos)
+        list_presupuestos = list(map(list, dict_presupuestos.items()))
+
+
+        # Join ambos dict
+        tabla_dict_tasas_presupuesto = []
+        i = 0
+        for categoria_i in list_presupuestos:
+            dict_anomes = {}
+            dict_anomes['categoria'] = categoria_i[0]
+            dict_anomes['presupuesto'] = categoria_i[1]
+            dict_anomes['gastos'] = dict_anomes_gastos.get(categoria_i[0])
+            if not dict_anomes['gastos']:
+                dict_anomes['gastos'] = 0
+
+            if dict_anomes['presupuesto']:
+                dict_anomes['tasa'] = str(
+                    round((dict_anomes['presupuesto'] - dict_anomes['gastos']) * 100 / dict_anomes['presupuesto'], 2)) + ' %'
+                dict_anomes['presupuesto'] = str(int(dict_anomes['presupuesto'])) + ' €'
+            else:
+                dict_anomes['tasa'] = '-'
+                dict_anomes['presupuesto'] = '-'
+
+            dict_anomes['gastos'] =  str(int(dict_anomes['gastos'])) + ' €'
+
+            tabla_dict_tasas_presupuesto.append(dict_anomes)
+
+        self.date = Tabla_presupuesto_mensual(tabla_dict=tabla_dict_tasas_presupuesto, callback=self.callback_ini)
+        self.date.open()
+
     def boton_concepto_press(self):
         self.ids.obj.ids.boton_concepto.md_bg_color = [4 / 255, 186 / 255, 202 / 255, 1]
         self.ids.obj.ids.boton_categoria.md_bg_color = [0 / 255, 131 / 255, 143 / 255, 1]
@@ -1120,6 +1189,10 @@ Builder.load_string(
                     md_bg_color: [0 / 255, 131 / 255, 143 / 255, 1]
                     text: "Tabla Tasa de ahorro"
                     on_release: root.tabla_tasa_ahorro() 
+                MDRaisedButton:
+                    md_bg_color: [0 / 255, 131 / 255, 143 / 255, 1]
+                    text: "Tabla Presupuesto Mensual"
+                    on_release: root.tabla_presupuesto_mensual() 
                 
 
         MDBoxLayout:

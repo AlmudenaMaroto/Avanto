@@ -99,6 +99,57 @@ Builder.load_string(
                     id: year_view
                     orientation: "vertical"
                     adaptive_height: True
+                    
+<Tabla_presupuesto_mensual>:
+    size_hint: None, None
+    size:
+        (dp(302), dp(450)) \
+        if root.theme_cls.device_orientation == "portrait" \
+        else (dp(450), dp(350))
+    BoxLayout:
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: root.theme_cls.bg_normal
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+        BoxLayout:
+            size_hint_y: None
+            height: dp(50)
+            canvas.before:
+                Color:
+                    rgba: 95/255,166/255,182/255,1
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius:[(10.0, 10.0), (10.0, 10.0), (0, 0), (0, 0)]
+            MDLabeltitle_22_2:
+                text:'Presupuesto Mensual'
+                 
+        BoxLayout:
+            size_hint_y: None
+            height: dp(50)
+            canvas.before:
+                Color:
+                    rgba: root.theme_cls.bg_dark
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            MDLabeltitle_2:
+                text: "Categoría"
+            MDLabeltitle_2:
+                text: "Ppto"
+            MDLabeltitle_2:
+                text: "Gasto"
+            MDLabeltitle_2:
+                text: "Tasa"
+        BoxLayout:
+            ScrollView:
+                MDBoxLayout:
+                    id: year_view
+                    orientation: "vertical"
+                    adaptive_height: True
 
 
 """
@@ -119,6 +170,75 @@ class Tabla_tasa_ahorro(BaseDialog, ThemableBehavior):
         for fila in tabla_dict:
             self.ids.year_view.add_widget(
                 ButtonBase2(text="%s" % fila.get('anomes'), text2="%s" % fila.get('ingresos'),
+                            text3="%s" % fila.get('gastos'), text4="%s" % fila.get('tasa'))
+            )
+
+        # for fila in tabla_dict:
+        #     self.ids.month_view.add_widget(
+        #         ButtonBase2(text="%s %s" % (fila.get('anomes'), str(fila.get('gastos'))), on_release=self._set_year)
+        #     )
+        self.callback = callback
+        # for x in reversed(range(self.year_range[0], self.year_range[1])):
+        #     self.ids.year_view.add_widget(
+        #         ButtonBase2(text="%d %d" % (x, x), on_release=self._set_year)
+        #     )
+
+    def _set_day(self, instance):
+        self._day_title = instance.text
+
+    def _set_month(self, instance):
+        self._month_title = instance.text
+
+    def _set_year(self, instance):
+        self._year_title = instance.text
+
+    def on_dismiss(self):
+        self._year_title = "-"
+        self._month_title = "-"
+        self._day_title = "-"
+        return
+
+    def _choose(self):
+        if not self.callback:
+            return False
+
+        if self.month_type == "string":
+            for k, v in self.month_dic.items():
+                if v == self._month_title:
+                    self._month_title = k
+                    break
+
+        try:
+            date = datetime(
+                int(self._year_title),
+                int(self._month_title),
+                int(self._day_title),
+            )
+        except BaseException:
+            date = False
+
+        self.callback(date)
+        self.cancel()
+
+    def cancel(self):
+        self.dismiss()
+
+
+
+class Tabla_presupuesto_mensual(BaseDialog, ThemableBehavior):
+    year_today = today.strftime("%Y")
+    year_range = ListProperty([1990, int(year_today) + 1])
+    month_type = OptionProperty("string", options=["string", "int"])
+    _day_title = StringProperty("-")
+    _month_title = StringProperty("-")
+    _year_title = StringProperty("-")
+
+    def __init__(self, tabla_dict, callback=None, **kwargs):
+        super(Tabla_presupuesto_mensual, self).__init__(**kwargs)
+
+        for fila in tabla_dict:
+            self.ids.year_view.add_widget(
+                ButtonBase2(text="%s" % fila.get('categoria'), text2="%s" % fila.get('presupuesto'),
                             text3="%s" % fila.get('gastos'), text4="%s" % fila.get('tasa'))
             )
 
