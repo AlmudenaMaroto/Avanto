@@ -49,7 +49,15 @@ def create_table_movimientos(cursor):
         Ubicación TEXT
         )'''
     )
-
+def create_table_presupuestos(cursor):
+    cursor.execute(
+        '''
+        CREATE TABLE presupuestos(
+        ID        INT   PRIMARY KEY NOT NULL,
+        Categoría   TEXT                NOT NULL,
+        Presupuesto     FLOAT              NOT NULL,
+        )'''
+    )
 
 def create_table_deporte(cursor):
     cursor.execute(
@@ -149,6 +157,7 @@ def create_table_vbles_globales(cursor):
 # De forma inicial, creamos las tablas. Añadir nuevas tablas aqui!!
 ruta_APP_PATH = os.getcwd()
 ruta_DB_PATH_movimientos = ruta_APP_PATH + '/movimientos.db'
+ruta_DB_PATH_presupuestos = ruta_APP_PATH + '/presupuestos.db'
 ruta_DB_PATH_deporte = ruta_APP_PATH + '/deporte.db'
 ruta_DB_PATH_tabladeporte = ruta_APP_PATH + '/tabladeporte.db'
 ruta_DB_PATH_inventario = ruta_APP_PATH + '/inventario.db'
@@ -163,6 +172,16 @@ try:
 except Exception as e:
     pass
     # print(e)
+try:
+    con = sqlite3.connect(ruta_DB_PATH_presupuestos)
+    cursor = con.cursor()
+    create_table_presupuestos(cursor)
+    con.commit()
+    con.close()
+except Exception as e:
+    pass
+
+
 try:
     con = sqlite3.connect(ruta_DB_PATH_deporte)
     cursor = con.cursor()
