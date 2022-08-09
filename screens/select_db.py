@@ -67,6 +67,11 @@ class Selectdb(MDScreen):
         self.current = 'db_movimientos'
         self.add_widget(DataBaseWid_movimientos())
 
+    def goto_presupuestos(self, *args):
+        self.clear_widgets()
+        self.current = 'db_presupuestos'
+        self.add_widget(DataBaseWid_presupuestos())
+
     def goto_deporte(self, *args):
         self.clear_widgets()
         self.current = 'db_deporte'
@@ -152,6 +157,57 @@ class DataBaseWid_movimientos(MDScreen):
         self.clear_widgets()
         self.current = 'insert_movimientos'
         self.add_widget(InsertDataWid_movimientos())
+
+
+class DataBaseWid_presupuestos(MDScreen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.Selectdb = Selectdb
+        self.num_rows = 0
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_presupuestos = self.ruta_APP_PATH + '/presupuestos.db'
+        self.check_memory()
+
+    def goto_main(self):
+        self.clear_widgets()
+        self.current = 'selectdb'
+        self.add_widget(Selectdb())
+
+    def check_memory(self):
+        self.ids.container.clear_widgets()
+
+        con = sqlite3.connect(self.ruta_DB_PATH_presupuestos)
+        cursor = con.cursor()
+        orden_execute = 'select * from presupuestos ORDER BY ID DESC LIMIT ' + str(
+            self.num_rows) + ', 10'
+        cursor.execute(orden_execute)
+        for i in cursor:
+            wid = DataWid_presupuestos()
+            r0 = ' ID: ' + str(i[0]) + '                       '
+            r1 = i[1] + '  '
+            r2 = str(i[2])
+            wid.data_id = str(i[0])
+            wid.dataID = r0  # ID
+            wid.dataCA = r1  # categoria
+            wid.dataPR = r2  # Presupuesto
+
+            self.ids.container.add_widget(wid)
+        con.close()
+
+    def next_10(self):
+        self.num_rows = self.num_rows + 10
+        self.check_memory()
+
+    def previous_10(self):
+        if self.num_rows >= 10:
+            self.num_rows = self.num_rows - 10
+        self.check_memory()
+
+    def create_new_product(self):
+        self.num_rows = 10
+        self.clear_widgets()
+        self.current = 'insert_presupuestos'
+        self.add_widget(InsertDataWid_presupuestos())
 
 
 class DataBaseWid_deporte(MDScreen):
@@ -520,6 +576,17 @@ class DataWid(MDCard):  # Usado en el check_memory para visualizar los registros
         self.add_widget(UpdateDataWid_movimientos(data_id))
 
 
+class DataWid_presupuestos(MDCard):  # Usado en el check_memory para visualizar los registros en cada widget mini
+    def __init__(self, **kwargs):
+        super(DataWid_presupuestos, self).__init__()
+        self.Selectdb = Selectdb
+
+    def update_data(self, data_id):
+        self.clear_widgets()
+        self.current = 'update_presupuestos'
+        self.add_widget(UpdateDataWid_presupuestos(data_id))
+
+
 class DataWid_deporte(MDCard):  # Usado en el check_memory para visualizar los registros en cada widget mini
     def __init__(self, **kwargs):
         super(DataWid_deporte, self).__init__()
@@ -642,6 +709,51 @@ class InsertDataWid_movimientos(BoxLayout):
         self.clear_widgets()
         self.current = 'db_movimientos'
         self.add_widget(DataBaseWid_movimientos())
+
+
+class InsertDataWid_presupuestos(BoxLayout):
+    def __init__(self, **kwargs):
+        super(InsertDataWid_presupuestos, self).__init__()
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_presupuestos = self.ruta_APP_PATH + '/presupuestos.db'
+        self.Popup = MessagePopup()
+
+    def insert_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_presupuestos)
+        cursor = con.cursor()
+        cursor.execute('select ID from presupuestos ORDER BY ID DESC LIMIT 1')
+        con.commit()
+        #
+        d1 = 1
+        for i in cursor:
+            d1 = i[0] + 1
+        con.close()
+        con = sqlite3.connect(self.ruta_DB_PATH_presupuestos)
+        cursor = con.cursor()
+        d2 = self.ids.ti_Categoria.text
+        d3 = self.ids.ti_Presupuesto.text.replace(",", ".")
+        a1 = (d1, d2, d3)
+        s1 = 'INSERT INTO presupuestos(ID,	Categoría,	Presupuesto)'
+        s2 = 'VALUES(%s,"%s",%s)' % a1
+        try:
+            cursor.execute(s1 + ' ' + s2)
+            con.commit()
+            con.close()
+            self.back_to_dbw()
+        except Exception as e:
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Data base error"
+            if '' in a1:
+                message.text = 'Uno o más campos están vacíos'
+            else:
+                message.text = str(e)
+            con.close()
+
+    def back_to_dbw(self):
+        self.clear_widgets()
+        self.current = 'db_presupuestos'
+        self.add_widget(DataBaseWid_presupuestos())
 
 
 class InsertDataWid_deporte(BoxLayout):
@@ -885,6 +997,66 @@ class UpdateDataWid_movimientos(BoxLayout):
         self.add_widget(Eliminado())
 
 
+class UpdateDataWid_presupuestos(BoxLayout):
+    def __init__(self, data_id, **kwargs):
+        super(UpdateDataWid_presupuestos, self).__init__()
+        self.data_id = data_id
+        self.ruta_APP_PATH = os.getcwd()
+        self.ruta_DB_PATH_presupuestos = self.ruta_APP_PATH + '/presupuestos.db'
+        self.check_memory()
+        self.WindowManager_select = WindowManager_select
+        self.Popup = MessagePopup()
+
+    def check_memory(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_presupuestos)
+        cursor = con.cursor()
+        s = 'select ID,	Categoría,	Presupuesto from presupuestos where ID='
+        cursor.execute(s + self.data_id)
+        for i in cursor:
+            self.ids.ti_Categoria.text = i[1]
+            self.ids.ti_Presupuesto.text = str(i[2])
+        con.close()
+
+    def update_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_presupuestos)
+        cursor = con.cursor()
+        d2 = self.ids.ti_Categoria.text
+        d3 = self.ids.ti_Presupuesto.text
+        a1 = (d2, d3)
+        s1 = 'UPDATE presupuestos SET'
+        s2 = 'Categoría="%s",Presupuesto=%s' % a1
+        s3 = 'WHERE ID=%s' % self.data_id
+        try:
+            cursor.execute(s1 + ' ' + s2 + ' ' + s3)
+            con.commit()
+            con.close()
+
+        except Exception as e:
+            message = self.Popup.ids.message
+            self.Popup.open()
+            self.Popup.title = "Data base error"
+            if '' in a1:
+                message.text = 'Uno o más campos están vacíos'
+            else:
+                message.text = str(e)
+            con.close()
+        self.clear_widgets()
+        self.add_widget(Actualizado())
+
+    def delete_data(self):
+        con = sqlite3.connect(self.ruta_DB_PATH_presupuestos)
+        cursor = con.cursor()
+        s = 'delete from presupuestos where ID=' + self.data_id
+        cursor.execute(s)
+        con.commit()
+        con.close()
+        self.back_to_dbw()
+
+    def back_to_dbw(self):
+        self.clear_widgets()
+        self.add_widget(Eliminado())
+
+
 class UpdateDataWid_deporte(BoxLayout):
     def __init__(self, data_id, **kwargs):
         super(UpdateDataWid_deporte, self).__init__()
@@ -954,6 +1126,7 @@ Builder.load_string(
     """
 WindowManager_select:
     db_movimientos:
+    db_presupuestos:
     db_deporte:
     db_tabladeporte:
     selectdb:
@@ -1009,12 +1182,17 @@ WindowManager_select:
                 MDList:
                     size_hint_y:.9
                     OneLineAvatarIconListItem:
-                        text:'Movimientos bancarios'
+                        text:'Movimientos Bancarios'
                         on_release:root.goto_movimientos()
                         IconLeftWidget:
                             icon: "bank"
                     OneLineAvatarIconListItem:
-                        text:'Registro deporte'
+                        text:'Presupuesto Mensual'
+                        on_release:root.goto_presupuestos()
+                        IconLeftWidget:
+                            icon: "piggy-bank"
+                    OneLineAvatarIconListItem:
+                        text:'Registro Deporte'
                         on_release:root.goto_deporte()
                         IconLeftWidget:
                             icon: "weight-lifter"
@@ -1101,6 +1279,56 @@ WindowManager_select:
                 text: " "
                 on_release: root.create_new_product()
                 
+                
+<DataBaseWid_presupuestos>:
+    name:"db_presupuesto"
+    canvas:
+        Color:
+            rgb: 4/255,150/255,163/255,1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MyToolbar:
+            id: _toolbar
+            title: "Presupuesto Mensual"
+
+        ScrollView:
+            size: self.size
+            GridLayout:
+                id: container
+                padding: [10,10,10,10]
+                spacing: 5
+                size_hint_y: None
+                cols: 1
+                row_default_height: root.height*0.2
+                height: self.minimum_height
+                
+        AKFloatingRoundedAppbar:
+
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "keyboard-return"
+                text: " "
+                on_release: root.goto_main()
+    
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "chevron-triple-left"
+                text: " "
+                on_release: root.previous_10()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "chevron-triple-right"
+                text: " "
+                on_release: root.next_10()
+                
+            AKFloatingRoundedAppbarButtonItem:
+                icon: "plus-circle-outline"
+                text: " "
+                on_release: root.create_new_product()
+
 <DataBaseWid_deporte>:
     name:"db_deporte"
     canvas:
@@ -1327,7 +1555,48 @@ WindowManager_select:
                 valign: "center"
             MDLabel:
                 text: ""
+
+<DataWid_presupuestos>:
+    padding: "8dp"
+    name:"datawid_presupuestos"
+    size_hint: .9, .2
+    #size: dp(320), dp(140)
+    radius: [dp(10),]
+    pos_hint: {"center_x": .5, "center_y": .5}
+    dataID: ""
+    dataCA: ""
+    dataPR: ""
+    data_id: ''
+    on_release: root.update_data(root.data_id)
+
+    MDBoxLayout:
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint_x: .7
+            
+            MDLabel:
+                text: ""
+            DataloaderLabel_select:
+                text:  root.dataID
+                font_size: root.width * .04
+            MDSeparator:
+            DataloaderLabel_select:
+                text:  root.dataCA
+            MDLabel:
+                text: ""
                 
+        MDBoxLayout:
+            size_hint_x: .3
+            orientation:"vertical"
+            MDLabel:
+                text: ""
+            DataloaderLabel_select:
+                text:  root.dataPR
+                halign: "center"
+                valign: "center"
+            MDLabel:
+                text: ""
+
 <DataWid_deporte>:
     padding: "8dp"
     name:"datawid"
@@ -1509,6 +1778,54 @@ WindowManager_select:
         Label:
             size_hint: .05,1
             
+<InsertDataWid_presupuestos>:
+    name:"insert_presupuestos"
+    orientation: 'vertical'
+    canvas:
+        Color:
+            rgb: 1/255, 104/255, 113/255
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MyToolbar:
+        id: _toolbar
+        title: "Presupuesto"
+    MDBoxLayout:
+        orientation: "horizontal"
+        Label:
+            size_hint: .05,1
+        MDBoxLayout:
+            size_hint: .9,1
+            orientation: "vertical"
+ 
+            Label: # ---------- Categoría
+                text: ' Categoría:'
+            TextInput:
+                id: ti_Categoria
+                multiline: False
+                hint_text: 'Categoría'
+            Label: # ---------- Presupuesto
+                text: ' Presupuesto Mensual:'
+            TextInput:
+                id: ti_Presupuesto
+                multiline: False
+                hint_text: 'Presupuesto Mensual'
+            
+            BoxLayout:
+                size_hint_y: 5
+            AKFloatingRoundedAppbar:
+                AKFloatingRoundedAppbarButtonItem:
+                    icon: "keyboard-return"
+                    text: " "
+                    on_release: root.back_to_dbw()
+                AKFloatingRoundedAppbarButtonItem:
+                    icon: "plus-circle-outline"
+                    text: " "
+                    on_release: root.insert_data()
+            
+        Label:
+            size_hint: .05,1
+
 
 <InsertDataWid_deporte>:
     name:"insert_movimientos"
@@ -1724,6 +2041,35 @@ WindowManager_select:
             id: ti_Ubi
             multiline: False
             hint_text: 'Ubicación'
+    BoxLayout:
+        Button:
+            text: 'Actualizar'
+            on_press: root.update_data()
+        Button:
+            text: 'Eliminar'
+            on_press: root.delete_data()
+            
+<UpdateDataWid_presupuestos>:
+    name: "update_presupuestos"
+    orientation: 'vertical'
+    data_id: ''
+    canvas:
+        Color:
+            rgb: .254,.556,.627
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        TextInput:
+            id: ti_Categoria
+            multiline: False
+            hint_text: 'Categoría'
+    BoxLayout:
+        TextInput:
+            id: ti_Presupuesto
+            multiline: False
+            hint_text: 'Presupuesto'
+
     BoxLayout:
         Button:
             text: 'Actualizar'

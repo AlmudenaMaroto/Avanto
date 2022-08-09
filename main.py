@@ -55,7 +55,7 @@ def create_table_presupuestos(cursor):
         CREATE TABLE presupuestos(
         ID        INT   PRIMARY KEY NOT NULL,
         Categoría   TEXT                NOT NULL,
-        Presupuesto     FLOAT              NOT NULL,
+        Presupuesto     FLOAT              NOT NULL
         )'''
     )
 
