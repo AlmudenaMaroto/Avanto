@@ -448,9 +448,42 @@ class Economia(MDScreen):
         epoch_fin = datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y').timestamp()
         epoch_ini = (datetime.datetime.strptime(today.strftime("%d/%m/%Y"), '%d/%m/%Y') - datetime.timedelta(
             days=30)).timestamp()
-        dict_domic = list(filter(lambda d: d['categoria'] in domiciliaciones_list, self.dict_eco_sorted))
+        dict_domic = list(filter(lambda d: d['concepto'] in domiciliaciones_list, self.dict_eco_sorted))
         dict_domic_fech = [d for d in dict_domic if filtrar_dict_fechas(d, epoch_ini, epoch_fin)]
+        domiciliaciones_mes_curso = -round(sum(item['importe'] for item in dict_domic_fech), 2)
         self.ids.domiciliaciones_mes.text = str(-round(sum(item['importe'] for item in dict_domic_fech), 2)) + ' €'
+
+        #############################
+        # Pie Chart: Domiciliaciones
+        #############################
+
+        # Para que no se duplique el grafico hay que borrarlo.
+        self.ids.chart_box_domiciliaciones.clear_widgets()
+        dict_pie_domic = []
+        list_dict_pie_domic = {}
+        for k, v in groupby(dict_domic_fech, key=lambda x: x['concepto']):
+            linea = {k: - sum(int(d['importe']) * 100 / domiciliaciones_mes_curso for d in v)}
+            if linea[k] < 0:
+                linea[k] = 0
+            list_dict_pie_domic[k] = linea.get(k)
+
+        total_perc = sum(list_dict_pie_domic.values())
+        list_dict_pie_domic.update((x, round(y * 100 / total_perc, 0)) for x, y in list_dict_pie_domic.items())
+        porc_real = sum(list_dict_pie_domic.values())
+        lista_pie_domic_total = set(d['concepto'] for d in dict_domic_fech)
+        for pie_domic_i in lista_pie_domic_total:
+            pass
+        if porc_real != 100:
+            list_dict_pie_domic[pie_domic_i] = list_dict_pie_domic[pie_domic_i] + 100 - porc_real
+        # Eliminamos los registros 0% para mejorar el grafico
+        list_dict_pie_domic_importe = {key: val for key, val in list_dict_pie_domic.items() if val != 0}
+        self.piechart = AKPieChart_etapas(
+            items=[list_dict_pie_domic_importe],
+            pos_hint={"center_x": 0.5, "center_y": 0.5},
+            size_hint=[None, None],
+            size=(dp(250), dp(250)),
+        )
+        self.ids.chart_box_domiciliaciones.add_widget(self.piechart)
 
     def choose_etapa(self):
         self.hay_eleccion = 0
@@ -1009,6 +1042,15 @@ Builder.load_string(
                     id:domiciliaciones_mes
                     halign: "center"
                     valign: "center"
+                MDLabel:
+                    text: 'Domiciliaciones:'
+                    halign: "center"
+                    valign: "center"
+                MDBoxLayout:
+                    id: chart_box_domiciliaciones
+                    adaptive_height: True
+                    padding:dp(24)
+                    orientation: "vertical"
                 MDLabel:
                     text: '% ingresos de cada etapa:'
                     halign: "center"

@@ -142,7 +142,7 @@ def create_table_vbles_globales(cursor):
         )''')
 
     cursor.execute(
-        '''INSERT INTO globales (ID, Obj_cuenta, Obj_fecha, Obj_peso, Domiciliaciones, Ingresos, Obj_tasa) VALUES (1,25000,'01/09/2022',60,'Abono, Spotify, Orange', 'Salario, Beca Erasmus, Fianza',80)'''
+        '''INSERT INTO globales (ID, Obj_cuenta, Obj_fecha, Obj_peso, Domiciliaciones, Ingresos, Obj_tasa) VALUES (1,25000,'01/09/2022',60,'Abono, Spotify, Orange, Luz, Simyo, Hipoteca', 'Salario, Beca Erasmus, Fianza',80)'''
     )
 
 
