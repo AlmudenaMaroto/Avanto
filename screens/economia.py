@@ -471,10 +471,16 @@ class Economia(MDScreen):
         list_dict_pie_domic.update((x, round(y * 100 / total_perc, 0)) for x, y in list_dict_pie_domic.items())
         porc_real = sum(list_dict_pie_domic.values())
         lista_pie_domic_total = set(d['concepto'] for d in dict_domic_fech)
-        for pie_domic_i in lista_pie_domic_total:
-            pass
-        if porc_real != 100:
-            list_dict_pie_domic[pie_domic_i] = list_dict_pie_domic[pie_domic_i] + 100 - porc_real
+        # Si no hay domiciliaciones este mes gráfico vacío:
+        if len(lista_pie_domic_total) == 0:
+            list_dict_pie_domic['No hay domiciliaciones'] = 100
+
+        else:
+
+            for pie_domic_i in lista_pie_domic_total:
+                pass
+            if porc_real != 100:
+                list_dict_pie_domic[pie_domic_i] = list_dict_pie_domic[pie_domic_i] + 100 - porc_real
         # Eliminamos los registros 0% para mejorar el grafico
         list_dict_pie_domic_importe = {key: val for key, val in list_dict_pie_domic.items() if val != 0}
         self.piechart = AKPieChart_etapas(
